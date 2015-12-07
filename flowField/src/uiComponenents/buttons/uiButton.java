@@ -1,5 +1,8 @@
 package uiComponenents.buttons;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.apache.commons.lang3.text.WordUtils;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RectangleShape;
@@ -11,6 +14,7 @@ import org.jsfml.system.Vector2f;
 import FYP.Main;
 
 public abstract class uiButton extends RectangleShape{
+	public static HashMap<String,uiButton> allButtons= new HashMap<String,uiButton>();
 	public String title;
 	Text text;
 	RectangleShape overlay;
@@ -44,7 +48,7 @@ public abstract class uiButton extends RectangleShape{
 		text.setCharacterSize(15);
 		
 		text.move((width- text.getGlobalBounds().width)/2,(height- text.getGlobalBounds().height)/2);
-		
+		allButtons.put(title,this);
 	}
 	public uiButton(String title)
 	{
@@ -53,7 +57,6 @@ public abstract class uiButton extends RectangleShape{
 	public void setTitle(String s)
 	{
 		text = new Text(s,Main.font);
-		String result="";
 		/*if(s.length()>10)
 		{
 			s=s.replace(" ", "\n");
@@ -105,5 +108,10 @@ public abstract class uiButton extends RectangleShape{
 	public void enable()
 	{
 		visible=true;
+	}
+	@Override
+	public String toString()
+	{
+		return "button_"+title;
 	}
 }

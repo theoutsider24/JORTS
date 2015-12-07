@@ -71,7 +71,8 @@ public class Minimap extends RectangleShape{
 				catch(PixelOutOfBoundsException ex){continue;}
 			}*/
 		Vector2f size = Main.gameView.getSize();
-		Vector2f newSize = new Vector2f(size.x*(sizeFactor/CELL_SIZE),size.y*(sizeFactor/CELL_SIZE));
+		//Vector2f newSize = new Vector2f(size.x*(sizeFactor/CELL_SIZE),size.y*(sizeFactor/CELL_SIZE));
+		Vector2f newSize = new Vector2f(size.x*(.02f),size.y*(.02f));
 		viewRect.setSize(newSize);
 		
 		Vector2f center = Main.gameView.getCenter();
@@ -80,7 +81,7 @@ public class Minimap extends RectangleShape{
 		Vector2f newCenter = new Vector2f(center.x*(sizeFactor/CELL_SIZE),center.y*(sizeFactor/CELL_SIZE));
 		newCenter = Vector2f.add(newCenter,getPosition());
 		//new Center = Vector2f.add(newCenter, )
-		viewRect.setPosition(newCenter);
+		viewRect.setPosition(newCenter.x+(viewRect.getSize().x/2),newCenter.y+(viewRect.getSize().y/2));
 	//	System.out.println(newCenter.toString());
 		
 		try {texture.loadFromImage(image);} 

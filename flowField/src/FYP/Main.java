@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Observable;
 import java.util.Properties;
 
 import uiComponenents.grids.*;
@@ -34,7 +35,7 @@ import map.MapCell;
 import test.Logger;
 
 
-public class Main {
+public class Main extends Observable{
 	public static RenderWindow window;
 	public static Font font;
 	//public static ArrayList<Entity> entities;
@@ -56,14 +57,21 @@ public class Main {
 	public static Clock clock;
 	public static GUI gui;
 	
-	public static Cursor cursor;
-	
 	public static String hoverIntent="";
+
+	public static Main game;
 	public static void main(String[] args) throws IOException
 	{
-		loadFont(FONT);
+		game = new Main();
+		game.init();
+	}
+	public Main()
+	{
 		
-		
+	}
+	public void init() throws IOException
+	{
+		loadFont(FONT);		
 		
 		clickTimer=new Clock();
 		clickTimer.restart();
@@ -77,6 +85,11 @@ public class Main {
 		players.add(new Player());
 		players.add(new Player());
 		activePlayer=players.get(0);
+		
+		/*for(Player p: players)
+		{
+			addObserver(p);
+		}*/
 		
 		initWindow();
 		gui = new GUI(uiView);
@@ -118,19 +131,22 @@ public class Main {
 			}
 		});
 		GUIthread.start();*/
+		
 		while(window.isOpen()) 
 		{
 			gameLoop();
 		}
 	}
-	public static void gameLoop() throws IOException
+	public void gameLoop() throws IOException
 	{
+		setChanged();
+		notifyObservers();
 		
 		if(hasFocus)limitMouse();
 		   pollEvents();
 		   
-		   for(Player p:players)
-			   p.tick();
+		  /* for(Player p:players)
+			   p.tick();*/
 		   window.clear(new Color(0,0,100));
 		   window.setView(gameView);
 		   window.draw(worldMap);
@@ -148,7 +164,7 @@ public class Main {
 	{
 		font = new Font();		
 		try {
-			font.loadFromFile(Paths.get(fontName+".ttf"));
+			font.loadFromFile(Paths.get(FONT_DIRECTORY+"\\"+fontName+".ttf"));
 		} catch(IOException ex) {
 		    System.out.println("Can't find path");
 		}
@@ -157,41 +173,60 @@ public class Main {
 	public static void initWindow()
 	{
 		ContextSettings settings = new ContextSettings(8);
-		int screenmode=RenderWindow.NONE;
-		if(FULLSCREEN)screenmode=RenderWindow.FULLSCREEN;
+		int screenmode=RenderWindow.DEFAULT;
+		if(FULLSCREEN)screenmode=RenderWindow.NONE;
 		window = new RenderWindow();
 		VideoMode v = new VideoMode(RESOLUTION_X, RESOLUTION_Y);
 		
 		if(FULLSCREEN)v=VideoMode.getDesktopMode();
 		window.create(v, WINDOW_TITLE,screenmode,settings);
-		window.setFramerateLimit(60);	
+		window.setFramerateLimit(FRAME_CAP);	
 		
 		window.setPosition(new Vector2i(0,0));
 		window.setMouseCursorVisible(false);
 		
 		gameView = new View();
 		gameView.setSize(RESOLUTION_X, RESOLUTION_Y);
+		
+		//isometric test
+		//gameView.setSize(RESOLUTION_X, (int)(RESOLUTION_Y*2.2));
+		//gameView.rotate(45);
+		
 		uiView = new View();
 		uiView.setSize(RESOLUTION_X, RESOLUTION_Y);
 		uiView.setCenter(RESOLUTION_X/2,RESOLUTION_Y/2);
 	}
 	public static void leftButtonDown()
 	{	
+		gui.cursor.startState=gui.cursor.state;
 		if(clickTimer.getElapsedTime().asMilliseconds()<CLICK_INTERVAL)
 		{
 			doubleClick=true;
 		}
 		clickTimer.restart();
 		
-		boolean clickOnButton=false;
+		boolean clickOnButton=false;		
+		
 		clickTimer.restart();
-		for(uiButton b:gui.buttons)
+		
+		/*for(uiButton b:gui.buttons)
 			if(b.getGlobalBounds().contains(uiClickLoc))
 			{
 				b.clickDown();
 				clickOnButton=true;
+			}*/
+		if(gui.cursor.state.contains("gui"))
+		{
+			if(gui.cursor.state.contains("button"))
+			{
+				String name = gui.cursor.state.substring(gui.cursor.state.lastIndexOf("button_")+7);
+				if(uiButton.allButtons.containsKey(name))
+				{
+					uiButton.allButtons.get(name).clickDown();
+				}
 			}
-		if(!clickOnButton)
+		}
+		else
 		{
 			if(editMapMode)
 			{
@@ -206,38 +241,45 @@ public class Main {
 	}
 	public static void leftButtonUp()
 	{	
-		boolean clickOnButton=false;
-		
-		for(uiButton b:gui.buttons)
+		if(gui.cursor.state.contains("gui"))
 		{
-			if(b.getGlobalBounds().contains(uiClickLoc))
+			if(gui.cursor.state.contains("button")&&gui.cursor.state.equals(gui.cursor.startState))
 			{
-				b.clickUp(true);
-				clickOnButton=true;
-			}
-			b.clickUp(false);
-		}
-		
-		if(!clickOnButton&&!gui.minimap.getGlobalBounds().contains(uiClickLoc))
-		{
-			if(activePlayer.selectionInProgress)
-				activePlayer.endSelection(clickLoc, true);
+				String name = gui.cursor.state.substring(gui.cursor.state.lastIndexOf("button_")+7);
+				if(uiButton.allButtons.containsKey(name))
+				{
+					uiButton.allButtons.get(name).clickUp(true);
+				}
+			}			
 		}
 		else
 		{
-			if(activePlayer.selectionInProgress)
-				activePlayer.endSelection(clickLoc, false);
+			if(!gui.minimap.getGlobalBounds().contains(uiClickLoc))
+			{
+				if(activePlayer.selectionInProgress)
+					activePlayer.endSelection(clickLoc, true);
+			}
+			else
+			{
+				if(activePlayer.selectionInProgress)
+					activePlayer.endSelection(clickLoc, false);
+			}
+			doubleClick=false;
 		}
-		doubleClick=false;
+
+		for(uiButton b:uiButton.allButtons.values())
+		{
+			b.clickUp(false);
+		}
 	}
 	public static void rightButtonDown()
 	{
 		boolean clickOnButton=false;
-		for(uiButton b:gui.buttons)
+		/*or(uiButton b:gui.buttons)
 			if(b.getGlobalBounds().contains(uiClickLoc))
 			{
 				clickOnButton=true;
-			}
+			}*/
 
 		if(gui.cursor.state.contains("minimap"))
 		{
@@ -247,13 +289,20 @@ public class Main {
 		}
 		if(!clickOnButton&&!gui.cursor.state.contains("gui"))
 		{
-			Thread t=new Thread(new Runnable(){
-				@Override
-				public void run() {
-					activePlayer.issueMoveCommand(clickLoc);
-				}});
-			t.start();
-			//activePlayer.issueMoveCommand(clickLoc);
+			if(gui.cursor.state.contains("enemy"))
+			{
+				String id= gui.cursor.state.substring(gui.cursor.state.lastIndexOf("enemy_")+6);
+				activePlayer.issueFollowCommand(Entity.allEntities.get(id));
+			}
+			else
+			{
+				Thread t=new Thread(new Runnable(){
+					@Override
+					public void run() {
+						activePlayer.issueMoveCommand(clickLoc);
+					}},"Move_Command_Thread");
+				t.start();
+			}
 		}
 	}
 	public static void determineHoverIntent()
@@ -275,12 +324,14 @@ public class Main {
 				{
 					e.hover();
 					gui.cursor.setColor(Color.WHITE);
-					gui.cursor.state="SELECT";
+					//gui.cursor.state="SELECT";
+					gui.cursor.state="my_"+e.id;
 				}
 				else
 				{
 					gui.cursor.setColor(Color.RED);
-					gui.cursor.state="ATTACK";
+					//gui.cursor.state="ATTACK";
+					gui.cursor.state="enemy_"+e.id;
 				}
 				return;
 			}
@@ -320,7 +371,7 @@ public class Main {
 	}
 	public static void limitMouse()
 	{
-		Vector2i pos = Mouse.getPosition();
+		Vector2i pos =  gui.cursor.getPosition();
 		if(pos.x-10<=0) moveCamera(-15,0);
 		else if(pos.x+10>=RESOLUTION_X) moveCamera(15,0);
 		

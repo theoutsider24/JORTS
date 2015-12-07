@@ -46,9 +46,7 @@ public abstract class ButtonGrid extends RectangleShape implements Drawable{
 				catch(Exception ex){continue;}
 			}
 		}
-		
 		super.draw(arg0, arg1);
-		
 	}
 	public ArrayList<uiButton> getButtons()
 	{
@@ -71,7 +69,7 @@ public abstract class ButtonGrid extends RectangleShape implements Drawable{
 			{
 				try {
 					if(buttons[i][j].getGlobalBounds().contains(v))
-						return buttons[i][j].title;
+						return buttons[i][j].toString();
 				}
 				catch(Exception ex){continue;}
 			}

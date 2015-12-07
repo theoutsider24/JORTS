@@ -4,6 +4,7 @@ import static common.Constants.*;
 
 import java.sql.Struct;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Stack;
 
 import org.jsfml.graphics.CircleShape;
@@ -16,6 +17,7 @@ import org.jsfml.system.Vector2i;
 
 import FYP.flowField.FlowCell;
 import FYP.Main;
+import FYP.Order;
 import FYP.Player;
 import FYP.flowField.Field;
 import common.CommonFunctions;
@@ -24,6 +26,12 @@ import uiComponenents.HealthBar;
 import static FYP.Main.worldMap;
 
 public abstract class Entity extends CircleShape{
+	public static HashMap<String,Entity> allEntities = new HashMap<String,Entity>();
+	public static int numberOfEntities;
+	public String id;
+	
+	public Order currentOrder;
+	
 	String unitType;
 	Vector2f speed;
 	float maxSpeed;
@@ -32,7 +40,7 @@ public abstract class Entity extends CircleShape{
 	Vector2f repulsion;
 	public int influenceRange=20;
 	float repulsionStrength=.2f;
-	Field fieldMap;//=new Field();
+	//Field fieldMap;//=new Field();
 	int controlGroup=-1;
 	Text controlGroupText;
 	Color playerColor=new Color(50,50,50);
@@ -48,6 +56,9 @@ public abstract class Entity extends CircleShape{
 	public Entity(int x,int y)
 	{
 		super();
+		
+		id="unit_#"+numberOfEntities++;
+		
 		controlGroupText=new Text("",Main.font);
 		controlGroupText.setCharacterSize(8);
 		controlGroupText.setColor(Color.BLACK);
@@ -68,11 +79,10 @@ public abstract class Entity extends CircleShape{
 		
 		speed = new Vector2f(0,0);
 		repulsion  = new Vector2f(0,0);
-		if(fieldMap!=null)
-		{
-			reregister();
-		}
+		
+		reregister();
 		setPosition(x,y);
+		allEntities.put(id,this);
 	}
 	public void hover()
 	{
@@ -117,15 +127,15 @@ public abstract class Entity extends CircleShape{
 		setOutlineColor(playerColor);
 		selected=false;
 	}
-	public void setFlowField(Field f)
+	/*public void setFlowField(Field f)
 	{
 		this.fieldMap=f;
-	}
+	}*/
 	public void tick()
 	{	
-		if(fieldMap!=null)
+		if(currentOrder!=null)
 		{
-			Vector2f v = fieldMap.getFlowAtPos(this.getPosition());
+			Vector2f v = currentOrder.flowField.getFlowAtPos(this.getPosition());
 			v = Vector2f.mul(v, maxSpeed);
 			
 			//enforceBounds();
@@ -162,13 +172,23 @@ public abstract class Entity extends CircleShape{
 		this.move(Math.max(-this.getPosition().x -5,0)    ,  Math.max(-this.getPosition().y-1,0));
 	}
 	public void reregister()
-	{
+	{//TODO register in multiple cells
 		int currentX = (int) (getPosition().x/CELL_SIZE);
 		int currentY = (int) (getPosition().y/CELL_SIZE);
 		if(currentX!=currentCell.x || currentY!=currentCell.y)
 		{
-			worldMap.getCell(currentCell.x, currentCell.y).deregisterUnit(this);
-			worldMap.getCell(currentX,currentY).registerUnit(this);
+			for(int i=currentCell.x-1;i<=currentCell.x+1;i++)
+			{
+				for(int j=currentCell.y-1;j<=currentCell.y+1;j++)
+					worldMap.getCell(i,j).deregisterUnit(this);
+			}
+			for(int i=currentX-1;i<=currentX+1;i++)
+			{
+				for(int j=currentY-1;j<=currentY+1;j++)
+					worldMap.getCell(i,j).registerUnit(this);
+			}
+			/*worldMap.getCell(currentCell.x, currentCell.y).deregisterUnit(this);
+			worldMap.getCell(currentX,currentY).registerUnit(this);*/
 			currentCell = new Vector2i(currentX,currentY);
 		}
 	}
@@ -228,14 +248,15 @@ public abstract class Entity extends CircleShape{
 	public Vector2f repel()
 	{
 		repulsion = new Vector2f(0,0);
-		for(int i=currentCell.x-1;i<=currentCell.x+1;i++)
+		int range=0;
+		for(int i=currentCell.x-range;i<=currentCell.x+range;i++)
 		{
-			for(int j=currentCell.y-1;j<=currentCell.y+1;j++)
+			for(int j=currentCell.y-range;j<=currentCell.y+range;j++)
 			{				
 				//for(Entity e: Main.fieldMap.getCell(currentCell.x, currentCell.y).entities)
-				if(!this.fieldMap.cellExists(i, j))//||!this.fieldMap.getCell(i, j).isOpen())
+				if(!currentOrder.flowField.cellExists(i, j))//||!this.fieldMap.getCell(i, j).isOpen())
 					continue;
-				FlowCell c = this.fieldMap.getCell(i, j);
+				FlowCell c = currentOrder.flowField.getCell(i, j);
 				if(!c.isOpen())
 				{
 					repulsion = Vector2f.add(repulsion,getCellRepulsion(c));		
@@ -274,7 +295,7 @@ public abstract class Entity extends CircleShape{
 		if(!worldMap.getCell(currentCell.x,currentCell.y).isTraversable())
 		{
 			//moveAndRegisterAbsolute(Vector2f.add(getCellRepulsion(fieldMap.getCell(currentCell.x,currentCell.y)),Vector2f.mul(v, -1)));
-			this.move(Vector2f.add(getCellRepulsion(fieldMap.getCell(currentCell.x,currentCell.y)),Vector2f.mul(v, -1)));
+			this.move(Vector2f.add(getCellRepulsion(currentOrder.flowField.getCell(currentCell.x,currentCell.y)),Vector2f.mul(v, -1)));
 			//moveAndRegisterAbsolute(Vector2f.mul(v, -1));
 		}
 	}

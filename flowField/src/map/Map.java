@@ -41,11 +41,33 @@ class EditCommand
 		this.command=command;
 	}
 }
-public class Map extends Observable implements Drawable{
-	public MapCell[][] cells;
+abstract class UpdatableImage extends RectangleShape
+{
 	Image image;
 	Texture texture;
-	RectangleShape shape;
+	public UpdatableImage(Vector2f shapeSize,Vector2f imageSize)
+	{
+		super(shapeSize);
+		image = new Image();
+		image.create((int)imageSize.x,(int)imageSize.y);
+		texture = new Texture();
+		//shape = new RectangleShape(new Vector2f(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE));
+	}
+	public abstract void updateImage();
+	protected void updateTexture()
+	{
+		try {texture.loadFromImage(image);} 
+		catch (TextureCreationException e) {e.printStackTrace();}
+		
+		setTexture(texture);
+	}
+}
+public class Map extends Observable implements Drawable{
+	public MapCell[][] cells;
+/*	Image image;
+	Texture texture;
+	RectangleShape shape;*/
+	UpdatableImage mapImage;
 	Stack<EditCommand> undoStack;
 	Stack<EditCommand> redoStack;
 	public Map()
@@ -56,19 +78,33 @@ public class Map extends Observable implements Drawable{
 		for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
 				cells[i][j] = new MapCell(i,j);
-		image = new Image();
+	/*	image = new Image();
 		image.create(GRID_SIZE,GRID_SIZE);
 		texture = new Texture();
-		shape = new RectangleShape(new Vector2f(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE));
-		refreshImage();
+		shape = new RectangleShape(new Vector2f(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE));*/
+		
+		mapImage = new UpdatableImage(new Vector2f(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE),new Vector2f(GRID_SIZE,GRID_SIZE)){
+			@Override
+			public void updateImage()
+			{
+				for(int i=0;i<GRID_SIZE;i++)
+					for(int j=0;j<GRID_SIZE;j++)
+					{
+						image.setPixel(i, j, cells[i][j].getDrawColor());
+					}				
+				updateTexture();
+			}
+		};
+		refreshImage();	
 	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {		
-		arg0.draw(shape);
+		//arg0.draw(shape);
+		arg0.draw(mapImage);
 	}
 	public void refreshImage()
 	{
-		for(int i=0;i<GRID_SIZE;i++)
+		/*for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
 			{
 				image.setPixel(i, j, cells[i][j].getDrawColor());
@@ -77,7 +113,8 @@ public class Map extends Observable implements Drawable{
 		try {texture.loadFromImage(image);} 
 		catch (TextureCreationException e) {e.printStackTrace();}
 		
-		shape.setTexture(texture);
+		shape.setTexture(texture);*/
+		mapImage.updateImage();
 		notifyAllObservers();
 	}
 	
@@ -150,11 +187,11 @@ public class Map extends Observable implements Drawable{
 	}
 	public boolean cellPosExists(float x,float y)
 	{
-		return (x>0&&y>0&&x<GRID_SIZE*CELL_SIZE&&y<GRID_SIZE*CELL_SIZE);		
+		return (x>=0&&y>=0&&x<GRID_SIZE*CELL_SIZE&&y<GRID_SIZE*CELL_SIZE);		
 	}
 	public boolean cellPosExists(Vector2f v)
 	{
-		return (v.x>0&&v.y>0&&v.x<GRID_SIZE*CELL_SIZE&&v.y<GRID_SIZE*CELL_SIZE);		
+		return (v.x>=0&&v.y>=0&&v.x<GRID_SIZE*CELL_SIZE&&v.y<GRID_SIZE*CELL_SIZE);		
 	}
 	
 	public MapCell getCellAtPos(Vector2f pos) throws IndexOutOfBoundsException
@@ -173,7 +210,8 @@ public class Map extends Observable implements Drawable{
 	}
 	public void saveToFile() throws IOException
 	{
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		JFileChooser chooser = new JFileChooser(MAP_DIRECTORY);
+		
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	        "MapFiles", "mp");
 	    chooser.setFileFilter(filter);
@@ -228,7 +266,7 @@ public class Map extends Observable implements Drawable{
 	}
 	public void loadFromFile() throws FileNotFoundException
 	{	
-		JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+		JFileChooser chooser = new JFileChooser(MAP_DIRECTORY);
 	    FileNameExtensionFilter filter = new FileNameExtensionFilter(
 	        "MapFiles", "mp");
 	    chooser.setFileFilter(filter);

@@ -1,5 +1,7 @@
 package common;
 
+import static common.Constants.MAP_DIRECTORY;
+
 import java.awt.Toolkit;
 
 import org.jsfml.graphics.Color;
@@ -19,8 +21,15 @@ public class Constants {
 	public final static int FRAME_CAP=60;
 	
 	public final static String WINDOW_TITLE="Flow Field Demo";
-	public final static String DEFAUL_MAP="FYP1.mp";
-
+	
+	public final static String ROOT_DIRECTORY=System.getProperty("user.dir");
+	public final static String MAP_DIRECTORY=ROOT_DIRECTORY+"//maps";
+	public final static String LOG_DIRECTORY=ROOT_DIRECTORY+"//logs";
+	public final static String FONT_DIRECTORY=ROOT_DIRECTORY+"//fonts";
+	
+	
+	public final static String DEFAUL_MAP=MAP_DIRECTORY+"//FYP1.mp";
+	
 	public final static boolean SHOW_HEALTH_BARS=true;
 	
 	public final static int COST_INCREASE_ON_CLICK=10;
@@ -34,7 +43,6 @@ public class Constants {
 	
 	public final static Color GROUND_COLOR = Color.GREEN;
 	public final static Color OBSTACLE_COLOR = new Color(50,50,50);
-	public final static int CLICK_INTERVAL = (Integer)Toolkit.getDefaultToolkit().
-	        getDesktopProperty("awt.multiClickInterval");
+	public final static int CLICK_INTERVAL = (Integer)Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
 
 }

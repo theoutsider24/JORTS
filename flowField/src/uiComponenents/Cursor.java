@@ -1,6 +1,6 @@
 package uiComponenents;
 
-
+import static common.Constants.*;
 import java.util.ArrayList;
 
 import org.jsfml.graphics.Color;
@@ -28,6 +28,9 @@ public class Cursor extends VertexArray{
 	
 	ArrayList<Vertex> outlineStartingPosition=new ArrayList<Vertex>();
 	public String state="";
+	
+	public String startState="";
+	
 	VertexArray outline;
 	public Cursor()
 	{
@@ -132,6 +135,8 @@ public class Cursor extends VertexArray{
 	}
 	public void update()
 	{
-		setPosition(Mouse.getPosition(Main.window));
+		Vector2i pos = Mouse.getPosition(Main.window);
+		if(pos.x>0&&pos.x<RESOLUTION_X && pos.y>0&&pos.y<RESOLUTION_Y)
+			setPosition(pos);
 	}
 }

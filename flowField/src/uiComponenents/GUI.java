@@ -17,6 +17,7 @@ import org.jsfml.window.Mouse;
 
 import FYP.Main;
 import test.Logger;
+import uiComponenents.buttons.ExitButton;
 import uiComponenents.buttons.StandardButton;
 import uiComponenents.buttons.uiButton;
 import uiComponenents.grids.ButtonGrid;
@@ -30,13 +31,14 @@ public class GUI implements Drawable{
 	View view;
 	public Minimap minimap;
 	public ButtonGrid grid1,grid2;
-	public ArrayList<uiButton> buttons;
+	//public ArrayList<uiButton> buttons;
 	public RectangleShape lowerBackground;
 	public RectangleShape topBackground;
 	public GameClock clock;
 	public FPSTimer fpsTimer;
 	public ArrayList<Drawable> drawables;
 	public Cursor cursor;
+	public ExitButton exit;
 	UpdatableTextField cursorState;
 	ArrayList<RectangleShape> rects = new ArrayList<RectangleShape>();
 	public GUI(View view)
@@ -45,7 +47,7 @@ public class GUI implements Drawable{
 		this.view=view;
 		minimap=new Minimap();
 		minimap.setPosition(RESOLUTION_X-minimap.getSize().x-20,RESOLUTION_Y-minimap.getSize().y-20);
-		buttons = new ArrayList<uiButton>();
+		//buttons = new ArrayList<uiButton>();
 		
 		lowerBackground=new GuiRectangle();
 		lowerBackground.setPosition(0, RESOLUTION_Y-LOWER_GUI_HEIGHT);
@@ -82,7 +84,7 @@ public class GUI implements Drawable{
 		rects.add(grid2);
 		rects.add(clock);
 		rects.add(fpsTimer);
-		
+		rects.add(exit);
 		rects.add(lowerBackground);
 		rects.add(topBackground);
 	}
@@ -116,6 +118,7 @@ public class GUI implements Drawable{
 		window.draw(clock);
 		fpsTimer.update();
 		window.draw(fpsTimer);
+		window.draw(exit);
 		//cursor.setPosition(new Vector2f(Mouse.getPosition((RenderWindow)window).x,Mouse.getPosition((RenderWindow)window).y));
 		//cursor.update();
 		window.draw(cursor);
@@ -127,6 +130,8 @@ public class GUI implements Drawable{
 	public void initButtons()
 	{		
 		//grid1 = new StandardButtonGrid(1, 5, new Vector2f(10,100));
+		exit = new ExitButton("");
+		
 		
 		grid1.addButton(new StandardButton("Zoom In"){public void click(){
 			Main.zoom(ZOOM_VALUE); }}, 0, 0);

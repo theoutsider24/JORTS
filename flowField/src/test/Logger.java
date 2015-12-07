@@ -1,6 +1,6 @@
 package test;
 
-import static common.Constants.GRID_SIZE;
+import static common.Constants.*;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,7 +15,7 @@ import FYP.Main;
 public class Logger {
 	public static void logUnitPositions() throws IOException
 	{   
-    	String fileName="unitPos.log";
+    	String fileName=LOG_DIRECTORY+"\\unitPos.log";
 		BufferedWriter outputWriter = null;
 		outputWriter = new BufferedWriter(new FileWriter(fileName));
 		

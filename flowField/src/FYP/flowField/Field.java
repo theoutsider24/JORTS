@@ -85,6 +85,19 @@ public class Field  implements Drawable,Observer{
 	{
 		openCellatPos(goalPosition, initialCellsToOpen);
 	}
+	/*public void openCellatPos(Vector2f pos)
+	{
+		cellsToOpen=0;
+		if(cellPosExists(pos.x,pos.y))
+		{
+			goalPosition = pos;
+			resetIntegration();
+			for(int i=0;i<GRID_SIZE;i++)
+				for(int j=0;j<GRID_SIZE;j++)
+					cells[i][j].isGoal=false;
+			
+		}
+	}*/
 	public void openCellatPos(Vector2f pos, int range)
 	{
 		cellsToOpen=range-1;
@@ -105,7 +118,8 @@ public class Field  implements Drawable,Observer{
 					//if(!cellExists(i, j))
 					//	continue;
 					goal =getCell(i,j);
-			
+					if(goal.neighbours.isEmpty())
+						System.out.println("Target has no neighbours");
 					goal.integration=0;
 					goal.isGoal=true;
 					openList.add(goal);
@@ -115,6 +129,8 @@ public class Field  implements Drawable,Observer{
 				integrate();
 			setVectors();
 		}
+		else
+			System.out.println("Invalid Move Target");
 	}
 	public void registerNeighours()
 	{
@@ -148,7 +164,7 @@ public class Field  implements Drawable,Observer{
 		for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
 			{
-				arg0.draw(cells[i][j].getVectorVisualistation());
+				//arg0.draw(cells[i][j].getVectorVisualistation());
 				
 				Text intnum = new Text(cells[i][j].toString(),Main.font);
 				intnum.setCharacterSize(8);
@@ -356,20 +372,22 @@ public class Field  implements Drawable,Observer{
 	}
 	public boolean cellExists(int x,int y)
 	{
-		return (x>0&&y>0&&x<GRID_SIZE&&y<GRID_SIZE);		
+		return (x>=0&&y>=0&&x<GRID_SIZE&&y<GRID_SIZE);		
 	}
 	public boolean cellPosExists(float x,float y)
 	{
-		return (x>0&&y>0&&x<GRID_SIZE*CELL_SIZE&&y<GRID_SIZE*CELL_SIZE);		
+		return (x>=0&&y>=0&&x<GRID_SIZE*CELL_SIZE&&y<GRID_SIZE*CELL_SIZE);		
 	}
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		//System.out.println("update");
+		update();
+	}
+	public void update()
+	{
 		for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
-				cells[i][j] = new FlowCell(this,((Map)arg0).getCell(i, j));	
+				cells[i][j] = new FlowCell(this,Main.worldMap.getCell(i, j));	
 		registerNeighours();
-
 		recalculate();
 	}
 }

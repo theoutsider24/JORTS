@@ -3,6 +3,7 @@ package FYP;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Observer;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Drawable;
@@ -19,7 +20,7 @@ import units.Entity;
 
 import static FYP.Main.worldMap;
 import static common.Constants.*;
-;public class Player implements Drawable{ 
+;public class Player implements Drawable,Observer{ 
 	String id="";
 	Color teamColor;
 	public Field lastField;
@@ -53,6 +54,7 @@ import static common.Constants.*;
 		selectionPoint = new Vector2f(0,0);
 		units=new ArrayList<Entity>();
 		selectedUnits=new ArrayList<Entity>();
+		Main.game.addObserver(this);
 	}
 	public void startSelection(Vector2f v)
 	{
@@ -161,17 +163,27 @@ import static common.Constants.*;
 	}
 	public void issueMoveCommand(Vector2f loc)
 	{
-		ArrayList<InfluenceMap> influenceMaps = new ArrayList<InfluenceMap>();
-		influenceMaps.add(new InfluenceMap(new Vector2f(400,600), 200));
-		
 		if(selectedUnits.size()>0)
 		{
-			//currentField = new Field(worldMap,influenceMaps);
-			currentField = new Field(worldMap);
-			currentField.openCellatPos(loc,selectedUnits.size()/2);
+			MoveOrder m = new MoveOrder();
+			m.init(loc, selectedUnits.size()/2);
+			currentField=m.flowField;
 			for(Entity e:selectedUnits)
 			{
-				e.setFlowField(currentField);
+				e.currentOrder = m;
+			}
+		}
+	}
+	public void issueFollowCommand(Entity ent)
+	{
+		if(selectedUnits.size()>0)
+		{
+			FollowOrder m = new FollowOrder();
+			m.init(ent);
+			currentField=m.flowField;
+			for(Entity e:selectedUnits)
+			{
+				e.currentOrder = m;
 			}
 		}
 	}
@@ -192,5 +204,10 @@ import static common.Constants.*;
 		   entity.tick();
 		for(Entity entity:units)
 		   entity.reregister();
+	}
+	@Override
+	public void update(Observable o, Object arg) {
+		tick();
+		
 	}
 }
