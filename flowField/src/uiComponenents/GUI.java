@@ -26,6 +26,7 @@ import uiComponenents.grids.StandardButtonGrid;
 import uiComponenents.textFields.FPSTimer;
 import uiComponenents.textFields.GameClock;
 import uiComponenents.textFields.UpdatableTextField;
+import units.Infantry;
 
 public class GUI implements Drawable{
 	View view;
@@ -75,7 +76,7 @@ public class GUI implements Drawable{
 		};
 		cursorState.setPosition(new Vector2f(200,1000));
 		
-		grid1 = new StandardButtonGrid(1, 5, new Vector2f(10,100));
+		grid1 = new StandardButtonGrid(1, 6, new Vector2f(10,100));
 		grid2 = new ControlGroupButtonGrid(1, 9, new Vector2f(700, RESOLUTION_Y-LOWER_GUI_HEIGHT-40));
 		initButtons();
 		
@@ -154,6 +155,17 @@ public class GUI implements Drawable{
 			} catch (IOException e) {}
 		}}, 0,4);
 		
+		uiButton b3 = new StandardButton("Place unit"){public void click(){
+			if(cursor.attachedUnit==null)
+			{
+				cursor.attachedUnit=new Infantry(); 
+				cursor.attachedUnit.disable();
+				Main.activePlayer.addUnit(cursor.attachedUnit);
+			}
+			else
+				cursor.attachedUnit=null;
+			}};			
+		grid1.addButton(b3, 0, 5);
 		//grid2 = new ControlGroupButtonGrid(1, 9, new Vector2f(700, RESOLUTION_Y-LOWER_GUI_HEIGHT-40));
 		grid2.setOutlineThickness(0);
 	}

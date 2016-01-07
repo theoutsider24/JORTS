@@ -16,6 +16,7 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
 import FYP.flowField.FlowCell;
+import FYP.IdleOrder;
 import FYP.Main;
 import FYP.Order;
 import FYP.Player;
@@ -49,9 +50,15 @@ public abstract class Entity extends CircleShape{
 	int health;
 	boolean hovered=false,selected=false;
 	public int maxHealth;
+	
+	boolean enabled=true;
 	public Entity(Vector2f v)
 	{
 		this((int)v.x,(int)v.y);
+	}
+	public Entity()
+	{
+		this(0,0);
 	}
 	public Entity(int x,int y)
 	{
@@ -83,6 +90,15 @@ public abstract class Entity extends CircleShape{
 		reregister();
 		setPosition(x,y);
 		allEntities.put(id,this);
+		currentOrder=Order.IdleOrder;
+	}
+	public void disable()
+	{
+		enabled=false;
+	}
+	public void enable()
+	{
+		enabled=true;
 	}
 	public void hover()
 	{
@@ -133,6 +149,7 @@ public abstract class Entity extends CircleShape{
 	}*/
 	public void tick()
 	{	
+		if(!enabled) return;
 		if(currentOrder!=null)
 		{
 			Vector2f v = currentOrder.flowField.getFlowAtPos(this.getPosition());

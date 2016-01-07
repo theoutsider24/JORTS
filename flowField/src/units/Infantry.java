@@ -9,4 +9,8 @@ public class Infantry extends Entity{
 		unitType="infantry";
 		setRadius(15);
 	}
+	public Infantry()
+	{
+		this(0,0);
+	}
 }

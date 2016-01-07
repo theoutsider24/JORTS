@@ -10,9 +10,10 @@ import FYP.flowField.Field;
 public abstract class Order {
 	public Field flowField;
 	ArrayList<CircleShape> targets;
+	public static final Order IdleOrder=new Order(){};
 	public Order()
 	{
-		flowField = new Field(Main.worldMap);
+		flowField = Field.nullField;//new Field(Main.worldMap);
 		targets = new ArrayList<CircleShape>();
 	}
 	

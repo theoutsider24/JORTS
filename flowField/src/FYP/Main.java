@@ -108,15 +108,16 @@ public class Main extends Observable{
 		numKeys.add(Keyboard.Key.NUM9);
 		
 		//entities = new ArrayList<Entity>();
+		int startingAreaSize = 400;
 		for(int i=0;i<STARTING_UNIT_COUNT;i++)			
-			players.get(0).addUnit(new Cavalry((int) (players.get(0).startPosition.x+(int)(Math.random()*200)),(int) (players.get(0).startPosition.y+(int)(Math.random()*200))));
+			players.get(0).addUnit(new Cavalry((int) (players.get(0).startPosition.x+(int)(Math.random()*startingAreaSize)),(int) (players.get(0).startPosition.y+(int)(Math.random()*startingAreaSize))));
 		
-		for(int i=0;i<STARTING_UNIT_COUNT;i++)			
+		/*for(int i=0;i<STARTING_UNIT_COUNT;i++)			
 			players.get(1).addUnit(new Infantry((int) (players.get(1).startPosition.x+(int)(Math.random()*200)),(int) (players.get(1).startPosition.y+(int)(Math.random()*200))));
 		
 		for(int i=0;i<STARTING_UNIT_COUNT;i++)			
 			players.get(2).addUnit(new SiegeUnit((int) (players.get(2).startPosition.x+(int)(Math.random()*200)),(int) (players.get(2).startPosition.y+(int)(Math.random()*200))));
-		
+		*/
 		/*for(Entity e:entities)
 			activePlayer.addUnit(e);*/
 		
@@ -235,6 +236,11 @@ public class Main extends Observable{
 				else
 					worldMap.closeCellsAtPosFour(clickLoc,true);
 			}
+			else if(gui.cursor.state.contains("unitAttached"))
+			{
+				gui.cursor.attachedUnit.enable();
+				gui.cursor.attachedUnit=null;
+			}
 			else
 				activePlayer.startSelection(clickLoc);
 		}
@@ -312,6 +318,12 @@ public class Main extends Observable{
 		{
 			gui.cursor.state="gui_"+guiHover;
 			gui.cursor.setColor(Color.WHITE);
+			return;
+		}
+
+		if(gui.cursor.attachedUnit!=null)
+		{
+			gui.cursor.state= "unitAttached_"+gui.cursor.attachedUnit.id;
 			return;
 		}
 		

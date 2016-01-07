@@ -11,13 +11,13 @@ public class Constants {
 	public final static int GRID_SIZE=100;
 	public final static int SECTOR_SIZE=10;
 	
-	public final static int STARTING_UNIT_COUNT=100;
+	public final static int STARTING_UNIT_COUNT=200;
 
 	public final static String FONT="FreeMonoBold";
 
 	public final static int RESOLUTION_X=1920;
 	public final static int RESOLUTION_Y=1080;
-	public final static boolean FULLSCREEN=false;
+	public final static boolean FULLSCREEN=true;
 	public final static int FRAME_CAP=60;
 	
 	public final static String WINDOW_TITLE="Flow Field Demo";

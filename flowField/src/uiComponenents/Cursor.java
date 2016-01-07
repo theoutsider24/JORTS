@@ -17,6 +17,7 @@ import org.jsfml.system.Vector2i;
 import org.jsfml.window.Mouse;
 
 import FYP.Main;
+import units.Entity;
 
 public class Cursor extends VertexArray{
 	Color color = Color.WHITE;
@@ -32,6 +33,8 @@ public class Cursor extends VertexArray{
 	public String startState="";
 	
 	VertexArray outline;
+	
+	public Entity attachedUnit=null;
 	public Cursor()
 	{
 		outline = new VertexArray();
@@ -138,5 +141,7 @@ public class Cursor extends VertexArray{
 		Vector2i pos = Mouse.getPosition(Main.window);
 		if(pos.x>0&&pos.x<RESOLUTION_X && pos.y>0&&pos.y<RESOLUTION_Y)
 			setPosition(pos);
+		if(attachedUnit!=null)
+			attachedUnit.setPosition(Main.clickLoc);
 	}
 }

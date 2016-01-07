@@ -40,7 +40,7 @@ public class Field  implements Drawable,Observer{
 	
 	public Vector2f goalPosition;
 	int initialCellsToOpen=0;
-	
+	public static final Field nullField=new Field(Main.worldMap);
 	int cellsToOpen; 
 	
 	/*public static init(int CELL_SIZE,int GRID_SIZE)
@@ -164,7 +164,7 @@ public class Field  implements Drawable,Observer{
 		for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
 			{
-				//arg0.draw(cells[i][j].getVectorVisualistation());
+				arg0.draw(cells[i][j].getVectorVisualistation());
 				
 				Text intnum = new Text(cells[i][j].toString(),Main.font);
 				intnum.setCharacterSize(8);
