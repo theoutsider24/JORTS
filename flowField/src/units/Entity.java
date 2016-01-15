@@ -16,13 +16,13 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
 import FYP.flowField.FlowCell;
-import FYP.IdleOrder;
+import FYP.Ability;
 import FYP.Main;
 import FYP.Order;
 import FYP.Player;
 import FYP.flowField.Field;
 import common.CommonFunctions;
-import uiComponenents.HealthBar;
+import uiComponents.HealthBar;
 
 import static FYP.Main.worldMap;
 
@@ -31,9 +31,11 @@ public abstract class Entity extends CircleShape{
 	public static int numberOfEntities;
 	public String id;
 	
+	public ArrayList<Ability> abilities = new ArrayList<Ability>();
+	
 	public Order currentOrder;
 	
-	String unitType;
+	public String unitType;
 	Vector2f speed;
 	float maxSpeed;
 	int radius=7;

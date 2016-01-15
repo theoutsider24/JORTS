@@ -1,4 +1,4 @@
-package uiComponenents;
+package uiComponents;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RectangleShape;

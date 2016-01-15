@@ -76,4 +76,17 @@ public abstract class ButtonGrid extends RectangleShape implements Drawable{
 		}
 		return "";
 	}
+	public void removeAll()
+	{
+		for(int i=0;i<x;i++)
+		{
+			for(int j=0;j<y;j++)
+			{
+				try{
+					uiButton.allButtons.remove(buttons[i][j].title);
+					buttons[i][j]=null;
+				}catch(Exception e){}
+			}
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package uiComponenents;
+package uiComponents;
 
 import static common.Constants.*;
 import java.util.ArrayList;
@@ -17,6 +17,8 @@ import org.jsfml.system.Vector2i;
 import org.jsfml.window.Mouse;
 
 import FYP.Main;
+import buildings.Building;
+import map.MapCell;
 import units.Entity;
 
 public class Cursor extends VertexArray{
@@ -35,6 +37,8 @@ public class Cursor extends VertexArray{
 	VertexArray outline;
 	
 	public Entity attachedUnit=null;
+	public Building attachedBuilding=null;
+	
 	public Cursor()
 	{
 		outline = new VertexArray();
@@ -142,6 +146,17 @@ public class Cursor extends VertexArray{
 		if(pos.x>0&&pos.x<RESOLUTION_X && pos.y>0&&pos.y<RESOLUTION_Y)
 			setPosition(pos);
 		if(attachedUnit!=null)
-			attachedUnit.setPosition(Main.clickLoc);
+			attachedUnit.setPosition(Main.mouse.clickLoc);
+		if(attachedBuilding!=null)
+		{
+			if(Main.worldMap.cellPosExists(Main.mouse.clickLoc))
+			{
+				MapCell c = Main.worldMap.getCellAtPos(Main.mouse.clickLoc);	
+				attachedBuilding.origin[0]=c.x;
+				attachedBuilding.origin[1]=c.y;
+				for(int[] offset:attachedBuilding.offsets)
+					Main.worldMap.highlightCell(c.x+offset[0], c.y+offset[1], Color.RED);
+			}
+		}
 	}
 }

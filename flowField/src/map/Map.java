@@ -17,6 +17,7 @@ import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Drawable;
 import org.jsfml.graphics.Image;
 import org.jsfml.graphics.RectangleShape;
@@ -104,16 +105,6 @@ public class Map extends Observable implements Drawable{
 	}
 	public void refreshImage()
 	{
-		/*for(int i=0;i<GRID_SIZE;i++)
-			for(int j=0;j<GRID_SIZE;j++)
-			{
-				image.setPixel(i, j, cells[i][j].getDrawColor());
-			}
-		
-		try {texture.loadFromImage(image);} 
-		catch (TextureCreationException e) {e.printStackTrace();}
-		
-		shape.setTexture(texture);*/
 		mapImage.updateImage();
 		notifyAllObservers();
 	}
@@ -133,6 +124,13 @@ public class Map extends Observable implements Drawable{
 			getCellAtPos(pos).open();
 		}
 		refreshImage();
+	}
+	public void closeCell(int x,int y)
+	{
+		if(cellExists(x,y))
+		{
+			getCell(x,y).close();
+		}
 	}
 	public void openCellsAtPosFour(Vector2f pos,boolean log)
 	{		
@@ -335,6 +333,23 @@ public class Map extends Observable implements Drawable{
 				getCell(i,j).open();
 			}
 		refreshImage();	
+	}
+	public void highlightCell(int x,int y, Color c)
+	{
+		try
+		{
+			cells[x][y].highlight(c);
+			mapImage.updateImage();
+		}catch(Exception e){}
+	}
+	public void unhighlightAll()
+	{
+		for(int i=0;i<GRID_SIZE;i++)
+			for(int j=0;j<GRID_SIZE;j++)
+			{
+				cells[i][j].unhighlight();
+			}
+		mapImage.updateImage();
 	}
 	
 }

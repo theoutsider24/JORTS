@@ -1,6 +1,5 @@
 package FYP;
 
-import uiComponenents.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,8 +11,7 @@ import java.util.Observable;
 import java.util.Properties;
 
 import uiComponenents.grids.*;
-import uiComponenents.GUI;
-import uiComponenents.Minimap;
+import uiComponents.*;
 import uiComponenents.buttons.*;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Clock;
@@ -39,7 +37,7 @@ public class Main extends Observable{
 	public static RenderWindow window;
 	public static Font font;
 	//public static ArrayList<Entity> entities;
-	public static ArrayList<Keyboard.Key> numKeys;
+	
 	public static int cellsToOpen = 10;
 	//public static Player activePlayer,player2,player3,activePlayer;
 	public static Player activePlayer;
@@ -49,16 +47,16 @@ public class Main extends Observable{
 	public static boolean showFlow=false;
 	public static View gameView;
 	public static View uiView;
-	public static Vector2f uiClickLoc;
-	public static Vector2f clickLoc;
-	public static Clock clickTimer;
-	public static boolean doubleClick;
+	
+	
 	public static boolean hasFocus=true;
 	public static Clock clock;
 	public static GUI gui;
 	
 	public static String hoverIntent="";
-
+	public static MouseManager mouse;
+	public static KeyboardManager keyboard;
+ 	
 	public static Main game;
 	public static void main(String[] args) throws IOException
 	{
@@ -72,11 +70,8 @@ public class Main extends Observable{
 	public void init() throws IOException
 	{
 		loadFont(FONT);		
-		
-		clickTimer=new Clock();
-		clickTimer.restart();
-		uiClickLoc = new Vector2f(0, 0);
-		clickLoc = new Vector2f(0,0);
+		mouse = new MouseManager();
+		keyboard=new KeyboardManager();
 		
 		worldMap = new Map(); 
 		worldMap.loadFile(new File(DEFAUL_MAP));
@@ -86,54 +81,18 @@ public class Main extends Observable{
 		players.add(new Player());
 		activePlayer=players.get(0);
 		
-		/*for(Player p: players)
-		{
-			addObserver(p);
-		}*/
-		
 		initWindow();
 		gui = new GUI(uiView);
-		//gui.initButtons();
 		
-		numKeys = new ArrayList<Keyboard.Key>();
-		numKeys.add(Keyboard.Key.NUM0);
-		numKeys.add(Keyboard.Key.NUM1);
-		numKeys.add(Keyboard.Key.NUM2);
-		numKeys.add(Keyboard.Key.NUM3);
-		numKeys.add(Keyboard.Key.NUM4);
-		numKeys.add(Keyboard.Key.NUM5);
-		numKeys.add(Keyboard.Key.NUM6);
-		numKeys.add(Keyboard.Key.NUM7);
-		numKeys.add(Keyboard.Key.NUM8);
-		numKeys.add(Keyboard.Key.NUM9);
-		
-		//entities = new ArrayList<Entity>();
 		int startingAreaSize = 400;
 		for(int i=0;i<STARTING_UNIT_COUNT;i++)			
-			players.get(0).addUnit(new Cavalry((int) (players.get(0).startPosition.x+(int)(Math.random()*startingAreaSize)),(int) (players.get(0).startPosition.y+(int)(Math.random()*startingAreaSize))));
-		
-		/*for(int i=0;i<STARTING_UNIT_COUNT;i++)			
-			players.get(1).addUnit(new Infantry((int) (players.get(1).startPosition.x+(int)(Math.random()*200)),(int) (players.get(1).startPosition.y+(int)(Math.random()*200))));
-		
-		for(int i=0;i<STARTING_UNIT_COUNT;i++)			
-			players.get(2).addUnit(new SiegeUnit((int) (players.get(2).startPosition.x+(int)(Math.random()*200)),(int) (players.get(2).startPosition.y+(int)(Math.random()*200))));
-		*/
-		/*for(Entity e:entities)
-			activePlayer.addUnit(e);*/
+			players.get(0).addUnit(new Infantry((int) (players.get(0).startPosition.x+(int)(Math.random()*startingAreaSize)),(int) (players.get(0).startPosition.y+(int)(Math.random()*startingAreaSize))));
 		
 		zoom(.25f);
 		clock = new Clock();
-		
-		/*Thread GUIthread = new Thread(new Runnable(){
-			@Override
-			public void run() {
-				while(true)
-					 gui.cursor.update();
-			}
-		});
-		GUIthread.start();*/
-		
-		while(window.isOpen()) 
+
+		registerCommands();
+		while(window.isOpen())
 		{
 			gameLoop();
 		}
@@ -142,8 +101,8 @@ public class Main extends Observable{
 	{
 		setChanged();
 		notifyObservers();
-		
-		if(hasFocus)limitMouse();
+		worldMap.unhighlightAll();
+		if(hasFocus)mouse.limitMouse();
 		   pollEvents();
 		   
 		  /* for(Player p:players)
@@ -197,288 +156,32 @@ public class Main extends Observable{
 		uiView.setSize(RESOLUTION_X, RESOLUTION_Y);
 		uiView.setCenter(RESOLUTION_X/2,RESOLUTION_Y/2);
 	}
-	public static void leftButtonDown()
-	{	
-		gui.cursor.startState=gui.cursor.state;
-		if(clickTimer.getElapsedTime().asMilliseconds()<CLICK_INTERVAL)
-		{
-			doubleClick=true;
-		}
-		clickTimer.restart();
-		
-		boolean clickOnButton=false;		
-		
-		clickTimer.restart();
-		
-		/*for(uiButton b:gui.buttons)
-			if(b.getGlobalBounds().contains(uiClickLoc))
-			{
-				b.clickDown();
-				clickOnButton=true;
-			}*/
-		if(gui.cursor.state.contains("gui"))
-		{
-			if(gui.cursor.state.contains("button"))
-			{
-				String name = gui.cursor.state.substring(gui.cursor.state.lastIndexOf("button_")+7);
-				if(uiButton.allButtons.containsKey(name))
-				{
-					uiButton.allButtons.get(name).clickDown();
-				}
-			}
-		}
-		else
-		{
-			if(editMapMode)
-			{
-				if(Keyboard.isKeyPressed(Keyboard.Key.LALT))
-					worldMap.openCellsAtPosFour(clickLoc,true);
-				else
-					worldMap.closeCellsAtPosFour(clickLoc,true);
-			}
-			else if(gui.cursor.state.contains("unitAttached"))
-			{
-				gui.cursor.attachedUnit.enable();
-				gui.cursor.attachedUnit=null;
-			}
-			else
-				activePlayer.startSelection(clickLoc);
-		}
-	}
-	public static void leftButtonUp()
-	{	
-		if(gui.cursor.state.contains("gui"))
-		{
-			if(gui.cursor.state.contains("button")&&gui.cursor.state.equals(gui.cursor.startState))
-			{
-				String name = gui.cursor.state.substring(gui.cursor.state.lastIndexOf("button_")+7);
-				if(uiButton.allButtons.containsKey(name))
-				{
-					uiButton.allButtons.get(name).clickUp(true);
-				}
-			}			
-		}
-		else
-		{
-			if(!gui.minimap.getGlobalBounds().contains(uiClickLoc))
-			{
-				if(activePlayer.selectionInProgress)
-					activePlayer.endSelection(clickLoc, true);
-			}
-			else
-			{
-				if(activePlayer.selectionInProgress)
-					activePlayer.endSelection(clickLoc, false);
-			}
-			doubleClick=false;
-		}
-
-		for(uiButton b:uiButton.allButtons.values())
-		{
-			b.clickUp(false);
-		}
-	}
-	public static void rightButtonDown()
-	{
-		boolean clickOnButton=false;
-		/*or(uiButton b:gui.buttons)
-			if(b.getGlobalBounds().contains(uiClickLoc))
-			{
-				clickOnButton=true;
-			}*/
-
-		if(gui.cursor.state.contains("minimap"))
-		{
-			//minimap.moveCamera(uiClickLoc);
-			activePlayer.issueMoveCommand(gui.minimap.getWorldCoords(uiClickLoc));
-			clickOnButton=true;
-		}
-		if(!clickOnButton&&!gui.cursor.state.contains("gui"))
-		{
-			if(gui.cursor.state.contains("enemy"))
-			{
-				String id= gui.cursor.state.substring(gui.cursor.state.lastIndexOf("enemy_")+6);
-				activePlayer.issueFollowCommand(Entity.allEntities.get(id));
-			}
-			else
-			{
-				Thread t=new Thread(new Runnable(){
-					@Override
-					public void run() {
-						activePlayer.issueMoveCommand(clickLoc);
-					}},"Move_Command_Thread");
-				t.start();
-			}
-		}
-	}
-	public static void determineHoverIntent()
-	{
-		String guiHover=gui.getMouseHover(uiClickLoc);
-		if(guiHover!=null)
-		{
-			gui.cursor.state="gui_"+guiHover;
-			gui.cursor.setColor(Color.WHITE);
-			return;
-		}
-
-		if(gui.cursor.attachedUnit!=null)
-		{
-			gui.cursor.state= "unitAttached_"+gui.cursor.attachedUnit.id;
-			return;
-		}
-		
-		MapCell cell = worldMap.getCellAtPos(clickLoc);
-		for(Entity e:cell.getEntities())
-		{
-			if(CommonFunctions.contains(e,clickLoc))
-			{
-				if(e.player==activePlayer)
-				{
-					e.hover();
-					gui.cursor.setColor(Color.WHITE);
-					//gui.cursor.state="SELECT";
-					gui.cursor.state="my_"+e.id;
-				}
-				else
-				{
-					gui.cursor.setColor(Color.RED);
-					//gui.cursor.state="ATTACK";
-					gui.cursor.state="enemy_"+e.id;
-				}
-				return;
-			}
-		}
-		
-		if(cell.isTraversable())
-		{
-			gui.cursor.setColor(Color.WHITE);
-			gui.cursor.state="MOVE";
-		}
-		else
-		{
-			gui.cursor.setColor(new Color(180,180,180));
-			gui.cursor.state="BLOCKED_CELL";
-		}
-	}
-	public static void rightButtonUp()
-	{	
-		
-	}
-	public static void setMouseLocs()
-	{
-		gui.cursor.update();
-		window.setView(gameView);				
-		//clickLoc =window.mapPixelToCoords(event.asMouseButtonEvent().position);
-		clickLoc =window.mapPixelToCoords(gui.cursor.getPosition());//Mouse.getPosition(window));
-		window.setView(uiView);				
-		//uiClickLoc =window.mapPixelToCoords(event.asMouseButtonEvent().position);
-		uiClickLoc =window.mapPixelToCoords(gui.cursor.getPosition());//Mouse.getPosition(window));
-	}
-	public static void mouseWheelRolled(int delta)
-	{
-		if(delta>0)
-			zoom(1.3f);
-		else
-			zoom(1/1.3f);
-	}
-	public static void limitMouse()
-	{
-		Vector2i pos =  gui.cursor.getPosition();
-		if(pos.x-10<=0) moveCamera(-15,0);
-		else if(pos.x+10>=RESOLUTION_X) moveCamera(15,0);
-		
-		if(pos.y-10<=0) moveCamera(0,-15);
-		else if(pos.y+10>=RESOLUTION_Y) moveCamera(0,15);
-		//Mouse.setPosition(new Vector2i(pos.x,pos.y));
-	}
+	
 	public static void pollEvents() throws IOException
 	{
-		setMouseLocs();
-		determineHoverIntent();
+		mouse.setMouseLocs();
+		mouse.determineHoverIntent();
 		for(Event event : window.pollEvents()) 
 		{
+			if(event.type == Event.Type.CLOSED) 
+	        {
+	            window.close();
+	        }
 			if(event.type==Event.Type.GAINED_FOCUS)
 				hasFocus=true;
 			if(event.type==Event.Type.LOST_FOCUS)
 				hasFocus=false;
 				
-			if(event.type == Event.Type.MOUSE_BUTTON_PRESSED)
-			{
-				if(event.asMouseButtonEvent().button==Button.LEFT)		
-				{
-					leftButtonDown();
-				}
-				else if(event.asMouseButtonEvent().button==Button.RIGHT)		
-				{
-					rightButtonDown();
-				}
-			}
-			if(event.type == Event.Type.MOUSE_BUTTON_RELEASED)
-			{
-				 if(event.asMouseButtonEvent().button==Button.LEFT)
-				{
-					leftButtonUp();
-				}
-				else if(event.asMouseButtonEvent().button==Button.RIGHT)
-				{
-					rightButtonUp();
-				}
-			}
-			if(event.type == Event.Type.MOUSE_WHEEL_MOVED)
-			{
-				mouseWheelRolled(event.asMouseWheelEvent().delta);
-			}
-	        if(event.type == Event.Type.CLOSED) 
-	        {
-	            window.close();
-	        }
-	        if(event.type == Event.Type.KEY_PRESSED)
+			mouse.processEvent(event);
+	        if(event.type == Event.Type.KEY_PRESSED||event.type == Event.Type.TEXT_ENTERED)
     		{
-	        	switch(event.asKeyEvent().key)
-	        	{
-	        		case ESCAPE: window.close(); break;
-	        		case UP: moveCamera(0,-10); break;
-	        		case DOWN: moveCamera(0,10); break;
-	        		case LEFT: moveCamera(-10,0); break;
-	        		case RIGHT: moveCamera(10,0); break;
-	        		case ADD: zoom(2); break;
-	        		case F1: activePlayer=players.get(0); break;
-	        		case F2: activePlayer=players.get(1); break;
-	        		case F3: activePlayer=players.get(2); break;
-	        		case SUBTRACT: zoom(.5f); break;
-	        		case S: if(!Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-	        					worldMap.saveToFile();
-        					else
-	        					worldMap.saveFile(DEFAUL_MAP);	
-	        				; break;
-	        		case L: worldMap.loadFromFile(); 
-	        		case Z: if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-	        				worldMap.undo();
-	        			break;
-	        		case N: if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-        				worldMap.openAll();
-        			break;
-	        		case Y: if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-        				worldMap.redo();
-        			break;
-	        		default: 
-	        			if(numKeys.contains(event.asKeyEvent().key))
-						{
-	        				if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-	        					activePlayer.assignControlGroup(numKeys.indexOf(event.asKeyEvent().key));
-	        				else
-	        					activePlayer.selectControlGroup(numKeys.indexOf(event.asKeyEvent().key));
-						}
-						break;       		
-	        	}
+	        	keyboard.processKeypress(event);
     		}
 	    }
 	}
 	public static void moveCamera(int x,int y)
 	{
-		//View view  = (View) window.getView();
 		gameView.setCenter(gameView.getCenter().x+x, gameView.getCenter().y+y);
-    	//window.setView((ConstView)view);
 	}
 	public static void updateFPSTimer()
 	{
@@ -487,8 +190,19 @@ public class Main extends Observable{
 	}
 	public static void zoom(float zoom)
 	{
-	//	View view  = (View) window.getView();
 		gameView.setSize(gameView.getSize().x / zoom, gameView.getSize().y / zoom);
-    	//window.setView((ConstView)view);
+	}
+	public void registerCommands()
+	{
+		Commands.registerCommand("zoom_in",new CommandInterface(){
+			@Override
+			public void run() {
+				Main.zoom(1.3f);
+		}});
+		Commands.registerCommand("zoom_out",new CommandInterface(){
+			@Override
+			public void run() {
+				Main.zoom(1/1.3f);
+		}});
 	}
 }

@@ -1,4 +1,4 @@
-package uiComponenents;
+package uiComponents;
 
 import static common.Constants.*;
 
@@ -16,10 +16,12 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.window.Mouse;
 
 import FYP.Main;
+import buildings.Building;
 import test.Logger;
 import uiComponenents.buttons.ExitButton;
 import uiComponenents.buttons.StandardButton;
 import uiComponenents.buttons.uiButton;
+import uiComponenents.grids.ActionButtonGrid;
 import uiComponenents.grids.ButtonGrid;
 import uiComponenents.grids.ControlGroupButtonGrid;
 import uiComponenents.grids.StandardButtonGrid;
@@ -31,7 +33,7 @@ import units.Infantry;
 public class GUI implements Drawable{
 	View view;
 	public Minimap minimap;
-	public ButtonGrid grid1,grid2;
+	public ButtonGrid grid1,grid2,grid3;
 	//public ArrayList<uiButton> buttons;
 	public RectangleShape lowerBackground;
 	public RectangleShape topBackground;
@@ -40,6 +42,7 @@ public class GUI implements Drawable{
 	public ArrayList<Drawable> drawables;
 	public Cursor cursor;
 	public ExitButton exit;
+	public Console console;
 	UpdatableTextField cursorState;
 	ArrayList<RectangleShape> rects = new ArrayList<RectangleShape>();
 	public GUI(View view)
@@ -60,7 +63,7 @@ public class GUI implements Drawable{
 		topBackground.setSize(new Vector2f(RESOLUTION_X,UPPER_GUI_HEIGHT));
 		topBackground.setFillColor(new Color(50,50,50));
 		
-		
+		console=new Console();
 		
 		clock = new GameClock();
 		fpsTimer = new FPSTimer();
@@ -76,13 +79,15 @@ public class GUI implements Drawable{
 		};
 		cursorState.setPosition(new Vector2f(200,1000));
 		
-		grid1 = new StandardButtonGrid(1, 6, new Vector2f(10,100));
+		grid1 = new StandardButtonGrid(1, 7, new Vector2f(10,100));
 		grid2 = new ControlGroupButtonGrid(1, 9, new Vector2f(700, RESOLUTION_Y-LOWER_GUI_HEIGHT-40));
+		grid3= new ActionButtonGrid(0, 0, new Vector2f(20,RESOLUTION_Y-LOWER_GUI_HEIGHT+20));
 		initButtons();
 		
 		rects.add(minimap);
 		rects.add(grid1);
 		rects.add(grid2);
+		rects.add(grid3);
 		rects.add(clock);
 		rects.add(fpsTimer);
 		rects.add(exit);
@@ -113,6 +118,8 @@ public class GUI implements Drawable{
 		window.draw(grid1);
 		((ControlGroupButtonGrid) grid2).update();
 		window.draw(grid2);
+		((ActionButtonGrid) grid3).update();
+		window.draw(grid3);
 		minimap.update();
 		window.draw(minimap);
 		clock.update();
@@ -120,6 +127,9 @@ public class GUI implements Drawable{
 		fpsTimer.update();
 		window.draw(fpsTimer);
 		window.draw(exit);
+		console.lineTimerTick();
+		CommandQueue.tick();
+		window.draw(console);
 		//cursor.setPosition(new Vector2f(Mouse.getPosition((RenderWindow)window).x,Mouse.getPosition((RenderWindow)window).y));
 		//cursor.update();
 		window.draw(cursor);
@@ -155,7 +165,7 @@ public class GUI implements Drawable{
 			} catch (IOException e) {}
 		}}, 0,4);
 		
-		uiButton b3 = new StandardButton("Place unit"){public void click(){
+		grid1.addButton(new StandardButton("Place unit"){public void click(){
 			if(cursor.attachedUnit==null)
 			{
 				cursor.attachedUnit=new Infantry(); 
@@ -164,8 +174,17 @@ public class GUI implements Drawable{
 			}
 			else
 				cursor.attachedUnit=null;
-			}};			
-		grid1.addButton(b3, 0, 5);
+			}} , 0, 5);
+		
+		grid1.addButton(new StandardButton("Place Building"){public void click(){
+			if(cursor.attachedBuilding==null)
+			{
+				cursor.attachedBuilding=new Building(); 
+				Main.activePlayer.addBuilding(cursor.attachedBuilding);
+			}
+			else
+				cursor.attachedBuilding=null;
+			}} , 0, 6);
 		//grid2 = new ControlGroupButtonGrid(1, 9, new Vector2f(700, RESOLUTION_Y-LOWER_GUI_HEIGHT-40));
 		grid2.setOutlineThickness(0);
 	}

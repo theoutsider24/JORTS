@@ -27,6 +27,7 @@ public abstract class uiButton extends RectangleShape{
 	boolean togglable;
 	boolean toggled;
 	boolean visible=true;
+	public Runnable activity=null;
 	public uiButton(String title,int x,int y)
 	{
 		super();

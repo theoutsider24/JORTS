@@ -1,4 +1,4 @@
-package uiComponenents;
+package uiComponents;
 
 import org.jsfml.graphics.RectangleShape;
 

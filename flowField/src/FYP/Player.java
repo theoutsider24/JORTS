@@ -15,6 +15,7 @@ import org.jsfml.system.Vector2f;
 
 import FYP.flowField.Field;
 import FYP.flowField.InfluenceMap;
+import buildings.Building;
 import common.CommonFunctions;
 import units.Entity;
 
@@ -25,6 +26,7 @@ import static common.Constants.*;
 	Color teamColor;
 	public Field lastField;
 	ArrayList<Entity> units;
+	ArrayList<Building> buildings;
 	ArrayList<Entity> selectedUnits;
 	public Field currentField=new Field(worldMap);
 	public Vector2f selectionPoint;
@@ -54,6 +56,7 @@ import static common.Constants.*;
 		selectionPoint = new Vector2f(0,0);
 		units=new ArrayList<Entity>();
 		selectedUnits=new ArrayList<Entity>();
+		buildings=new ArrayList<Building>();
 		Main.game.addObserver(this);
 	}
 	public void startSelection(Vector2f v)
@@ -75,7 +78,7 @@ import static common.Constants.*;
 			else
 			{
 				selectUnit(v);
-				if(selectedUnits.size()>0&&Main.doubleClick)
+				if(selectedUnits.size()>0&&Main.mouse.doubleClick)
 					selectUnitType(selectedUnits.get(0).getType());
 			}
 		}
@@ -84,6 +87,11 @@ import static common.Constants.*;
 	public void addUnit(Entity e)
 	{
 		units.add(e);
+		e.setPlayer(this);
+	}
+	public void addBuilding(Building e)
+	{
+		buildings.add(e);
 		e.setPlayer(this);
 	}
 	public void selectUnitType(String type)
@@ -197,6 +205,10 @@ import static common.Constants.*;
 		{
 			arg0.draw(e);
 		}
+		for(Building b:buildings)
+		{
+			arg0.draw(b);
+		}
 	}
 	public void tick()
 	{
@@ -207,7 +219,10 @@ import static common.Constants.*;
 	}
 	@Override
 	public void update(Observable o, Object arg) {
-		tick();
-		
+		tick();		
+	}
+	public ArrayList<Entity> getSelectedUnits()
+	{
+		return selectedUnits;
 	}
 }

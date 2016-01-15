@@ -4,6 +4,9 @@ import java.util.ArrayList;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RectangleShape;
+
+import buildings.Building;
+
 import static common.Constants.*;
 import units.Entity;
 
@@ -14,13 +17,27 @@ public class MapCell extends RectangleShape{
 	public int y=0;
 	int perUnitCost=2;
 	ArrayList<Entity> entities;
+	ArrayList<Building> buildings;
+	Color highlightColor=new Color(0,0,0);
+	
+	public void highlight(Color c)
+	{
+		highlightColor=c;
+	}
+	public void unhighlight()
+	{
+		highlightColor=new Color(0,0,0);
+	}
+	
 	
 	public MapCell(int x,int y)
 	{
 		super();
 		this.x=x;
 		this.y=y;
+		setPosition(x*CELL_SIZE, y*CELL_SIZE);
 		entities=new ArrayList<Entity>();
+		buildings=new ArrayList<Building>();
 	}
 	public MapCell(int cost,int x,int y)
 	{
@@ -28,6 +45,7 @@ public class MapCell extends RectangleShape{
 		this.x=x;
 		this.y=y;
 		entities=new ArrayList<Entity>();
+		buildings=new ArrayList<Building>();
 		if(cost==0)
 			close();
 		this.cost=cost;				
@@ -62,8 +80,8 @@ public class MapCell extends RectangleShape{
 	
 	public Color getDrawColor()
 	{
-		if(traversable) return GROUND_COLOR;
-		else return OBSTACLE_COLOR;
+		if(traversable) return Color.add(GROUND_COLOR,highlightColor);
+		else return Color.add(OBSTACLE_COLOR,highlightColor);
 	}
 	
 	public void registerUnit(Entity e)
@@ -74,6 +92,13 @@ public class MapCell extends RectangleShape{
 			entities.add(e);
 		}
 	}
+	public void registerBuilding(Building b)
+	{
+		if(!buildings.contains(b))
+		{
+			buildings.add(b);
+		}
+	}
 	public void deregisterUnit(Entity e)
 	{
 		if(entities.contains(e))
@@ -82,6 +107,13 @@ public class MapCell extends RectangleShape{
 			entities.remove(e);
 		}
 	}	
+	public void deregisterBuilding(Building b)
+	{
+		if(buildings.contains(b))
+		{
+			buildings.remove(b);
+		}
+	}
 	public void clearUnits()
 	{
 		entities.clear();
@@ -89,5 +121,9 @@ public class MapCell extends RectangleShape{
 	public ArrayList<Entity> getEntities()
 	{
 		return entities;
+	}
+	public ArrayList<Building> getBuildings()
+	{
+		return buildings;
 	}
 }
