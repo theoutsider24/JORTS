@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Properties;
 
-import uiComponenents.grids.*;
+import uiComponents.grids.*;
 import uiComponents.*;
-import uiComponenents.buttons.*;
+import uiComponents.buttons.*;
 import org.jsfml.graphics.*;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;

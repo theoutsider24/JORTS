@@ -18,16 +18,16 @@ import org.jsfml.window.Mouse;
 import FYP.Main;
 import buildings.Building;
 import test.Logger;
-import uiComponenents.buttons.ExitButton;
-import uiComponenents.buttons.StandardButton;
-import uiComponenents.buttons.uiButton;
-import uiComponenents.grids.ActionButtonGrid;
-import uiComponenents.grids.ButtonGrid;
-import uiComponenents.grids.ControlGroupButtonGrid;
-import uiComponenents.grids.StandardButtonGrid;
-import uiComponenents.textFields.FPSTimer;
-import uiComponenents.textFields.GameClock;
-import uiComponenents.textFields.UpdatableTextField;
+import uiComponents.buttons.ExitButton;
+import uiComponents.buttons.StandardButton;
+import uiComponents.buttons.uiButton;
+import uiComponents.grids.ActionButtonGrid;
+import uiComponents.grids.ButtonGrid;
+import uiComponents.grids.ControlGroupButtonGrid;
+import uiComponents.grids.StandardButtonGrid;
+import uiComponents.textFields.FPSTimer;
+import uiComponents.textFields.GameClock;
+import uiComponents.textFields.UpdatableTextField;
 import units.Infantry;
 
 public class GUI implements Drawable{
