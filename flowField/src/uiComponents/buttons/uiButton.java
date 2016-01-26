@@ -28,6 +28,7 @@ public abstract class uiButton extends RectangleShape{
 	boolean toggled;
 	boolean visible=true;
 	public Runnable activity=null;
+	int charSize =15;
 	public uiButton(String title,int x,int y)
 	{
 		super();
@@ -46,7 +47,7 @@ public abstract class uiButton extends RectangleShape{
 		overlay.setOutlineColor(new Color(0,0,0,150));
 		
 		setTitle(title);
-		text.setCharacterSize(15);
+		text.setCharacterSize(charSize);		
 		
 		text.move((width- text.getGlobalBounds().width)/2,(height- text.getGlobalBounds().height)/2);
 		allButtons.put(title,this);
@@ -58,6 +59,7 @@ public abstract class uiButton extends RectangleShape{
 	public void setTitle(String s)
 	{
 		text = new Text(s,Main.font);
+		text.setCharacterSize(charSize);
 		/*if(s.length()>10)
 		{
 			s=s.replace(" ", "\n");
