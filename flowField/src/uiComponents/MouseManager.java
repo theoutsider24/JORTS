@@ -210,13 +210,14 @@ public class MouseManager {
 				if(Main.activePlayer.selectionInProgress)
 					Main.activePlayer.endSelection(clickLoc, false);
 			}
-			doubleClick=false;
 		}
 
 		for(uiButton b:uiButton.allButtons.values())
 		{
 			b.clickUp(false);
 		}
+
+		doubleClick=false;
 	}
 	public void rightButtonDown()
 	{

@@ -9,12 +9,13 @@ import org.jsfml.system.Vector2f;
 
 import FYP.Ability;
 import FYP.Main;
+import buildings.Building;
 import uiComponents.buttons.StandardButton;
 import uiComponents.buttons.uiButton;
 import units.Entity;
 
 public class ActionButtonGrid extends StandardButtonGrid{
-	String currentUnitType="";
+	String currentType="";
 	public ActionButtonGrid(int x, int y, Vector2f pos) {
 		super(3, 3, pos);
 	}
@@ -36,40 +37,86 @@ public class ActionButtonGrid extends StandardButtonGrid{
 	public void update()
 	{
 		HashMap<String,Integer> counter = new HashMap<String,Integer>();
-		for(Entity e:Main.activePlayer.getSelectedUnits())
+		if(Main.activePlayer.getSelectedUnits().size()>0)
 		{
-			if(counter.containsKey(e.unitType))
+			for(Entity e:Main.activePlayer.getSelectedUnits())
 			{
-				counter.put(e.unitType,counter.get(e.unitType)+1);
+				if(counter.containsKey(e.unitType))
+				{
+					counter.put(e.unitType,counter.get(e.unitType)+1);
+				}
+				else
+					counter.put(e.unitType,1);
 			}
-			else
-				counter.put(e.unitType,0);
+			int most=0;
+			String type="";
+		    Iterator it = counter.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        if((Integer)pair.getValue()>most)
+		        {
+		        	most=(Integer)pair.getValue();
+		        	type=(String)pair.getKey();
+		        }
+		        it.remove();
+		    }
+		    if(!type.equals(currentType))
+		    {
+		    	removeAll();
+		    	currentType=type;
+			    outer:for(Entity e:Main.activePlayer.getSelectedUnits())
+				{
+			    	if(e.unitType.equals(type))
+			    	{
+			    		setAbilities(e.abilities);
+			    		break outer;
+			    	}
+				}
+		    }
+		   
 		}
-		int most=0;
-		String type="";
-	    Iterator it = counter.entrySet().iterator();
-	    while (it.hasNext()) {
-	        Map.Entry pair = (Map.Entry)it.next();
-	        if((Integer)pair.getValue()>most)
-	        {
-	        	most=(Integer)pair.getValue();
-	        	type=(String)pair.getKey();
-	        }
-	        it.remove();
-	    }
-	    if(!type.equals(currentUnitType))
-	    {
-	    	removeAll();
-	    	currentUnitType=type;
-		    outer:for(Entity e:Main.activePlayer.getSelectedUnits())
+		else if(Main.activePlayer.getSelectedBuildings().size()>0)
+		{
+			for(Building b:Main.activePlayer.getSelectedBuildings())
 			{
-		    	if(e.unitType.equals(type))
-		    	{
-		    		setAbilities(e.abilities);
-		    		break outer;
-		    	}
+				if(counter.containsKey(b.buildingType))
+				{
+					counter.put(b.buildingType,counter.get(b.buildingType)+1);
+				}
+				else
+					counter.put(b.buildingType,1);
 			}
-	    }	    
+			int most=0;
+			String type="";
+		    Iterator it = counter.entrySet().iterator();
+		    while (it.hasNext()) {
+		        Map.Entry pair = (Map.Entry)it.next();
+		        if((Integer)pair.getValue()>most)
+		        {
+		        	most=(Integer)pair.getValue();
+		        	type=(String)pair.getKey();
+		        }
+		        it.remove();
+		    }
+		    if(!type.equals(currentType))
+		    {
+		    	removeAll();
+		    	currentType=type;
+			    outer:for(Building b:Main.activePlayer.getSelectedBuildings())
+				{
+			    	if(b.buildingType.equals(type))
+			    	{
+			    		setAbilities(b.abilities);
+			    		break outer;
+			    	}
+				}
+		    }
+		}
+		else
+		{
+			removeAll();
+			currentType="";
+		}
 	}
 	
 }

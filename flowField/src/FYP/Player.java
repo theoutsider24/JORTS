@@ -27,7 +27,10 @@ import static common.Constants.*;
 	public Field lastField;
 	ArrayList<Entity> units;
 	ArrayList<Building> buildings;
+	
 	ArrayList<Entity> selectedUnits;
+	ArrayList<Building> selectedBuildings;
+	
 	public Field currentField=new Field(worldMap);
 	public Vector2f selectionPoint;
 	public boolean selectionInProgress=false;
@@ -55,8 +58,11 @@ import static common.Constants.*;
 		
 		selectionPoint = new Vector2f(0,0);
 		units=new ArrayList<Entity>();
-		selectedUnits=new ArrayList<Entity>();
 		buildings=new ArrayList<Building>();
+		
+		selectedUnits=new ArrayList<Entity>();
+		selectedBuildings=new ArrayList<Building>();
+		
 		Main.game.addObserver(this);
 	}
 	public void startSelection(Vector2f v)
@@ -68,18 +74,18 @@ import static common.Constants.*;
 	{
 		if(doSelection)
 		{
-			if(CommonFunctions.getDist(v, selectionPoint)>2)
+			RectangleShape selectionRect = new RectangleShape();
+			selectionRect.setPosition(selectionPoint.x, selectionPoint.y);
+			selectionRect.setSize(new Vector2f(v.x-selectionPoint.x+1,  v.y-selectionPoint.y+1));
+			selectUnits(selectionRect.getGlobalBounds());
+			if(selectedUnits.size()>0&&Main.mouse.doubleClick)
+				selectUnitType(selectedUnits.get(0).getType());
+						
+			if(selectedUnits.size()==0)
 			{
-				RectangleShape selectionRect = new RectangleShape();
-				selectionRect.setPosition(selectionPoint.x, selectionPoint.y);
-				selectionRect.setSize(new Vector2f(v.x-selectionPoint.x,  v.y-selectionPoint.y));
-				selectUnits(selectionRect.getGlobalBounds());
-			}
-			else
-			{
-				selectUnit(v);
-				if(selectedUnits.size()>0&&Main.mouse.doubleClick)
-					selectUnitType(selectedUnits.get(0).getType());
+				selectBuildings(selectionRect.getGlobalBounds());
+				if(selectedBuildings.size()>0&&Main.mouse.doubleClick)
+					selectBuildingType(selectedBuildings.get(0).getType());
 			}
 		}
 		selectionInProgress=false;
@@ -93,14 +99,26 @@ import static common.Constants.*;
 	{
 		buildings.add(e);
 		e.setPlayer(this);
-	}
+	}	
 	public void selectUnitType(String type)
 	{
+		ArrayList<Entity> temp = new ArrayList<Entity>();
 		for(Entity e:units)
 		{
 			if(e.getType().equals(type))
-				selectUnit(e);
+				temp.add(e);
 		}
+		selectUnits(temp);
+	}	
+	public void selectBuildingType(String type)
+	{
+		ArrayList<Building> temp = new ArrayList<Building>();
+		for(Building b:buildings)
+		{
+			if(b.getType().equals(type))
+				temp.add(b);
+		}
+		selectBuildings(temp);
 	}
 	public void assignControlGroup(int ctrlGrp)
 	{
@@ -113,50 +131,62 @@ import static common.Constants.*;
 	}
 	public void selectControlGroup(int ctrlGrp)
 	{
-		clearSelectedUnits();
+		ArrayList<Entity> temp = new ArrayList<Entity>();
 		for(Entity e:units)
 		{
 			if(e.getControlGroup()==ctrlGrp)
-				selectUnit(e);				
+				temp.add(e);		
 		}
+		selectUnits(temp);
 	}
 	public void selectUnits(FloatRect rect)
-	{
-		clearSelectedUnits();
+	{		
+		ArrayList<Entity> temp = new ArrayList<Entity>();
 		for(Entity e:units)
 		{
 			if(rect.contains(e.getPosition().x, e.getPosition().y))
-				selectUnit(e);
+				temp.add(e);
 			else if(CommonFunctions.getDist(rect, e.getPosition())<e.getRadius())				
 			{
-				selectUnit(e);
+				temp.add(e);
 			}
 				
 		}
+		selectUnits(temp);
 	}
 	public void selectUnits(ArrayList<Entity> es)
 	{
+		clearSelectedUnits();
 		for(Entity e:es)
-			selectUnit(e);
+		{
+			selectedUnits.add(e);
+			e.select();
+		}
+	}
+	public void selectBuildings(ArrayList<Building> bs)
+	{
+		clearSelectedBuildings();
+		for(Building e:bs)
+		{
+			selectedBuildings.add(e);
+			e.select();
+		}
 	}
 	
-	public void selectUnit(Entity e)
-	{
-		selectedUnits.add(e);
-		e.select();
-	}
 	public void selectUnit(Vector2f pos)
 	{
-
-		clearSelectedUnits();
-		for(Entity e:units)
+		FloatRect f = new FloatRect(pos,new Vector2f(1,1));
+		selectUnits(f);
+	}
+	public void selectBuildings(FloatRect rect)
+	{		
+		ArrayList<Building> temp = new ArrayList<Building>();
+		for(Building b:buildings)
 		{
-			if(CommonFunctions.getDist(pos, e.getPosition())<e.getRadius())
-			{
-				selectUnit(e);
-				return;
-			}
+			if(b.getGlobalBounds().intersection(rect)!=null)
+				temp.add(b);				
 		}
+		selectBuildings(temp);
 	}
 	public void deselectUnit(Entity e)
 	{
@@ -168,6 +198,11 @@ import static common.Constants.*;
 		for(Entity e:selectedUnits)
 			e.deselect();
 		selectedUnits.clear();
+	}
+	private void clearSelectedBuildings() {
+		for(Building b:selectedBuildings)
+			b.deselect();
+		selectedBuildings.clear();	
 	}
 	public void issueMoveCommand(Vector2f loc)
 	{
@@ -195,10 +230,7 @@ import static common.Constants.*;
 			}
 		}
 	}
-	public ArrayList<Entity> getUnits()
-	{
-		return units;
-	}
+	
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {
 		for(Entity e:units)
@@ -221,8 +253,22 @@ import static common.Constants.*;
 	public void update(Observable o, Object arg) {
 		tick();		
 	}
+	
+	
+	public ArrayList<Entity> getUnits()
+	{
+		return units;
+	}
 	public ArrayList<Entity> getSelectedUnits()
 	{
 		return selectedUnits;
+	}
+	public ArrayList<Building> getBuildings()
+	{
+		return buildings;
+	}
+	public ArrayList<Building> getSelectedBuildings()
+	{
+		return selectedBuildings;
 	}
 }

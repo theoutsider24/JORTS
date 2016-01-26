@@ -10,28 +10,33 @@ import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Vector2f;
 
 import static common.Constants.*;
+
+import FYP.Ability;
 import FYP.Main;
 import FYP.Player;
 import map.MapCell;
 import units.Entity;
 
-public class Building extends RectangleShape{
+public abstract class Building extends RectangleShape{
 	public static HashMap<String,Building> allBuildings = new HashMap<String,Building>();
 	public ArrayList<int[]> offsets = new ArrayList<int[]>(); 
 	public boolean placed=false;
 	public int[] origin=new int[2];
 	
+	public ArrayList<Ability> abilities = new ArrayList<Ability>();
+	
 	public String id;
 	public static int numberOfBuildings;
-	
+	public String buildingType="building";
 	public Player player;
 	Color playerColor=new Color(50,50,50,0);
+	boolean selected=false;
 	
 	int outlineThickness=5;
 	
 	public Building()
 	{
-		id="building#"+numberOfBuildings++;
+		id=buildingType+"_#"+numberOfBuildings++;
 		
 		offsets.add(new int[]{0,0});		
 		offsets.add(new int[]{-1,-1});
@@ -71,9 +76,23 @@ public class Building extends RectangleShape{
 	{
 		super.draw(arg0, arg1);
 		setOutlineColor(playerColor);
+		if(selected)
+			setOutlineColor(Color.WHITE);
 	}	
 	public void hover()
 	{
-		setOutlineColor(new Color(100,100,255));
+		if(!selected)setOutlineColor(new Color(100,100,255));
+	}
+	public void select()
+	{
+		selected=true;
+	}
+	public void deselect()
+	{
+		selected=false;
+	}
+	public String getType()
+	{
+		return buildingType;
 	}
 }

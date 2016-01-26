@@ -16,6 +16,7 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.window.Mouse;
 
 import FYP.Main;
+import buildings.Barracks;
 import buildings.Building;
 import test.Logger;
 import uiComponents.buttons.ExitButton;
@@ -179,7 +180,7 @@ public class GUI implements Drawable{
 		grid1.addButton(new StandardButton("Place Building"){public void click(){
 			if(cursor.attachedBuilding==null)
 			{
-				cursor.attachedBuilding=new Building(); 
+				cursor.attachedBuilding=new Barracks(); 
 				Main.activePlayer.addBuilding(cursor.attachedBuilding);
 			}
 			else

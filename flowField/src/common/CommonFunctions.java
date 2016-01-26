@@ -81,6 +81,11 @@ public class CommonFunctions {
 		}		
 		return Math.abs(dist);
 	}
+	/*public static double getDist(FloatRect rect1,FloatRect rect2)
+	{
+		if(Math.abs(rect1.top-rect2.top)<rect1.height+rect2.height)
+			
+	}*/
 	public static int getSector(FloatRect rect,Vector2f p2)
 	{
 		final int left =0;

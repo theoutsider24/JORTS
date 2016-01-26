@@ -2,6 +2,7 @@ package units;
 
 import FYP.Ability;
 import FYP.Main;
+import buildings.Barracks;
 import buildings.Building;
 
 public class Infantry extends Entity{
@@ -12,13 +13,12 @@ public class Infantry extends Entity{
 		id=id.replace("unit", "unit_"+unitType);
 		maxSpeed=2;
 		setMaxHealth(100);
-		unitType="infantry";
 		setRadius(15);
 		
-		abilities.add(new Ability("Place Building Ability"){public void run(){
+		abilities.add(new Ability("Place Barracks"){public void run(){
 			if(Main.gui.cursor.attachedBuilding==null)
 			{
-				Main.gui.cursor.attachedBuilding=new Building(); 
+				Main.gui.cursor.attachedBuilding=new Barracks(); 
 				Main.activePlayer.addBuilding(Main.gui.cursor.attachedBuilding);
 			}
 			else
