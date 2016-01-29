@@ -11,16 +11,16 @@ public class Constants {
 	public final static int GRID_SIZE=100;
 	public final static int SECTOR_SIZE=10;
 	
-	public final static int STARTING_UNIT_COUNT=200;
+	public final static int STARTING_UNIT_COUNT=20;
 
 	public final static String FONT="FreeMonoBold";
 
 	public final static int RESOLUTION_X=1920;
 	public final static int RESOLUTION_Y=1080;
 	public final static boolean FULLSCREEN=false;
-	public final static int FRAME_CAP=60;
+	public final static int FRAME_CAP=144;
 	
-	public final static String WINDOW_TITLE="Flow Field Demo";
+	public final static String WINDOW_TITLE="JORTS";
 	
 	public final static String ROOT_DIRECTORY=System.getProperty("user.dir");
 	public final static String MAP_DIRECTORY=ROOT_DIRECTORY+"//maps";
@@ -38,6 +38,7 @@ public class Constants {
 	
 	public final static int LOWER_GUI_HEIGHT=240;
 	public final static int UPPER_GUI_HEIGHT=30;
+	public final static int BORDER_DRAG_TOLERANCE=40;
 	
 	public final static boolean MAP[][] = new boolean[GRID_SIZE][GRID_SIZE];
 	

@@ -1,8 +1,6 @@
 package uiComponents;
 
-import static common.Constants.CLICK_INTERVAL;
-import static common.Constants.RESOLUTION_X;
-import static common.Constants.RESOLUTION_Y;
+import static common.Constants.*;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.system.Clock;
@@ -178,8 +176,11 @@ public class MouseManager {
 			}
 			else if(Main.gui.cursor.state.contains("buildingAttached"))
 			{
-				Main.gui.cursor.attachedBuilding.place();
-				Main.gui.cursor.attachedBuilding=null;
+				if(Main.gui.cursor.attachedBuilding.valid)
+				{
+					Main.gui.cursor.attachedBuilding.place();
+					Main.gui.cursor.attachedBuilding=null;
+				}
 			}
 			else
 				Main.activePlayer.startSelection(clickLoc);
@@ -277,10 +278,10 @@ public class MouseManager {
 	public void limitMouse()
 	{
 		Vector2i pos =  Main.gui.cursor.getPosition();
-		if(pos.x-10<=0) Main.moveCamera(-15,0);
+		if(pos.x-BORDER_DRAG_TOLERANCE<=0) Main.moveCamera(-15,0);
 		else if(pos.x+10>=RESOLUTION_X) Main.moveCamera(15,0);
 		
-		if(pos.y-10<=0) Main.moveCamera(0,-15);
+		if(pos.y-BORDER_DRAG_TOLERANCE<=0) Main.moveCamera(0,-15);
 		else if(pos.y+10>=RESOLUTION_Y) Main.moveCamera(0,15);
 		//Mouse.setPosition(new Vector2i(pos.x,pos.y));
 	}

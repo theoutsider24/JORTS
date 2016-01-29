@@ -147,6 +147,7 @@ public class Cursor extends VertexArray{
 			setPosition(pos);
 		if(attachedUnit!=null)
 			attachedUnit.setPosition(Main.mouse.clickLoc);
+		
 		if(attachedBuilding!=null)
 		{
 			if(Main.worldMap.cellPosExists(Main.mouse.clickLoc))
@@ -154,8 +155,19 @@ public class Cursor extends VertexArray{
 				MapCell c = Main.worldMap.getCellAtPos(Main.mouse.clickLoc);	
 				attachedBuilding.origin[0]=c.x;
 				attachedBuilding.origin[1]=c.y;
+				boolean valid=true;
+				
 				for(int[] offset:attachedBuilding.offsets)
-					Main.worldMap.highlightCell(c.x+offset[0], c.y+offset[1], Color.RED);
+					if(!Main.worldMap.isCellTraversable(c.x+offset[0], c.y+offset[1]))
+						valid=false;
+				attachedBuilding.valid=valid;
+				for(int[] offset:attachedBuilding.offsets)
+				{
+					if(attachedBuilding.valid)	
+						Main.worldMap.highlightCell(c.x+offset[0], c.y+offset[1], Color.RED);
+					else
+						Main.worldMap.highlightCell(c.x+offset[0], c.y+offset[1], Color.BLUE);
+				}
 			}
 		}
 	}

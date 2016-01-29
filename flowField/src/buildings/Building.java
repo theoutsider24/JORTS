@@ -8,6 +8,7 @@ import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 
 import static common.Constants.*;
 
@@ -21,7 +22,10 @@ public abstract class Building extends RectangleShape{
 	public static HashMap<String,Building> allBuildings = new HashMap<String,Building>();
 	public ArrayList<int[]> offsets = new ArrayList<int[]>(); 
 	public boolean placed=false;
+	public boolean valid=true;
+	
 	public int[] origin=new int[2];
+	
 	
 	public ArrayList<Ability> abilities = new ArrayList<Ability>();
 	
@@ -72,7 +76,7 @@ public abstract class Building extends RectangleShape{
 		playerColor=p.color;
 	}
 	@Override
-	public void draw(RenderTarget arg0, RenderStates arg1) 
+	public void draw(RenderTarget arg0, RenderStates arg1)
 	{
 		super.draw(arg0, arg1);
 		setOutlineColor(playerColor);
@@ -81,7 +85,7 @@ public abstract class Building extends RectangleShape{
 	}	
 	public void hover()
 	{
-		if(!selected)setOutlineColor(new Color(100,100,255));
+		if(!selected)setOutlineColor(Color.add(new Color(200,200,200),playerColor));
 	}
 	public void select()
 	{
@@ -94,5 +98,12 @@ public abstract class Building extends RectangleShape{
 	public String getType()
 	{
 		return buildingType;
+	}
+	public Vector2i getSpawnLocation()
+	{
+		Vector2f spawnCenter = Vector2f.add(this.getPosition(),Vector2f.div(this.getSize(),2));
+		float halfWidth=this.getSize().x/2;
+		float halfHeight=this.getSize().y/2;
+		return new Vector2i((int)(spawnCenter.x+halfWidth),(int)(spawnCenter.y+halfHeight));		
 	}
 }

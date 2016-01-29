@@ -13,7 +13,7 @@ import FYP.Main;
 public abstract class UpdatableTextField extends RectangleShape implements Drawable
 {
 	RectangleShape backgroundRect;
-	Text text;
+	public Text text;
 	String id="";
 	static int numInitiated=0;
 	public UpdatableTextField()

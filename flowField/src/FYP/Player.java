@@ -21,8 +21,8 @@ import units.Entity;
 
 import static FYP.Main.worldMap;
 import static common.Constants.*;
-;public class Player implements Drawable,Observer{ 
-	String id="";
+public class Player implements Drawable,Observer{ 
+	public String id="";
 	Color teamColor;
 	public Field lastField;
 	ArrayList<Entity> units;
@@ -30,7 +30,6 @@ import static common.Constants.*;
 	
 	ArrayList<Entity> selectedUnits;
 	ArrayList<Building> selectedBuildings;
-	
 	public Field currentField=new Field(worldMap);
 	public Vector2f selectionPoint;
 	public boolean selectionInProgress=false;
@@ -53,6 +52,7 @@ import static common.Constants.*;
 	public Player()
 	{
 		playerNum=players++;
+		id="player_"+playerNum;
 		color=playerColors[playerNum];
 		startPosition=spawnPoints[playerNum];		
 		
@@ -78,6 +78,7 @@ import static common.Constants.*;
 			selectionRect.setPosition(selectionPoint.x, selectionPoint.y);
 			selectionRect.setSize(new Vector2f(v.x-selectionPoint.x+1,  v.y-selectionPoint.y+1));
 			selectUnits(selectionRect.getGlobalBounds());
+			
 			if(selectedUnits.size()>0&&Main.mouse.doubleClick)
 				selectUnitType(selectedUnits.get(0).getType());
 						
@@ -157,6 +158,7 @@ import static common.Constants.*;
 	public void selectUnits(ArrayList<Entity> es)
 	{
 		clearSelectedUnits();
+		clearSelectedBuildings();
 		for(Entity e:es)
 		{
 			selectedUnits.add(e);
@@ -165,6 +167,7 @@ import static common.Constants.*;
 	}
 	public void selectBuildings(ArrayList<Building> bs)
 	{
+		clearSelectedUnits();
 		clearSelectedBuildings();
 		for(Building e:bs)
 		{

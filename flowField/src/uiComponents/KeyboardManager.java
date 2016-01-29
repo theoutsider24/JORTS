@@ -69,30 +69,30 @@ public class KeyboardManager {
 	    	{
 	    		case ESCAPE: Main.window.close();
 	    			break;
-	    		case UP: Main.moveCamera(0,-10); 
+	    		case UP: Main.moveCamera(0,-30); 
 	    			break;
-	    		case DOWN: Main.moveCamera(0,10); 
+	    		case DOWN: Main.moveCamera(0,30); 
 	    			break;
-	    		case LEFT: Main.moveCamera(-10,0); 
+	    		case LEFT: Main.moveCamera(-30,0); 
 	    			break;
-	    		case RIGHT: Main.moveCamera(10,0);
+	    		case RIGHT: Main.moveCamera(30,0);
 					break;
 	    		case ADD: Main.zoom(2); 
 	    			break;
-	    		case F1: Main.activePlayer=Main.players.get(0); 
+	    		case F1: Main.activePlayer=Main.players.get(0); Main.gui.playerList.update();
 	    			break;
-	    		case F2: Main.activePlayer=Main.players.get(1); 
+	    		case F2: Main.activePlayer=Main.players.get(1); Main.gui.playerList.update();
 	    			break;
-	    		case F3: Main.activePlayer=Main.players.get(2); 
+	    		case F3: Main.activePlayer=Main.players.get(2); Main.gui.playerList.update();
 	    			break;
 	    		case SUBTRACT: Main.zoom(.5f); 
 	    			break;
-	    		case S: if(!Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
+	    		/*case S: if(!Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
 	    					Main.worldMap.saveToFile();//TODO breaks game
 						else
 							Main.worldMap.saveFile(DEFAUL_MAP);	
 	    				; 
-					break;
+					break;*/
 	    		case L: Main.worldMap.loadFromFile(); 
 	    			break;
 	    		case RETURN: Main.gui.console.open();

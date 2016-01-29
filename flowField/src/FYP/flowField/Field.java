@@ -85,6 +85,21 @@ public class Field  implements Drawable,Observer{
 	{
 		openCellatPos(goalPosition, initialCellsToOpen);
 	}
+	public void updateImage()
+	{
+		for(int i=0;i<GRID_SIZE;i++)
+			for(int j=0;j<GRID_SIZE;j++)
+			{
+				image.setPixel(i, j, cells[i][j].getFlowColor());
+				if( cells[i][j].flow.x>9999999||cells[i][j].flow.y>9999999||cells[i][j].flow.x<-9999999||cells[i][j].flow.y<-9999999)
+					image.setPixel(i, j, Color.RED);
+			}
+		
+		try {texture.loadFromImage(image);} 
+		catch (TextureCreationException e) {e.printStackTrace();}
+		
+		shape.setTexture(texture);
+	}
 	/*public void openCellatPos(Vector2f pos)
 	{
 		cellsToOpen=0;
@@ -128,6 +143,7 @@ public class Field  implements Drawable,Observer{
 			while(openList.size()>0)
 				integrate();
 			setVectors();
+			updateImage();
 		}
 		else
 			System.out.println("Invalid Move Target");
@@ -148,28 +164,20 @@ public class Field  implements Drawable,Observer{
 	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {		
-		for(int i=0;i<GRID_SIZE;i++)
-			for(int j=0;j<GRID_SIZE;j++)
-			{
-				image.setPixel(i, j, cells[i][j].getFlowColor());
-				if( cells[i][j].flow.x>9999999||cells[i][j].flow.y>9999999||cells[i][j].flow.x<-9999999||cells[i][j].flow.y<-9999999)
-					image.setPixel(i, j, Color.RED);
-			}
 		
-		try {texture.loadFromImage(image);} 
-		catch (TextureCreationException e) {e.printStackTrace();}
 		
-		shape.setTexture(texture);
 		arg0.draw(shape);
+		
 		for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
 			{
 				arg0.draw(cells[i][j].getVectorVisualistation());
 				
-				Text intnum = new Text(cells[i][j].toString(),Main.font);
+				/*Text intnum = new Text(cells[i][j].toString(),Main.font);
 				intnum.setCharacterSize(8);
 				intnum.setPosition(cells[i][j].getPosition());
-				arg0.draw(intnum);
+				arg0.draw(intnum);*/
+				arg0.draw(cells[i][j].integrationText);
 			}
 				//cells[i][j].draw(arg0,Main.displayField);		
 	}
@@ -314,6 +322,7 @@ public class Field  implements Drawable,Observer{
 		            return  c1.integration - c2.integration;
 		        }
 		});
+		
 		for(int i=0;i<GRID_SIZE;i++)
 		{
 			for(int j=0;j<GRID_SIZE;j++)
@@ -329,14 +338,16 @@ public class Field  implements Drawable,Observer{
 				//try{values[7]=cells[i-1][j-1].integration;}catch(IndexOutOfBoundsException ex){values[7]=255;};
 				int dir = getMinIndex(values);
 				try{
-					if(dir==0)cells[i][j].setDir(cells[i][j-1]);
-					else if(dir==1)cells[i][j].setDir(cells[i+1][j]);
-					else if(dir==2)cells[i][j].setDir(cells[i][j+1]);
-					else if(dir==3)cells[i][j].setDir(cells[i-1][j]);
+					if(dir==0)cells[i][j].setTargetCell(cells[i][j-1]);
+					else if(dir==1)cells[i][j].setTargetCell(cells[i+1][j]);
+					else if(dir==2)cells[i][j].setTargetCell(cells[i][j+1]);
+					else if(dir==3)cells[i][j].setTargetCell(cells[i-1][j]);
 				}
 				catch(IndexOutOfBoundsException ex){}
 			}
 		}
+		for(FlowCell c:cellsList)
+			c.setDir();
 	}
 	public int getMinIndex(int[] array)
 	{

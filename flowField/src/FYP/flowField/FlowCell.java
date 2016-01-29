@@ -30,6 +30,8 @@ public class FlowCell extends RectangleShape{
 	public ArrayList<FlowCell> neighbours;
 	//public ArrayList<Entity> entities;
 	int vectorValue;
+	FlowCell targetCell=null;
+	RectangleShape vectorVisualisation;
 	
 	MapCell mpCl;
 	float maxSpeed =.5f;
@@ -39,6 +41,7 @@ public class FlowCell extends RectangleShape{
 		super();
 		this.mpCl=mpCl;
 		this.field=field;
+		integrationText = new Text();
 		//entities = new ArrayList<Entity>();
 		flow = new Vector2f(0,0);
 		this.x=mpCl.x;
@@ -51,19 +54,15 @@ public class FlowCell extends RectangleShape{
 		
 		setSize(new Vector2f(CELL_SIZE,CELL_SIZE));
 		setPosition(new Vector2f(CELL_SIZE*x,CELL_SIZE*y));
+		vectorVisualisation=new RectangleShape();
+	}
+	public void setTargetCell(FlowCell c)
+	{
+		targetCell=c;
 	}
 	public RectangleShape getVectorVisualistation()
 	{
-		RectangleShape r = new RectangleShape();
-		r.setPosition(this.getCenter());
-		r.setSize(new Vector2f(0,CELL_SIZE/2));
-		r.setOutlineThickness(1);
-		r.setOutlineColor(Color.BLACK);
-		float a = CommonFunctions.getAngle(flow,new Vector2f(0, 0));
-		//System.out.println(flow.x+","+flow.y);
-		//System.out.println(a);
-		r.rotate(a);
-		return r;
+		return vectorVisualisation;
 	}
 	public void increaseCost(int cost)
 	{
@@ -99,7 +98,7 @@ public class FlowCell extends RectangleShape{
 	{
 		flow = new Vector2f(0,0);
 	}
-	public void setDir(FlowCell cell)//vector)
+	public void setDir()//vector)
 	{
 		resetFlow();
 		if (los)
@@ -107,25 +106,46 @@ public class FlowCell extends RectangleShape{
 		else if(integration==255)flow = new Vector2f(0,0);
 		else
 		{
-			flow=Vector2f.sub(cell.getCenter(),getCenter());
+			flow=Vector2f.sub(targetCell.getCenter(),getCenter());
 			flow = CommonFunctions.normaliseVector(flow);
-			flow = Vector2f.add(flow, cell.flow);
+			
+			flow = Vector2f.add(flow, Vector2f.mul(targetCell.flow,2));
+			if(targetCell.flow.x==0&&targetCell.flow.y==0)
+			{
+				System.out.println("error?");
+			}
 		}
-		if(flow.x!=0&&flow.y!=0)
-		{
+		//if(flow.x!=0&&flow.y!=0)
+		//{
 			flow = CommonFunctions.normaliseVector(flow);
 			flow = Vector2f.mul(flow, maxSpeed);		
-		}
+		//}
+		updateVectorVisualisation();
+	}
+	public void updateVectorVisualisation()
+	{
+		vectorVisualisation.setPosition(this.getCenter());
+		vectorVisualisation.setSize(new Vector2f(0,CELL_SIZE/2));
+		vectorVisualisation.setOutlineThickness(1);
+		vectorVisualisation.setOutlineColor(Color.BLACK);
+		float a = CommonFunctions.getAngle(flow,new Vector2f(0, 0));
+		//System.out.println(flow.x+","+flow.y);
+		//System.out.println(a);
+		vectorVisualisation.rotate(a);
 		
+		integrationText = new Text(this.toString(),Main.font);
+		integrationText.setCharacterSize(20);
+		integrationText.setColor(Color.RED);
+		integrationText.setPosition(this.getPosition());
 	}
 	public String toString()
 	{
 		cost=mpCl.cost;
-		//String result=((int)integration)+"\n";
+		String result=((int)integration)+"\n";
 		//result += flow.x+",\n"+flow.y;
 		//String result=cost+"";
 		//String result=((int)integration)+"";
-		String result=(Main.worldMap.getCell(x, y).getEntities().size())+"";
+		//String result=(Main.worldMap.getCell(x, y).getEntities().size())+"";
 		return result;
 	}
 }

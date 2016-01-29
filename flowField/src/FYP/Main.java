@@ -91,6 +91,7 @@ public class Main extends Observable{
 		zoom(.25f);
 		clock = new Clock();
 
+		Main.gui.playerList.update();
 		registerCommands();
 		while(window.isOpen())
 		{
@@ -117,7 +118,7 @@ public class Main extends Observable{
 			   window.draw(p);
 		  
 		   window.draw(gui);
-		   updateFPSTimer();
+		   //updateFPSTimer();
 		   window.display();
 	}
 	public static void loadFont(String fontName)

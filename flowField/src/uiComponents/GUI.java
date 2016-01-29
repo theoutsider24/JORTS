@@ -28,6 +28,7 @@ import uiComponents.grids.ControlGroupButtonGrid;
 import uiComponents.grids.StandardButtonGrid;
 import uiComponents.textFields.FPSTimer;
 import uiComponents.textFields.GameClock;
+import uiComponents.textFields.PlayerLabel;
 import uiComponents.textFields.UpdatableTextField;
 import units.Infantry;
 
@@ -44,6 +45,7 @@ public class GUI implements Drawable{
 	public Cursor cursor;
 	public ExitButton exit;
 	public Console console;
+	public PlayerList playerList;
 	UpdatableTextField cursorState;
 	ArrayList<RectangleShape> rects = new ArrayList<RectangleShape>();
 	public GUI(View view)
@@ -64,6 +66,8 @@ public class GUI implements Drawable{
 		topBackground.setSize(new Vector2f(RESOLUTION_X,UPPER_GUI_HEIGHT));
 		topBackground.setFillColor(new Color(50,50,50));
 		
+		playerList=new PlayerList();
+		
 		console=new Console();
 		
 		clock = new GameClock();
@@ -78,7 +82,7 @@ public class GUI implements Drawable{
 				setText(cursor.state);
 			}
 		};
-		cursorState.setPosition(new Vector2f(200,1000));
+		cursorState.setPosition(new Vector2f(10,RESOLUTION_Y-LOWER_GUI_HEIGHT-70));
 		
 		grid1 = new StandardButtonGrid(1, 7, new Vector2f(10,100));
 		grid2 = new ControlGroupButtonGrid(1, 9, new Vector2f(700, RESOLUTION_Y-LOWER_GUI_HEIGHT-40));
@@ -128,6 +132,9 @@ public class GUI implements Drawable{
 		fpsTimer.update();
 		window.draw(fpsTimer);
 		window.draw(exit);
+		
+		window.draw(playerList);
+		
 		console.lineTimerTick();
 		CommandQueue.tick();
 		window.draw(console);
