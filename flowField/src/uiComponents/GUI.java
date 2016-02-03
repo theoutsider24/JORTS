@@ -46,6 +46,7 @@ public class GUI implements Drawable{
 	public ExitButton exit;
 	public Console console;
 	public PlayerList playerList;
+	public SelectionRect selectionRect;
 	UpdatableTextField cursorState;
 	ArrayList<RectangleShape> rects = new ArrayList<RectangleShape>();
 	public GUI(View view)
@@ -73,6 +74,7 @@ public class GUI implements Drawable{
 		clock = new GameClock();
 		fpsTimer = new FPSTimer();
 		
+		selectionRect=new SelectionRect();
 		cursor=new Cursor();
 		cursor.setColor(Color.RED);
 
@@ -140,6 +142,7 @@ public class GUI implements Drawable{
 		window.draw(console);
 		//cursor.setPosition(new Vector2f(Mouse.getPosition((RenderWindow)window).x,Mouse.getPosition((RenderWindow)window).y));
 		//cursor.update();
+		window.draw(selectionRect);
 		window.draw(cursor);
 		cursorState.update();
 		window.draw(cursorState);

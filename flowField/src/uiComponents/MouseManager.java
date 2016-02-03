@@ -3,6 +3,8 @@ package uiComponents;
 import static common.Constants.*;
 
 import org.jsfml.graphics.Color;
+import org.jsfml.graphics.FloatRect;
+import org.jsfml.graphics.RectangleShape;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
@@ -61,6 +63,8 @@ public class MouseManager {
 	}
 	public void determineHoverIntent()
 	{
+
+		MapCell cell = Main.worldMap.getCellAtPos(clickLoc);
 		String guiHover=Main.gui.getMouseHover(uiClickLoc);
 		if(guiHover!=null)
 		{
@@ -80,8 +84,17 @@ public class MouseManager {
 			Main.gui.cursor.state= "buildingAttached_"+Main.gui.cursor.attachedBuilding.id;
 			return;
 		}
-		
-		MapCell cell = Main.worldMap.getCellAtPos(clickLoc);
+		/*if(Main.activePlayer.selectionInProgress)
+		{
+			for(Entity e:Main.activePlayer.getUnits())
+			{
+				FloatRect rect=Main.gui.selectionRect.realRect.getGlobalBounds();
+				if(rect.contains(e.getPosition().x, e.getPosition().y))
+					e.hover();
+				else if(CommonFunctions.getDist(rect, e.getPosition())<e.getRadius())				
+					e.hover();					
+			}
+		}*/
 		for(Entity e:cell.getEntities())
 		{
 			if(CommonFunctions.contains(e,clickLoc))
@@ -197,7 +210,9 @@ public class MouseManager {
 				{
 					uiButton.allButtons.get(name).clickUp(true);
 				}
-			}			
+			}	
+			if(Main.activePlayer.selectionInProgress)
+				Main.activePlayer.endSelection(clickLoc, false);
 		}
 		else
 		{
@@ -237,10 +252,15 @@ public class MouseManager {
 		}
 		if(!clickOnButton&&!Main.gui.cursor.state.contains("gui"))
 		{
-			if(Main.gui.cursor.state.contains("enemy"))
+			if(Main.gui.cursor.state.contains("enemy")&&Main.gui.cursor.state.contains("unit"))
 			{
 				String id= Main.gui.cursor.state.substring(Main.gui.cursor.state.lastIndexOf("enemy_")+6);
 				Main.activePlayer.issueFollowCommand(Entity.allEntities.get(id));
+			}
+			else if(Main.gui.cursor.state.contains("enemy")&&Main.gui.cursor.state.contains("building"))
+			{
+				String id= Main.gui.cursor.state.substring(Main.gui.cursor.state.lastIndexOf("enemy_")+6);
+				Main.activePlayer.issueAttackBuildingOrder(Building.allBuildings.get(id));
 			}
 			else
 			{

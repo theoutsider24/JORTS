@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.spi.LocaleServiceProvider;
 
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Drawable;
@@ -35,10 +36,14 @@ public class Field  implements Drawable,Observer{
 	
 	ArrayList<FlowCell> openList;
 	ArrayList<FlowCell> closedList;
-	FlowCell goal;
 	FlowCell[][] cells;
 	
+
+	FlowCell goal;
+	ArrayList<FlowCell> goals = new ArrayList<FlowCell>();
+	
 	public Vector2f goalPosition;
+	
 	int initialCellsToOpen=0;
 	public static final Field nullField=new Field(Main.worldMap);
 	int cellsToOpen; 
@@ -85,6 +90,11 @@ public class Field  implements Drawable,Observer{
 	{
 		openCellatPos(goalPosition, initialCellsToOpen);
 	}
+	/*public void setCellAsGoal(FlowCell c)
+	{
+		c.isGoal=true;
+		goals.add(c);
+	}*/
 	public void updateImage()
 	{
 		for(int i=0;i<GRID_SIZE;i++)
@@ -100,7 +110,7 @@ public class Field  implements Drawable,Observer{
 		
 		shape.setTexture(texture);
 	}
-	/*public void openCellatPos(Vector2f pos)
+	/*public void openCells(Vector2f pos)
 	{
 		cellsToOpen=0;
 		if(cellPosExists(pos.x,pos.y))
@@ -139,6 +149,8 @@ public class Field  implements Drawable,Observer{
 					goal.isGoal=true;
 					openList.add(goal);
 			//	}
+			
+			openAdjacentCells();
 			losPass();
 			while(openList.size()>0)
 				integrate();
@@ -147,6 +159,30 @@ public class Field  implements Drawable,Observer{
 		}
 		else
 			System.out.println("Invalid Move Target");
+	}
+	public void openCellLocations(ArrayList<Vector2f> list)
+	{
+		cellsToOpen=0;
+		resetIntegration();
+		for(int i=0;i<GRID_SIZE;i++)
+			for(int j=0;j<GRID_SIZE;j++)
+				cells[i][j].isGoal=false;
+		
+		for(Vector2f v:list)
+		{
+			if(cellPosExists(v.x,v.y))
+			{
+				FlowCell goal =getCell((int)v.x,(int)v.y);
+				goal.integration=0;
+				goal.isGoal=true;
+				openList.add(goal);
+			}
+		}
+		losPass();
+		while(openList.size()>0)
+			integrate();
+		setVectors();
+		updateImage();
 	}
 	public void registerNeighours()
 	{
@@ -163,9 +199,8 @@ public class Field  implements Drawable,Observer{
 			}
 	}
 	@Override
-	public void draw(RenderTarget arg0, RenderStates arg1) {		
-		
-		
+	public void draw(RenderTarget arg0, RenderStates arg1) 
+	{			
 		arg0.draw(shape);
 		
 		for(int i=0;i<GRID_SIZE;i++)
@@ -183,25 +218,83 @@ public class Field  implements Drawable,Observer{
 	}
 	public void losPass()
 	{
-		for(int i=0;i<GRID_SIZE;i++)
+		outer:for(int i=0;i<GRID_SIZE;i++)
 		{
-			for(int j=0;j<GRID_SIZE;j++)
+			inner:for(int j=0;j<GRID_SIZE;j++)
 			{
-				if(hasLineOfSight(getCellAtPos(goalPosition),cells[i][j]))
+				//NEW CODE START
+				FlowCell cell =cells[i][j];
+				
+				ArrayList<FlowCell> losCandidates = new ArrayList<FlowCell>();
+				for(int x=0;x<GRID_SIZE;x++)
+				{
+					for(int y=0;y<GRID_SIZE;y++)
+					{						
+						if(cells[x][y].isGoal && cells[x][y]!=cell && hasLineOfSight(cell,cells[x][y]))
+						{							
+							losCandidates.add(cells[x][y]);
+						}
+					}
+				}
+				if(losCandidates.size()<1)
+					continue;
+				FlowCell targetCell=losCandidates.get(0);
+				double minDist = (CommonFunctions.getDist(cell.getCenter(),targetCell.getCenter())/CELL_SIZE);
+				for(FlowCell tempCell:losCandidates)
+				{
+					double dist = (CommonFunctions.getDist(cell.getCenter(), tempCell.getCenter())/CELL_SIZE);
+					if(dist<minDist)
+					{
+						targetCell=tempCell;
+						minDist=dist;
+					}
+				}
+				cell.los=true;
+				cell.setTargetCell(targetCell);
+				cell.integration=(int)minDist;
+				//NEW CODE END
+				/*if(hasLineOfSight(getCellAtPos(goalPosition),cells[i][j]))
 				{
 					FlowCell c= cells[i][j];
-					c.los=true;
-					
-					
-					/*ArrayList<int[]> pts = CommonFunctions.getBresenhamLine(goal.x, goal.y,c.x , c.y);
-					int cost=0;
-					for(int[] p:pts)
-					{
-						cost+=cells[p[0]][p[1]].cost;
-					}					
-					c.integration=cost;*/
-					
+					c.los=true;					
 					c.integration=((int)CommonFunctions.getDist(cells[i][j].getCenter(), getCellAtPos(goalPosition).getCenter())/CELL_SIZE);
+				}*/
+			}
+		}
+	}
+	public void openAdjacentCells()
+	{
+		outer:for(FlowCell c : openList.get(0).neighbours)
+		{
+			if(!closedList.contains(c)&&!openList.contains(c))
+			{
+				openList.add(c);		
+				if(cellsToOpen-- >0) 
+				{
+					c.integration=0;
+					c.isGoal=true;
+				}
+				else 
+				{
+					System.out.println(cellsToOpen);
+					break outer;
+				}
+			}
+			else if(closedList.contains(c))
+			{
+				if(c.integration > openList.get(0).integration + c.cost&&!c.los)
+				{
+					c.integration = openList.get(0).integration + c.cost;
+				
+					closedList.remove(c);
+					openList.add(c);
+				}
+			}
+			else if(openList.contains(c))
+			{
+				if(c.integration > openList.get(0).integration + c.cost)
+				{
+					c.integration = openList.get(0).integration + c.cost;
 				}
 			}
 		}
@@ -213,13 +306,13 @@ public class Field  implements Drawable,Observer{
 			if(!closedList.contains(c)&&!openList.contains(c))
 			{
 				openList.add(c);		
-				if(cellsToOpen-- >0) 
+				/*if(cellsToOpen-- >0) 
 					{
 						c.integration=0;
 						c.isGoal=true;
 					}
 				else
-				{
+				{*/
 					if(!c.los)
 						c.integration = openList.get(0).integration + c.cost;
 				//	if(hasLineOfSight(getCellAtPos(goalPosition),c))
@@ -227,7 +320,7 @@ public class Field  implements Drawable,Observer{
 				//		c.los=true;
 					//	c.integration=(int) CommonFunctions.getDist(c.getCenter(), getCellAtPos(goalPosition).getCenter());
 				//	}
-				}
+				//}
 			}
 			else if(closedList.contains(c))
 			{
@@ -263,10 +356,6 @@ public class Field  implements Drawable,Observer{
 			{
 					los=false;
 			}
-			/*if(i>0&&!cells[pts.get(i-1)[0]][pts.get(i-1)[1]].neighbours.contains(cell))
-			{
-				los=false;
-			}*/
 			if(i>0&&!hasDiagonalConnection(p, pts.get(i-1)))
 				los=false;
 		}
@@ -300,13 +389,13 @@ public class Field  implements Drawable,Observer{
 	}
 	public void setVectors()
 	{		
-		for(int i=0;i<GRID_SIZE;i++)
+		/*for(int i=0;i<GRID_SIZE;i++)
 		{
 			for(int j=0;j<GRID_SIZE;j++)
 			{
 				if(cells[i][j].los)cells[i][j].integration=((int)CommonFunctions.getDist(cells[i][j].getCenter(), getCellAtPos(goalPosition).getCenter())/CELL_SIZE);
 			}
-		}
+		}*/
 		ArrayList<FlowCell> cellsList = new ArrayList<FlowCell>();
 		for(int i=0;i<GRID_SIZE;i++)
 		{
@@ -327,6 +416,8 @@ public class Field  implements Drawable,Observer{
 		{
 			for(int j=0;j<GRID_SIZE;j++)
 			{
+				if(cells[i][j].los==true)
+					continue;
 				int[] values = new int[4];
 				try{values[0]=cells[i][j-1].integration;}  catch(IndexOutOfBoundsException ex){values[0]=255;};
 				//try{values[1]=cells[i+1][j-1].integration;}catch(IndexOutOfBoundsException ex){values[1]=255;};
@@ -344,6 +435,8 @@ public class Field  implements Drawable,Observer{
 					else if(dir==3)cells[i][j].setTargetCell(cells[i-1][j]);
 				}
 				catch(IndexOutOfBoundsException ex){}
+				if(cells[i][j].targetCell==null)
+					System.out.println("failed");
 			}
 		}
 		for(FlowCell c:cellsList)

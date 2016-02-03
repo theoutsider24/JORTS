@@ -91,6 +91,7 @@ public class FlowCell extends RectangleShape{
 	public Color getFlowColor()
 	{
 		if(isGoal) return Color.YELLOW;
+		if(los) return Color.CYAN;
 		int shade =255-( Math.min(255,(integration*5)));
 		return new Color(shade,shade,shade,200);
 	}
@@ -101,9 +102,15 @@ public class FlowCell extends RectangleShape{
 	public void setDir()//vector)
 	{
 		resetFlow();
-		if (los)
-			flow=Vector2f.sub(field.goalPosition,getCenter());
-		else if(integration==255)flow = new Vector2f(0,0);
+		if (los&&!isGoal)
+			flow=Vector2f.sub(targetCell.getCenter(),getCenter());//TODO possible wrong direction
+			//flow=Vector2f.sub(field.goalPosition,getCenter());
+		else if(integration==255)
+		{
+			flow = new Vector2f(0,0);
+
+			
+		}
 		else
 		{
 			flow=Vector2f.sub(targetCell.getCenter(),getCenter());

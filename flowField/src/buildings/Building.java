@@ -26,7 +26,7 @@ public abstract class Building extends RectangleShape{
 	
 	public int[] origin=new int[2];
 	
-	
+	public ArrayList<MapCell> occupiedCells = new ArrayList<MapCell>();
 	public ArrayList<Ability> abilities = new ArrayList<Ability>();
 	
 	public String id;
@@ -64,6 +64,7 @@ public abstract class Building extends RectangleShape{
 		{
 			//Main.worldMap.closeCell(origin[0]+offset[0], origin[1]+offset[1]);
 			MapCell c = Main.worldMap.getCell(origin[0]+offset[0], origin[1]+offset[1]);
+			occupiedCells.add(c);
 			c.close();
 			c.registerBuilding(this);
 		}

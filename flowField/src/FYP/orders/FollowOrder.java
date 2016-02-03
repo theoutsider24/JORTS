@@ -1,10 +1,11 @@
-package FYP;
+package FYP.orders;
 
 import java.util.Observable;
 import java.util.Observer;
 
 import org.jsfml.system.Vector2f;
 
+import FYP.Main;
 import units.Entity;
 
 public class FollowOrder extends Order implements Observer{

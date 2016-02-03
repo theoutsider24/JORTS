@@ -15,6 +15,9 @@ import org.jsfml.system.Vector2f;
 
 import FYP.flowField.Field;
 import FYP.flowField.InfluenceMap;
+import FYP.orders.AttackBuildingOrder;
+import FYP.orders.FollowOrder;
+import FYP.orders.MoveOrder;
 import buildings.Building;
 import common.CommonFunctions;
 import units.Entity;
@@ -67,6 +70,8 @@ public class Player implements Drawable,Observer{
 	}
 	public void startSelection(Vector2f v)
 	{
+		Main.gui.selectionRect.start(Main.mouse.uiClickLoc);
+		
 		selectionPoint = v;
 		selectionInProgress=true;
 	}
@@ -74,22 +79,23 @@ public class Player implements Drawable,Observer{
 	{
 		if(doSelection)
 		{
-			RectangleShape selectionRect = new RectangleShape();
+			/*RectangleShape selectionRect = new RectangleShape();
 			selectionRect.setPosition(selectionPoint.x, selectionPoint.y);
 			selectionRect.setSize(new Vector2f(v.x-selectionPoint.x+1,  v.y-selectionPoint.y+1));
-			selectUnits(selectionRect.getGlobalBounds());
+			*/selectUnits(Main.gui.selectionRect.globalBounds);
 			
-			if(selectedUnits.size()>0&&Main.mouse.doubleClick)
+			if(selectedUnits.size()>0&&Main.mouse.doubleClick&&Main.gui.selectionRect.globalBounds.width<1&&Main.gui.selectionRect.globalBounds.height<1)
 				selectUnitType(selectedUnits.get(0).getType());
 						
 			if(selectedUnits.size()==0)
 			{
-				selectBuildings(selectionRect.getGlobalBounds());
+				selectBuildings(Main.gui.selectionRect.globalBounds);
 				if(selectedBuildings.size()>0&&Main.mouse.doubleClick)
 					selectBuildingType(selectedBuildings.get(0).getType());
 			}
 		}
 		selectionInProgress=false;
+		Main.gui.selectionRect.end();
 	}
 	public void addUnit(Entity e)
 	{
@@ -233,7 +239,19 @@ public class Player implements Drawable,Observer{
 			}
 		}
 	}
-	
+	public void issueAttackBuildingOrder(Building b)
+	{
+		if(selectedUnits.size()>0)
+		{
+			AttackBuildingOrder m = new AttackBuildingOrder();
+			m.init(b);
+			currentField=m.flowField;
+			for(Entity e:selectedUnits)
+			{
+				e.currentOrder = m;
+			}
+		}
+	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {
 		for(Entity e:units)
@@ -254,6 +272,7 @@ public class Player implements Drawable,Observer{
 	}
 	@Override
 	public void update(Observable o, Object arg) {
+		Main.gui.selectionRect.update(Main.mouse.uiClickLoc);
 		tick();		
 	}
 	

@@ -16,9 +16,9 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
 import FYP.flowField.FlowCell;
+import FYP.orders.Order;
 import FYP.Ability;
 import FYP.Main;
-import FYP.Order;
 import FYP.Player;
 import FYP.flowField.Field;
 import common.CommonFunctions;

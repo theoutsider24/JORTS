@@ -1,4 +1,4 @@
-package FYP;
+package FYP.orders;
 
 import java.util.ArrayList;
 
