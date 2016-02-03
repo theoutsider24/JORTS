@@ -69,6 +69,7 @@ public class Map extends Observable implements Drawable{
 	Texture texture;
 	RectangleShape shape;*/
 	UpdatableImage mapImage;
+	public UpdatableImage visionMask;
 	Stack<EditCommand> undoStack;
 	Stack<EditCommand> redoStack;
 	public Map()
@@ -96,19 +97,47 @@ public class Map extends Observable implements Drawable{
 				updateTexture();
 			}
 		};
+		visionMask = new UpdatableImage(new Vector2f(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE),new Vector2f(GRID_SIZE,GRID_SIZE)){
+			@Override
+			public void updateImage()
+			{
+				for(int i=0;i<GRID_SIZE;i++)
+					for(int j=0;j<GRID_SIZE;j++)
+					{
+						if(cells[i][j].mask) image.setPixel(i, j, new Color(0,0,0,80));
+						else if(!cells[i][j].visible) image.setPixel(i, j, new Color(0,0,0));
+						else  image.setPixel(i, j, Color.TRANSPARENT);
+					}				
+				updateTexture();
+			}
+		};
+		visionMask.texture.setSmooth(true);
 		refreshImage();	
 	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {		
 		//arg0.draw(shape);
 		arg0.draw(mapImage);
+		//arg0.draw(visionMask);
 	}
 	public void refreshImage()
 	{
 		mapImage.updateImage();
 		notifyAllObservers();
 	}
-	
+	public void refreshVisionMask()
+	{
+		visionMask.updateImage();
+	}
+	public void resetVision()
+	{
+		for(int i=0;i<GRID_SIZE;i++)
+			for(int j=0;j<GRID_SIZE;j++)
+			{
+				cells[i][j].visible=false;
+				cells[i][j].mask=false;
+			}
+	}
 	public boolean isCellTraversable(int i,int j)
 	{
 		if(cellExists(i,j))

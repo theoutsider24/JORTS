@@ -4,6 +4,7 @@ import static common.Constants.*;
 import java.util.ArrayList;
 
 import org.jsfml.graphics.CircleShape;
+import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.system.Vector2f;
@@ -240,8 +241,15 @@ public class CommonFunctions {
 		Vector2i screenPos = Main.window.mapCoordsToPixel(r.getPosition());
 		if(screenPos.x<-10||screenPos.y<-10||screenPos.x>RESOLUTION_X+10||screenPos.y>RESOLUTION_Y+10)
 			return false;
-		return true;
-		
+		return true;		
+	}
+	public static Color substract(Color c1,Color c2)
+	{
+		return new Color(c1.r-c2.r,c1.g-c2.g,c1.b-c2.b);
+	}
+	public static Color add(Color c1,Color c2)
+	{
+		return new Color(c1.r+c2.r,c1.g+c2.g,c1.b+c2.b);
 	}
 }
 

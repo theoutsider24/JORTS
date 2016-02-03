@@ -269,6 +269,7 @@ public class Player implements Drawable,Observer{
 		   entity.tick();
 		for(Entity entity:units)
 		   entity.reregister();
+		if(Main.activePlayer==this)revealMap();
 	}
 	@Override
 	public void update(Observable o, Object arg) {
@@ -276,7 +277,28 @@ public class Player implements Drawable,Observer{
 		tick();		
 	}
 	
-	
+	public void revealMap()
+	{
+		for(int i=0;i<GRID_SIZE;i++)
+			for(int j=0;j<GRID_SIZE;j++)
+			{
+				if(Main.worldMap.cells[i][j].visible)
+					Main.worldMap.cells[i][j].mask=true;
+				Main.worldMap.cells[i][j].visible=false;
+			}
+		for(Entity e:units)
+		{
+			for(int i=0;i<GRID_SIZE;i++)
+				for(int j=0;j<GRID_SIZE;j++)
+				{
+					if(CommonFunctions.getDist(Main.worldMap.cells[i][j].getPosition(), e.getPosition())<500)
+					{
+						Main.worldMap.cells[i][j].visible=true;
+						Main.worldMap.cells[i][j].mask=false;
+					}
+				}
+		}
+	}
 	public ArrayList<Entity> getUnits()
 	{
 		return units;

@@ -15,7 +15,7 @@ import FYP.Main;
 
 public class GameClock extends UpdatableTextField
 {
-	Clock clock;
+	public Clock clock;
 	int width=100;
 	public GameClock()
 	{

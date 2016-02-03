@@ -58,6 +58,9 @@ public class Main extends Observable{
 	public static KeyboardManager keyboard;
  	
 	public static Main game;
+	public long deltaT;
+	public long lastTimer;
+	
 	public static void main(String[] args) throws IOException
 	{
 		game = new Main();
@@ -100,6 +103,8 @@ public class Main extends Observable{
 	}
 	public void gameLoop() throws IOException
 	{
+		deltaT=gui.clock.clock.getElapsedTime().asMilliseconds()-lastTimer;
+		lastTimer=gui.clock.clock.getElapsedTime().asMilliseconds();
 		setChanged();
 		notifyObservers();
 		worldMap.unhighlightAll();
@@ -110,13 +115,14 @@ public class Main extends Observable{
 			   p.tick();*/
 		   window.clear(new Color(0,0,100));
 		   window.setView(gameView);
+		   worldMap.refreshVisionMask();
 		   window.draw(worldMap);
 		   if(showFlow)
 			   window.draw(activePlayer.currentField);
 		   
 		   for(Player p:players)
 			   window.draw(p);
-		  
+		  window.draw(worldMap.visionMask);
 		   window.draw(gui);
 		   //updateFPSTimer();
 		   window.display();
@@ -205,5 +211,11 @@ public class Main extends Observable{
 			public void run() {
 				Main.zoom(1/1.3f);
 		}});
+	}
+	public void changeActivePlayer(Player p)
+	{
+		activePlayer=p;
+		Main.gui.playerList.update();
+		worldMap.resetVision();
 	}
 }

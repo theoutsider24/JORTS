@@ -11,6 +11,7 @@ public class MoveOrder extends Order {
 	public MoveOrder()
 	{
 		super();	
+		flowField = new Field(Main.worldMap);
 	}
 	public void init(Vector2f loc,int size)
 	{

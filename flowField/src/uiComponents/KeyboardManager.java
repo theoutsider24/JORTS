@@ -79,11 +79,11 @@ public class KeyboardManager {
 					break;
 	    		case ADD: Main.zoom(2); 
 	    			break;
-	    		case F1: Main.activePlayer=Main.players.get(0); Main.gui.playerList.update();
+	    		case F1: Main.game.changeActivePlayer(Main.players.get(0));
 	    			break;
-	    		case F2: Main.activePlayer=Main.players.get(1); Main.gui.playerList.update();
+	    		case F2: Main.game.changeActivePlayer(Main.players.get(1));
 	    			break;
-	    		case F3: Main.activePlayer=Main.players.get(2); Main.gui.playerList.update();
+	    		case F3: Main.game.changeActivePlayer(Main.players.get(2));
 	    			break;
 	    		case SUBTRACT: Main.zoom(.5f); 
 	    			break;

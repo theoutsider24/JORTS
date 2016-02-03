@@ -19,6 +19,8 @@ public class MapCell extends RectangleShape{
 	ArrayList<Entity> entities;
 	ArrayList<Building> buildings;
 	Color highlightColor=new Color(0,0,0);
+	public boolean visible=false;
+	public boolean mask=false;
 	
 	public void highlight(Color c)
 	{
@@ -27,8 +29,7 @@ public class MapCell extends RectangleShape{
 	public void unhighlight()
 	{
 		highlightColor=new Color(0,0,0);
-	}
-	
+	}	
 	
 	public MapCell(int x,int y)
 	{
@@ -80,6 +81,9 @@ public class MapCell extends RectangleShape{
 	
 	public Color getDrawColor()
 	{
+		//if(mask) return new Color(0,0,0,50);
+
+		//if(!visible) return new Color(20,20,20);
 		if(traversable) return Color.add(GROUND_COLOR,highlightColor);
 		else return Color.add(OBSTACLE_COLOR,highlightColor);
 	}

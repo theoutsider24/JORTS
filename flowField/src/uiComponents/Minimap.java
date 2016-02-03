@@ -17,6 +17,7 @@ import org.jsfml.window.Mouse;
 
 import FYP.Main;
 import FYP.Player;
+import common.CommonFunctions;
 import units.Entity;
 
 public class Minimap extends RectangleShape{
@@ -53,13 +54,23 @@ public class Minimap extends RectangleShape{
 			for(int j=0;j<image.getSize().y;j++)
 			{
 				Color c= new Color(0,0,0);
-				
-				if(!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).isTraversable())
+				if(!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).visible&&!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).mask)
+				{
 					c=Color.BLACK;
-				else if(!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).getEntities().isEmpty())
-					c=Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).getEntities().get(0).player.color;
-				else if(Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).isTraversable())
-					c=Color.GREEN;
+				}
+				else
+				{
+					if(!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).isTraversable())
+						c=Color.BLACK;
+					else if(!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).getEntities().isEmpty())
+						c=Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).getEntities().get(0).player.color;
+					else if(Main.worldMap.getCell(i/(int)sizeFactor,	j/(int)sizeFactor).isTraversable())
+						c=Color.GREEN;
+				}
+				if(Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).mask)
+				{
+					c=CommonFunctions.substract(c, new Color(150,150,150));
+				}
 				/*if(Main.worldMap.getCell(i/sizeFactor, j/sizeFactor).getEntities().size()>0)
 					c=Color.BLUE;*/
 				image.setPixel(i, j, c);

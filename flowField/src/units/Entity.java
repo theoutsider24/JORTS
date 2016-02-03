@@ -307,14 +307,16 @@ public abstract class Entity extends CircleShape{
 	}
 	public void moveAndRegisterAbsolute(Vector2f v)
 	{
-		this.move(v);
+		System.out.println(Main.game.deltaT);
+		this.move(Vector2f.mul(v,(Main.game.deltaT/7)));
 		//System.out.println(v.toString());
 		enforceBounds();
 		reregister();
 		if(!worldMap.getCell(currentCell.x,currentCell.y).isTraversable())
 		{
 			//moveAndRegisterAbsolute(Vector2f.add(getCellRepulsion(fieldMap.getCell(currentCell.x,currentCell.y)),Vector2f.mul(v, -1)));
-			this.move(Vector2f.add(getCellRepulsion(currentOrder.flowField.getCell(currentCell.x,currentCell.y)),Vector2f.mul(v, -1)));
+			Vector2f temp = Vector2f.add(getCellRepulsion(currentOrder.flowField.getCell(currentCell.x,currentCell.y)),Vector2f.mul(v, -1));
+			this.move(Vector2f.mul(temp,(Main.game.deltaT/7)));
 			//moveAndRegisterAbsolute(Vector2f.mul(v, -1));
 		}
 	}

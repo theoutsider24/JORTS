@@ -38,7 +38,6 @@ public class Field  implements Drawable,Observer{
 	ArrayList<FlowCell> closedList;
 	FlowCell[][] cells;
 	
-
 	FlowCell goal;
 	ArrayList<FlowCell> goals = new ArrayList<FlowCell>();
 	
