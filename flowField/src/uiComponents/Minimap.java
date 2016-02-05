@@ -54,7 +54,7 @@ public class Minimap extends RectangleShape{
 			for(int j=0;j<image.getSize().y;j++)
 			{
 				Color c= new Color(0,0,0);
-				if(!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).visible&&!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).mask)
+				if(SHOW_VISION_MASK&&!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).visible&&!Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).mask)
 				{
 					c=Color.BLACK;
 				}
@@ -67,7 +67,7 @@ public class Minimap extends RectangleShape{
 					else if(Main.worldMap.getCell(i/(int)sizeFactor,	j/(int)sizeFactor).isTraversable())
 						c=Color.GREEN;
 				}
-				if(Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).mask)
+				if(SHOW_VISION_MASK&&Main.worldMap.getCell(i/(int)sizeFactor, j/(int)sizeFactor).mask)
 				{
 					c=CommonFunctions.substract(c, new Color(150,150,150));
 				}

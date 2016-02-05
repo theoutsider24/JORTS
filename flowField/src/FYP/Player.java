@@ -269,7 +269,7 @@ public class Player implements Drawable,Observer{
 		   entity.tick();
 		for(Entity entity:units)
 		   entity.reregister();
-		if(Main.activePlayer==this)revealMap();
+		if(Main.activePlayer==this&&SHOW_VISION_MASK)revealMap();
 	}
 	@Override
 	public void update(Observable o, Object arg) {

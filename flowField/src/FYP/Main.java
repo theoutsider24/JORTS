@@ -115,14 +115,14 @@ public class Main extends Observable{
 			   p.tick();*/
 		   window.clear(new Color(0,0,100));
 		   window.setView(gameView);
-		   worldMap.refreshVisionMask();
+		   if(SHOW_VISION_MASK)worldMap.refreshVisionMask();
 		   window.draw(worldMap);
 		   if(showFlow)
 			   window.draw(activePlayer.currentField);
 		   
 		   for(Player p:players)
 			   window.draw(p);
-		  window.draw(worldMap.visionMask);
+		   if(SHOW_VISION_MASK) window.draw(worldMap.visionMask);
 		   window.draw(gui);
 		   //updateFPSTimer();
 		   window.display();

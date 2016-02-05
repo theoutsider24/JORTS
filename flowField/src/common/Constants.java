@@ -31,6 +31,7 @@ public class Constants {
 	public final static String DEFAUL_MAP=MAP_DIRECTORY+"//FYP1.mp";
 	
 	public final static boolean SHOW_HEALTH_BARS=false;
+	public final static boolean SHOW_VISION_MASK=false;
 	
 	public final static int COST_INCREASE_ON_CLICK=10;
 	public final static float ZOOM_VALUE=1.5f;
