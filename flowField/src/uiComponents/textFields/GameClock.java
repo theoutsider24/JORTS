@@ -17,6 +17,7 @@ public class GameClock extends UpdatableTextField
 {
 	public Clock clock;
 	int width=100;
+	long milliseconds=0;
 	public GameClock()
 	{
 		super();
@@ -32,11 +33,19 @@ public class GameClock extends UpdatableTextField
 	}
 	@Override
 	public void update() {
-		String minutes = ""+(int)(clock.getElapsedTime().asSeconds()/60);
+		if(!PAUSED)		
+			milliseconds+=clock.getElapsedTime().asMilliseconds();
+			
+		clock.restart();
+		
+		long seconds=milliseconds/1000;		
+		//String minutes = ""+(int)(clock.getElapsedTime().asSeconds()/60);
+		String minutes = ""+(int)(seconds/60);
 		if(minutes.length()<2)minutes="0"+minutes;
-		String seconds = ""+(int)(clock.getElapsedTime().asSeconds()%60);
-		if(seconds.length()<2)seconds="0"+seconds;
-		text.setString(minutes+":"+seconds);
+		//String seconds = ""+(int)(clock.getElapsedTime().asSeconds()%60);
+		String secondsS = ""+(int)(seconds%60);
+		if(secondsS.length()<2)secondsS="0"+secondsS;
+		text.setString(minutes+":"+secondsS);
 	}
 
 	@Override

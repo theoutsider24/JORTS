@@ -190,9 +190,10 @@ public class Player implements Drawable,Observer{
 	public void selectBuildings(FloatRect rect)
 	{		
 		ArrayList<Building> temp = new ArrayList<Building>();
+		FloatRect r = new FloatRect(rect.left,rect.top,rect.width+1,rect.height+1);
 		for(Building b:buildings)
 		{
-			if(b.getGlobalBounds().intersection(rect)!=null)
+			if(b.getGlobalBounds().intersection(r)!=null)
 				temp.add(b);				
 		}
 		selectBuildings(temp);
@@ -265,11 +266,14 @@ public class Player implements Drawable,Observer{
 	}
 	public void tick()
 	{
-		for(Entity entity:units)
-		   entity.tick();
-		for(Entity entity:units)
-		   entity.reregister();
-		if(Main.activePlayer==this&&SHOW_VISION_MASK)revealMap();
+		if(!PAUSED)
+		{
+			for(Entity entity:units)
+			   entity.tick();
+			for(Entity entity:units)
+			   entity.reregister();
+			if(Main.activePlayer==this&&SHOW_VISION_MASK)revealMap();
+		}
 	}
 	@Override
 	public void update(Observable o, Object arg) {

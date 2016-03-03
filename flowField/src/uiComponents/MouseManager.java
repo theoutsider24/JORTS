@@ -257,9 +257,10 @@ public class MouseManager {
 				String id= Main.gui.cursor.state.substring(Main.gui.cursor.state.lastIndexOf("enemy_")+6);
 				Main.activePlayer.issueFollowCommand(Entity.allEntities.get(id));
 			}
-			else if(Main.gui.cursor.state.contains("enemy")&&Main.gui.cursor.state.contains("building"))
+			else if(/*Main.gui.cursor.state.contains("enemy")&&*/Main.gui.cursor.state.contains("building"))
 			{
-				String id= Main.gui.cursor.state.substring(Main.gui.cursor.state.lastIndexOf("enemy_")+6);
+				//String id= Main.gui.cursor.state.substring(Main.gui.cursor.state.lastIndexOf("enemy_")+6);
+				String id= Main.gui.cursor.state.substring(Main.gui.cursor.state.lastIndexOf("building"));
 				Main.activePlayer.issueAttackBuildingOrder(Building.allBuildings.get(id));
 			}
 			else

@@ -1,6 +1,6 @@
 package uiComponents;
 
-import static common.Constants.DEFAUL_MAP;
+import static common.Constants.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -106,6 +106,8 @@ public class KeyboardManager {
 	    		case Y: if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
 	    					Main.worldMap.redo();
 				break;
+	    		case PAUSE: PAUSED=!PAUSED;
+	    			break;
 	    		default: 
 	    			if(numKeys.contains(e.key))
 					{

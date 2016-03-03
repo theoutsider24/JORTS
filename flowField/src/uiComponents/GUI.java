@@ -47,6 +47,7 @@ public class GUI implements Drawable{
 	public Console console;
 	public PlayerList playerList;
 	public SelectionRect selectionRect;
+	public PauseOverlay pauseOverlay;
 	UpdatableTextField cursorState;
 	ArrayList<RectangleShape> rects = new ArrayList<RectangleShape>();
 	public GUI(View view)
@@ -90,6 +91,8 @@ public class GUI implements Drawable{
 		grid2 = new ControlGroupButtonGrid(1, 9, new Vector2f(700, RESOLUTION_Y-LOWER_GUI_HEIGHT-40));
 		grid3= new ActionButtonGrid(0, 0, new Vector2f(20,RESOLUTION_Y-LOWER_GUI_HEIGHT+20));
 		initButtons();
+		
+		pauseOverlay=new PauseOverlay();
 		
 		rects.add(minimap);
 		rects.add(grid1);
@@ -146,6 +149,7 @@ public class GUI implements Drawable{
 		window.draw(cursor);
 		cursorState.update();
 		window.draw(cursorState);
+		if(PAUSED)window.draw(pauseOverlay);
 		//for(Drawable d:drawables)
 		//	window.draw(d);
 	}

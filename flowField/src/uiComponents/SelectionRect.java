@@ -7,6 +7,7 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
 import FYP.Main;
+import buildings.Building;
 import common.CommonFunctions;
 import units.Entity;
 
@@ -47,12 +48,22 @@ public class SelectionRect extends RectangleShape{
 
 			//RectangleShape r=new RectangleShape();
 			//FloatRect rect=realRect.getGlobalBounds();
+			boolean hoverUnits=false;
 			for(Entity e:Main.activePlayer.getUnits())
 			{
-				if(globalBounds.contains(e.getPosition().x, e.getPosition().y))
+				if(globalBounds.contains(e.getPosition().x, e.getPosition().y)||CommonFunctions.getDist(globalBounds, e.getPosition())<e.getRadius())
+				{
 					e.hover();
-				else if(CommonFunctions.getDist(globalBounds, e.getPosition())<e.getRadius())				
-					e.hover();					
+					hoverUnits=true;
+				}
+			}
+			if(!hoverUnits)
+			{
+				for(Building b:Main.activePlayer.getBuildings())
+				{
+					if(b.getGlobalBounds().intersection(globalBounds)!=null)
+						b.hover();				
+				}
 			}
 			
 		}
