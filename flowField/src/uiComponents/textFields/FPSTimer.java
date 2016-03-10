@@ -47,6 +47,8 @@ public class FPSTimer extends UpdatableTextField
 			setText(fps+" FPS");
 		}
 		clock.restart();
+		setCentered(true);
+		text.move(new Vector2f(-width/2,0));
 	}
 	@Override
 	public String toString()

@@ -1,0 +1,16 @@
+{
+	"units":
+	[
+		"cavalry.json",
+		"infantry.json",
+		"siege_unit.json",
+		"goliath.json",
+		"zaria.json"
+	],
+	"buildings":
+	[
+		"barracks.json"
+	],
+	"map": "SummonersRift.mp",
+	"keyMappings": "mapping1.json"
+}

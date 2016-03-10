@@ -7,13 +7,24 @@ import org.jsfml.graphics.CircleShape;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
+import org.jsfml.graphics.RenderWindow;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
+import FYP.GameWindow;
 import FYP.Main;
 
 
 public class CommonFunctions {
+	public static float testDistToSquare(FloatRect r,Vector2f p)
+	{
+		float x = r.left+r.width/2;
+		float y = r.top+r.height/2;
+		float dx,dy;
+		dx = Math.max(Math.abs(p.x - x) - r.width / 2, 0);
+		dy = Math.max(Math.abs(p.y - y) - r.height / 2, 0);
+		return dx * dx + dy * dy;
+	}
 	public static float correctAngle(float a2)
 	{
 		while(a2<0)
@@ -235,10 +246,10 @@ public class CommonFunctions {
 	{
 		return getDistSqr(c.getPosition(),v)<=(c.getRadius()*c.getRadius());
 	}
-	public static boolean isOnScreen(RectangleShape r)
+	public static boolean isOnScreen(RectangleShape r,GameWindow window)
 	{
-		Main.window.setView(Main.gameView);
-		Vector2i screenPos = Main.window.mapCoordsToPixel(r.getPosition());
+		window.setView(window.gameView);
+		Vector2i screenPos = window.mapCoordsToPixel(r.getPosition());
 		if(screenPos.x<-10||screenPos.y<-10||screenPos.x>RESOLUTION_X+10||screenPos.y>RESOLUTION_Y+10)
 			return false;
 		return true;		

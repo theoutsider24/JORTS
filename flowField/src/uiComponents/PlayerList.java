@@ -7,14 +7,17 @@ import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Vector2f;
 
+import FYP.GameWindow;
 import FYP.Main;
 import FYP.Player;
 import uiComponents.textFields.PlayerLabel;
 
 public class PlayerList implements Drawable{
 	ArrayList<PlayerLabel> labels;
-	public PlayerList()
+	GameWindow window;
+	public PlayerList(GameWindow window)
 	{
+		this.window=window;
 		labels=new ArrayList<PlayerLabel>();
 		for(Player p:Main.players)
 		{
@@ -22,7 +25,7 @@ public class PlayerList implements Drawable{
 			{
 				l.move(new Vector2f(0,-30));
 			}		
-			labels.add(new PlayerLabel(p));
+			labels.add(new PlayerLabel(p,window));
 		}
 	}
 	public void update()

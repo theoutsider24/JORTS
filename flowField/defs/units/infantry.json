@@ -1,0 +1,11 @@
+{
+    "UnitType": "infantry",
+    "Speed": 2,
+    "Health": 100,
+    "Radius": 15,
+	"Building":
+	[
+		{"Name": "barracks"}	
+	],
+	"Icon": "sword.gif"
+}

@@ -16,12 +16,16 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.Mouse;
 
+import FYP.GameWindow;
 import FYP.Main;
-import buildings.Building;
-import map.MapCell;
-import units.Entity;
+import gameElements.buildings.Building;
+import gameElements.buildings.BuildingFactory;
+import gameElements.map.MapCell;
+import gameElements.units.Entity;
+import gameElements.units.UnitFactory;
 
 public class Cursor extends VertexArray{
+	GameWindow window;
 	Color color = Color.WHITE;
 	float factor=3;
 	int xSize=(int)(6f*factor);
@@ -36,11 +40,12 @@ public class Cursor extends VertexArray{
 	
 	VertexArray outline;
 	
-	public Entity attachedUnit=null;
-	public Building attachedBuilding=null;
+	private Entity attachedUnit=null;
+	private Building attachedBuilding=null;
 	
-	public Cursor()
+	public Cursor(GameWindow window)
 	{
+		this.window=window;
 		outline = new VertexArray();
 		outline.setPrimitiveType(PrimitiveType.LINE_STRIP);
 		position=new Vector2i(0,0);
@@ -142,17 +147,17 @@ public class Cursor extends VertexArray{
 	}
 	public void update()
 	{
-		Vector2i pos = Mouse.getPosition(Main.window);
+		Vector2i pos = Mouse.getPosition(window);
 		if(pos.x>0&&pos.x<RESOLUTION_X && pos.y>0&&pos.y<RESOLUTION_Y)
 			setPosition(pos);
 		if(attachedUnit!=null)
-			attachedUnit.setPosition(Main.mouse.clickLoc);
+			attachedUnit.setPosition(window.mouse.clickLoc);
 		
 		if(attachedBuilding!=null)
 		{
-			if(Main.worldMap.cellPosExists(Main.mouse.clickLoc))
+			if(Main.worldMap.cellPosExists(window.mouse.clickLoc))
 			{
-				MapCell c = Main.worldMap.getCellAtPos(Main.mouse.clickLoc);	
+				MapCell c = Main.worldMap.getCellAtPos(window.mouse.clickLoc);	
 				attachedBuilding.origin[0]=c.x;
 				attachedBuilding.origin[1]=c.y;
 				boolean valid=true;
@@ -170,5 +175,91 @@ public class Cursor extends VertexArray{
 				}
 			}
 		}
+	}
+	public void attachUnit(String type)
+	{
+		if(attachedUnit==null)
+		{
+			attachedUnit=UnitFactory.buildEntity(type,0,0,window.activePlayer); 
+			attachedUnit.disable();
+			window.activePlayer.addUnit(attachedUnit);
+			update();
+			
+			attachedBuilding=null;
+		}
+		else
+			attachedUnit=null;
+	}
+	
+	public void attachUnit(Entity e)
+	{
+		if(attachedUnit==null)
+		{
+			attachedUnit=e; 
+			attachedUnit.disable();
+			window.activePlayer.addUnit(attachedUnit);
+			update();
+			
+			attachedBuilding=null;
+		}
+		else
+			attachedUnit=null;
+	}
+	public void attachBuilding(String type)
+	{
+		if(attachedBuilding==null)
+		{
+			attachedBuilding=BuildingFactory.buildEntity("barracks",window.activePlayer); 
+			window.activePlayer.addBuilding(attachedBuilding);
+			update();
+			
+			attachedUnit=null;
+		}
+		else
+			attachedBuilding=null;
+	}
+	public void attachBuilding(Building b)
+	{
+		if(attachedBuilding==null)
+		{
+			attachedBuilding=b; 
+			window.activePlayer.addBuilding(attachedBuilding);
+			update();
+			
+			attachedUnit=null;
+		}
+		else
+			attachedBuilding=null;
+	}
+	public void placeAttachedUnit()
+	{
+		attachedUnit.enable();
+		attachedUnit=null;
+	}
+	public void placeAttachedBuilding()
+	{
+		if(attachedBuilding.valid)
+		{
+			attachedBuilding.place();
+			attachedBuilding=null;
+		}
+	}
+	public boolean hasUnitAttached()
+	{
+		return attachedUnit!=null;
+	}
+	public boolean hasBuildingAttached()
+	{
+		return attachedBuilding!=null;
+	}
+	public String getAttachedUnitId()
+	{
+		if(hasUnitAttached())return attachedUnit.id;
+		else	return "no_unit";
+	}
+	public String getAttachedBuildingId()
+	{
+		if(hasBuildingAttached())return attachedBuilding.id;
+		else	return "no_building";
 	}
 }

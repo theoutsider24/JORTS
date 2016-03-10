@@ -32,6 +32,7 @@ public abstract class ButtonGrid extends RectangleShape implements Drawable{
 	}
 	public void addButton(uiButton b,int x,int y)
 	{
+		b.setSize(new Vector2f(buttonSize.x,buttonSize.y));
 		//Main.gui.buttons.add(b);
 		buttons[x][y]=b;
 		buttons[x][y].setPosition(spacing+getPosition().x+(x*(buttonSize.x+spacing)),spacing+getPosition().y+(y*(buttonSize.y+spacing)));
@@ -75,6 +76,21 @@ public abstract class ButtonGrid extends RectangleShape implements Drawable{
 			}
 		}
 		return "";
+	}
+	public uiButton getButton(Vector2f v)
+	{
+		for(int i=0;i<x;i++)
+		{
+			for(int j=0;j<y;j++)
+			{
+				try {
+					if(buttons[i][j].getGlobalBounds().contains(v))
+						return buttons[i][j];
+				}
+				catch(Exception ex){continue;}
+			}
+		}
+		return null;
 	}
 	public void removeAll()
 	{

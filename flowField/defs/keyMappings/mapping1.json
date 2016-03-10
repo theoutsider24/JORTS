@@ -1,0 +1,32 @@
+{
+	"mappings":
+	[
+		{"key":"ESCAPE", "command":"exit"}
+		{"key":"UP", "command":"move_camera 0 -30"}
+		{"key":"DOWN", "command":"move_camera 0 30"}
+		{"key":"LEFT", "command":"move_camera -30 0"}
+		{"key":"RIGHT", "command":"move_camera 30 0"}
+		{"key":"ADD", "command":"zoom_in 2"}
+		{"key":"SUBTRACT", "command":"zoom_out 2"}
+		{"key":"F1", "command":"setPlayer 0"}
+		{"key":"F2", "command":"setPlayer 1"}
+		{"key":"F3", "command":"setPlayer 2"}
+		{"key":"I", "command":"addUnit infantry"}
+		{"key":"C", "command":"addUnit cavalry"}
+		{"key":"B", "command":"addBuilding barracks"}
+		
+		{"key":"NUM0", "command":"selectControlGroup 0"}
+		{"key":"NUM1", "command":"selectControlGroup 1"}
+		{"key":"NUM2", "command":"selectControlGroup 2"}
+		{"key":"NUM3", "command":"selectControlGroup 3"}
+		{"key":"NUM4", "command":"selectControlGroup 4"}
+		{"key":"NUM5", "command":"selectControlGroup 5"}
+		{"key":"NUM6", "command":"selectControlGroup 6"}
+		{"key":"NUM7", "command":"selectControlGroup 7"}
+		{"key":"NUM8", "command":"selectControlGroup 8"}
+		{"key":"NUM9", "command":"selectControlGroup 9"}
+		
+		{"key":"O", "command":"openCell"}
+		{"key":"S", "command":"saveMap"}
+	]
+}

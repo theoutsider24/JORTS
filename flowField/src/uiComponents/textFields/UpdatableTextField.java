@@ -1,11 +1,16 @@
 package uiComponents.textFields;
 
+import java.io.IOException;
+import java.nio.file.Paths;
+
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.Drawable;
+import org.jsfml.graphics.FloatRect;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.graphics.Text;
+import org.jsfml.graphics.Texture;
 import org.jsfml.system.Vector2f;
 
 import FYP.Main;
@@ -16,6 +21,7 @@ public abstract class UpdatableTextField extends RectangleShape implements Drawa
 	public Text text;
 	String id="";
 	static int numInitiated=0;
+	boolean centered=false;
 	public UpdatableTextField()
 	{
 		super();
@@ -28,6 +34,17 @@ public abstract class UpdatableTextField extends RectangleShape implements Drawa
 		text = new Text("",Main.font);
 		text.setCharacterSize(20);
 		text.setColor(Color.BLACK);
+		
+		/*Texture texture=new Texture();
+		try {
+			texture.loadFromFile(Paths.get("imgs//border.png"));
+			setFillColor(Color.WHITE);
+			setTexture(texture);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
 	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {	
@@ -36,10 +53,16 @@ public abstract class UpdatableTextField extends RectangleShape implements Drawa
 	}
 	
 	public abstract void update();
+	@Override
 	public void setPosition(Vector2f v)
 	{
 		super.setPosition(v);
-		text.setPosition(v);
+		if(centered)
+		{
+			centerText();
+		}
+		else
+			text.setPosition(v);
 	}
 	public void setText(String s)
 	{
@@ -57,5 +80,16 @@ public abstract class UpdatableTextField extends RectangleShape implements Drawa
 	public String toString()
 	{
 		return getId();
+	}
+	public void setCentered(boolean b)
+	{
+		centered=b;
+		setPosition(getPosition());
+	}
+	private void centerText()
+	{
+		FloatRect textbounds = text.getGlobalBounds();
+		text.setOrigin(textbounds.width / 2, textbounds.height );
+		text.setPosition(Vector2f.add(getPosition(),Vector2f.div(getSize(),2)));
 	}
 }

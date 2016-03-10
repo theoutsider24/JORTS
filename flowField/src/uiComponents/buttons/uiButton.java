@@ -15,6 +15,8 @@ import FYP.Main;
 
 public abstract class uiButton extends RectangleShape{
 	public static HashMap<String,uiButton> allButtons= new HashMap<String,uiButton>();
+	public String id;
+	static int instances;
 	public String title;
 	Text text;
 	RectangleShape overlay;
@@ -26,7 +28,7 @@ public abstract class uiButton extends RectangleShape{
 	int state=UP;
 	boolean togglable;
 	boolean toggled;
-	boolean visible=true;
+	public boolean visible=true;
 	public Runnable activity=null;
 	int charSize =15;
 	public uiButton(String title,int x,int y)
@@ -34,7 +36,7 @@ public abstract class uiButton extends RectangleShape{
 		super();
 		width=x;
 		height=y;
-		setSize(new Vector2f(width,height));
+		super.setSize(new Vector2f(width,height));
 		setFillColor(Color.BLUE);
 		setOutlineThickness(1);
 		setOutlineColor(Color.WHITE);
@@ -50,11 +52,18 @@ public abstract class uiButton extends RectangleShape{
 		text.setCharacterSize(charSize);		
 		
 		text.move((width- text.getGlobalBounds().width)/2,(height- text.getGlobalBounds().height)/2);
-		allButtons.put(title,this);
+		id="button#"+instances++;
+		allButtons.put(id,this);
 	}
 	public uiButton(String title)
 	{
 		this(title,100,50);
+	}
+	@Override 
+	public void setSize(Vector2f v)
+	{
+		super.setSize(v);
+		overlay.setSize(v);
 	}
 	public void setTitle(String s)
 	{
@@ -115,6 +124,6 @@ public abstract class uiButton extends RectangleShape{
 	@Override
 	public String toString()
 	{
-		return "button_"+title;
+		return id;
 	}
 }

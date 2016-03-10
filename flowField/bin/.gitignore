@@ -1,8 +1,10 @@
-/FYP/
-/buildings/
-/common/
-/config/
-/map/
-/test/
-/uiComponents/
 /units/
+/uiComponents/
+/FYP/
+/common/
+/test/
+/buildings/
+/map/
+/gameElements/
+/behaviour/
+/timedAbilities/

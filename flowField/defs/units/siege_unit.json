@@ -1,0 +1,11 @@
+{
+    "UnitType": "siege_unit",
+    "Speed": 1,
+    "Health": 200,
+    "Radius": 35,
+    "ability":
+    	{
+    		"Name": "q"
+    	},
+	"Icon": "siege_unit.png"
+}

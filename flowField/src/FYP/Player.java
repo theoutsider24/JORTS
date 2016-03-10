@@ -13,14 +13,15 @@ import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Vector2f;
 
-import FYP.flowField.Field;
-import FYP.flowField.InfluenceMap;
-import FYP.orders.AttackBuildingOrder;
-import FYP.orders.FollowOrder;
-import FYP.orders.MoveOrder;
-import buildings.Building;
+import behaviour.flowField.Field;
+import behaviour.flowField.InfluenceMap;
+import behaviour.orders.FollowOrder;
+import behaviour.orders.MoveOrder;
+import behaviour.orders.SurroundBuildingOrder;
 import common.CommonFunctions;
-import units.Entity;
+import gameElements.buildings.Building;
+import gameElements.map.MapCell;
+import gameElements.units.Entity;
 
 import static FYP.Main.worldMap;
 import static common.Constants.*;
@@ -31,9 +32,12 @@ public class Player implements Drawable,Observer{
 	ArrayList<Entity> units;
 	ArrayList<Building> buildings;
 	
+	public static int unitCap=3000;
+	public int unitCount=0;
+	
 	ArrayList<Entity> selectedUnits;
 	ArrayList<Building> selectedBuildings;
-	public Field currentField=new Field(worldMap);
+	public Field currentField=Field.nullField;
 	public Vector2f selectionPoint;
 	public boolean selectionInProgress=false;
 	public static Color playerColors[] = new Color[]{Color.BLUE,Color.RED,Color.MAGENTA,new Color(150,0,150)};
@@ -68,39 +72,43 @@ public class Player implements Drawable,Observer{
 		
 		Main.game.addObserver(this);
 	}
-	public void startSelection(Vector2f v)
+	public void startSelection(Vector2f v,GameWindow window)
 	{
-		Main.gui.selectionRect.start(Main.mouse.uiClickLoc);
+		window.gui.selectionRect.start(window.mouse.uiClickLoc);
 		
 		selectionPoint = v;
 		selectionInProgress=true;
 	}
-	public void endSelection(Vector2f v,boolean doSelection)
+	public void endSelection(Vector2f v,boolean doSelection,GameWindow window)
 	{
 		if(doSelection)
 		{
 			/*RectangleShape selectionRect = new RectangleShape();
 			selectionRect.setPosition(selectionPoint.x, selectionPoint.y);
 			selectionRect.setSize(new Vector2f(v.x-selectionPoint.x+1,  v.y-selectionPoint.y+1));
-			*/selectUnits(Main.gui.selectionRect.globalBounds);
+			*/selectUnits(window.gui.selectionRect.globalBounds);
 			
-			if(selectedUnits.size()>0&&Main.mouse.doubleClick&&Main.gui.selectionRect.globalBounds.width<1&&Main.gui.selectionRect.globalBounds.height<1)
+			if(selectedUnits.size()>0&&window.mouse.doubleClick&&window.gui.selectionRect.globalBounds.width<1&&window.gui.selectionRect.globalBounds.height<1)
 				selectUnitType(selectedUnits.get(0).getType());
 						
 			if(selectedUnits.size()==0)
 			{
-				selectBuildings(Main.gui.selectionRect.globalBounds);
-				if(selectedBuildings.size()>0&&Main.mouse.doubleClick)
+				selectBuildings(window.gui.selectionRect.globalBounds);
+				if(selectedBuildings.size()>0&&window.mouse.doubleClick)
 					selectBuildingType(selectedBuildings.get(0).getType());
 			}
 		}
 		selectionInProgress=false;
-		Main.gui.selectionRect.end();
+		window.gui.selectionRect.end();
 	}
 	public void addUnit(Entity e)
 	{
-		units.add(e);
-		e.setPlayer(this);
+		if(unitCount<unitCap)
+		{
+			unitCount++;
+			units.add(e);
+			e.setPlayer(this);
+		}
 	}
 	public void addBuilding(Building e)
 	{
@@ -218,39 +226,63 @@ public class Player implements Drawable,Observer{
 	{
 		if(selectedUnits.size()>0)
 		{
-			MoveOrder m = new MoveOrder();
-			m.init(loc, selectedUnits.size()/2);
-			currentField=m.flowField;
+			float minX,maxX,minY,maxY;
+			minX=loc.x;
+			maxX=loc.x;
+			
+			minY=loc.y;
+			maxY=loc.y;
+			
 			for(Entity e:selectedUnits)
 			{
-				e.currentOrder = m;
+				if(e.getPosition().x>maxX)
+					maxX=e.getPosition().x;
+				if(e.getPosition().x<minX)
+					minX=e.getPosition().x;
+				
+				if(e.getPosition().y>maxY)
+					maxY=e.getPosition().y;
+				if(e.getPosition().y<minY)
+					minY=e.getPosition().y;
 			}
-		}
+			
+			MoveOrder m = new MoveOrder();
+			m.init(loc, selectedUnits.size()/2,minX,maxX,minY,maxY);
+			
+			for(Entity e:selectedUnits)
+			{
+				m.issue(e);
+			}
+			
+			currentField=m.flowField;
+		}		
 	}
 	public void issueFollowCommand(Entity ent)
 	{
 		if(selectedUnits.size()>0)
 		{
 			FollowOrder m = new FollowOrder();
-			m.init(ent);
-			currentField=m.flowField;
+			//currentField=m.flowField;
 			for(Entity e:selectedUnits)
 			{
-				e.currentOrder = m;
+				m.issue(e);
 			}
+
+			m.init(ent);
+			currentField=m.flowField;
 		}
 	}
 	public void issueAttackBuildingOrder(Building b)
 	{
 		if(selectedUnits.size()>0)
 		{
-			AttackBuildingOrder m = new AttackBuildingOrder();
-			m.init(b);
-			currentField=m.flowField;
+			//SurroundBuildingOrder m = new SurroundBuildingOrder();
+			//m.init(b);
 			for(Entity e:selectedUnits)
 			{
-				e.currentOrder = m;
+				b.surroundOrder.issue(e);
 			}
+			currentField=b.surroundOrder.flowField;
 		}
 	}
 	@Override
@@ -272,12 +304,15 @@ public class Player implements Drawable,Observer{
 			   entity.tick();
 			for(Entity entity:units)
 			   entity.reregister();
-			if(Main.activePlayer==this&&SHOW_VISION_MASK)revealMap();
+			for(Building building:buildings)
+				building.tick();
+		//	/*if(Main.activePlayer==this&&SHOW_VISION_MASK)*/revealMap();//TODO every player has vision map
 		}
 	}
 	@Override
 	public void update(Observable o, Object arg) {
-		Main.gui.selectionRect.update(Main.mouse.uiClickLoc);
+		try{Main.getPlayerWindow(this).gui.selectionRect.update(Main.getPlayerWindow(this).mouse.uiClickLoc);}//TODO fix this shit
+		catch(Exception e){}
 		tick();		
 	}
 	
@@ -290,15 +325,26 @@ public class Player implements Drawable,Observer{
 					Main.worldMap.cells[i][j].mask=true;
 				Main.worldMap.cells[i][j].visible=false;
 			}
+		
+
+		int visionRangePix=500;
+		int visionRangePixSqr=visionRangePix*visionRangePix;
+		int visionRangeCells=(visionRangePix/CELL_SIZE)+2;
 		for(Entity e:units)
 		{
-			for(int i=0;i<GRID_SIZE;i++)
-				for(int j=0;j<GRID_SIZE;j++)
+			Vector2f ePos = e.getPosition();
+			MapCell cell = Main.worldMap.getCellAtPos(ePos);
+			
+			for(int i=cell.x-visionRangeCells;i<cell.x+visionRangeCells;i++)
+				for(int j=cell.y-visionRangeCells;j<cell.y+visionRangeCells;j++)
 				{
-					if(CommonFunctions.getDist(Main.worldMap.cells[i][j].getPosition(), e.getPosition())<500)
+					if(i>=0&&j>=0&&i<GRID_SIZE&&j<GRID_SIZE)
 					{
-						Main.worldMap.cells[i][j].visible=true;
-						Main.worldMap.cells[i][j].mask=false;
+						if(!Main.worldMap.cells[i][j].visible&&CommonFunctions.getDistSqr(Main.worldMap.cells[i][j].getPosition(), e.getPosition())<visionRangePixSqr)
+						{
+							Main.worldMap.cells[i][j].visible=true;
+							Main.worldMap.cells[i][j].mask=false;
+						}
 					}
 				}
 		}

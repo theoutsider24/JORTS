@@ -15,19 +15,22 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.Mouse;
 
+import FYP.GameWindow;
 import FYP.Main;
 import FYP.Player;
 import common.CommonFunctions;
-import units.Entity;
+import gameElements.units.Entity;
 
 public class Minimap extends RectangleShape{
+	GameWindow window;
 	Image image;
 	Texture texture;
 	float sizeFactor=4;
 	RectangleShape viewRect;
-	public Minimap()
-	{
+	public Minimap(GameWindow window)
+	{		
 		super();
+		this.window=window;
 		viewRect=new RectangleShape();
 		viewRect.setFillColor(Color.TRANSPARENT);
 		viewRect.setOutlineThickness(1);
@@ -81,17 +84,21 @@ public class Minimap extends RectangleShape{
 				try{image.setPixel((int)(e.getPosition().x/(CELL_SIZE/sizeFactor)),(int) (e.getPosition().y/(CELL_SIZE/sizeFactor)), e.getFillColor());}
 				catch(PixelOutOfBoundsException ex){continue;}
 			}*/
-		Vector2f size = Main.gameView.getSize();
-		//Vector2f newSize = new Vector2f(size.x*(sizeFactor/CELL_SIZE),size.y*(sizeFactor/CELL_SIZE));
-		Vector2f newSize = new Vector2f(size.x*(.02f),size.y*(.02f));
+		Vector2f size = window.gameView.getSize();
+		Vector2f newSize = new Vector2f(size.x*(sizeFactor/CELL_SIZE),size.y*(sizeFactor/CELL_SIZE));
+		//Vector2f newSize = new Vector2f(size.x*(.02f),size.y*(.02f));
 		viewRect.setSize(newSize);
 		
-		Vector2f center = Main.gameView.getCenter();
+		Vector2f center = window.gameView.getCenter();
 		center = Vector2f.add(center,Vector2f.div(size,-2));
 		
-		Vector2f newCenter = new Vector2f(center.x*(sizeFactor/CELL_SIZE),center.y*(sizeFactor/CELL_SIZE));
+		Vector2f newCenter = Vector2f.mul(center, (sizeFactor/CELL_SIZE));
+		
+		//Vector2f newCenter = new Vector2f(center.x*(sizeFactor/CELL_SIZE),center.y*(sizeFactor/CELL_SIZE));
 		newCenter = Vector2f.add(newCenter,getPosition());
-		//new Center = Vector2f.add(newCenter, )
+		
+		newCenter = Vector2f.sub(newCenter, Vector2f.div(newSize, 2));
+		
 		viewRect.setPosition(newCenter.x+(viewRect.getSize().x/2),newCenter.y+(viewRect.getSize().y/2));
 	//	System.out.println(newCenter.toString());
 		
@@ -99,9 +106,9 @@ public class Minimap extends RectangleShape{
 		catch (TextureCreationException e) {e.printStackTrace();}
 		setTexture(texture);
 		
-		Vector2i mousePos = Mouse.getPosition(Main.window);
+		Vector2i mousePos = Mouse.getPosition(window);
 		Vector2f floatPos = new Vector2f(mousePos.x,mousePos.y);
-		if(Mouse.isButtonPressed(Mouse.Button.LEFT)&&Main.gui.cursor.state.contains("minimap"))
+		if(Mouse.isButtonPressed(Mouse.Button.LEFT)&&window.gui.cursor.state.contains("minimap"))
 		{
 			moveCamera(floatPos);
 		}
@@ -110,7 +117,7 @@ public class Minimap extends RectangleShape{
 	{
 		Vector2f loc = Vector2f.sub(uiClickLoc,getPosition());
 		Vector2f mapPos = new Vector2f(loc.x/(sizeFactor/CELL_SIZE),loc.y/(sizeFactor/CELL_SIZE));
-		Main.gameView.setCenter(mapPos);
+		window.gameView.setCenter(mapPos);
 		//System.out.println(mapPos.toString());
 	}
 	public Vector2f getWorldCoords(Vector2f v)

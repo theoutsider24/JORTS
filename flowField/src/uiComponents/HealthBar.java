@@ -4,7 +4,7 @@ import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RectangleShape;
 import org.jsfml.system.Vector2f;
 
-import units.Entity;
+import gameElements.units.Entity;
 
 public class HealthBar extends RectangleShape{
 	int maxHealth;

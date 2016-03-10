@@ -6,13 +6,16 @@ import org.jsfml.graphics.Color;
 import org.jsfml.system.Clock;
 import org.jsfml.system.Vector2f;
 
+import FYP.GameWindow;
 import FYP.Main;
 import FYP.Player;
 
 public class PlayerLabel extends UpdatableTextField {
-	public PlayerLabel(Player p)
+	GameWindow window;
+	public PlayerLabel(Player p,GameWindow window)
 	{
 		super();
+		this.window=window;
 		player=p;
 		
 		setPosition(RESOLUTION_X-100,RESOLUTION_Y-LOWER_GUI_HEIGHT-50);
@@ -28,7 +31,7 @@ public class PlayerLabel extends UpdatableTextField {
 	Player player;
 	@Override
 	public void update() {
-		if(player==Main.activePlayer)
+		if(player==window.activePlayer)
 		{
 			setFillColor(new Color(255,255,255,130));
 		}
