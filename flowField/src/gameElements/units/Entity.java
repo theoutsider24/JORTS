@@ -370,6 +370,9 @@ public abstract class Entity extends CircleShape{
 	public void setControlGroup(int group)
 	{
 		controlGroup=group;
-		controlGroupText.setString(""+controlGroup);
+		if(group==-1)
+			controlGroupText.setString("");
+		else
+			controlGroupText.setString(""+controlGroup);
 	}
 }

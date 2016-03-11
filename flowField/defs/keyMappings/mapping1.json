@@ -12,7 +12,10 @@
 		{"key":"F2", "command":"setPlayer 1"}
 		{"key":"F3", "command":"setPlayer 2"}
 		{"key":"I", "command":"addUnit infantry 20"}
+		
+		
 		{"key":"C", "command":"addUnit cavalry 20"}
+		{"key":"C", "command":"addUnit infantry 20","modifier":"LCONTROL"}
 		{"key":"B", "command":"addBuilding barracks"}
 		
 		{"key":"NUM0", "command":"selectControlGroup 0"}
@@ -25,6 +28,18 @@
 		{"key":"NUM7", "command":"selectControlGroup 7"}
 		{"key":"NUM8", "command":"selectControlGroup 8"}
 		{"key":"NUM9", "command":"selectControlGroup 9"}
+		
+		
+		{"key":"NUM0", "command":"assignControlGroup 0", "modifier":"LCONTROL"}
+		{"key":"NUM1", "command":"assignControlGroup 1", "modifier":"LCONTROL"}
+		{"key":"NUM2", "command":"assignControlGroup 2", "modifier":"LCONTROL"}
+		{"key":"NUM3", "command":"assignControlGroup 3", "modifier":"LCONTROL"}
+		{"key":"NUM4", "command":"assignControlGroup 4", "modifier":"LCONTROL"}
+		{"key":"NUM5", "command":"assignControlGroup 5", "modifier":"LCONTROL"}
+		{"key":"NUM6", "command":"assignControlGroup 6", "modifier":"LCONTROL"}
+		{"key":"NUM7", "command":"assignControlGroup 7", "modifier":"LCONTROL"}
+		{"key":"NUM8", "command":"assignControlGroup 8", "modifier":"LCONTROL"}
+		{"key":"NUM9", "command":"assignControlGroup 9", "modifier":"LCONTROL"}
 		
 		{"key":"O", "command":"openCell"}
 		{"key":"S", "command":"saveMap"}

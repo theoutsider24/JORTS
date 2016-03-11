@@ -54,7 +54,9 @@ public class JsonReader {
 			{
 				String key = (String)((JSONObject)s).get("key");
 				String cmd = (String)((JSONObject)s).get("command");
-				KeyboardManager.loadMapping(key, cmd);
+				String mod = (String)((JSONObject)s).get("modifier");
+				
+				KeyboardManager.loadMapping(key, cmd,mod);
 				//System.out.println(key+","+cmd);
 			}
 		}

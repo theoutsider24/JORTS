@@ -138,12 +138,13 @@ public class Player implements Drawable,Observer{
 	}
 	public void assignControlGroup(int ctrlGrp)
 	{
-		for(Entity e:selectedUnits)
+		for(Entity e:units)
 		{
 			if(e.getControlGroup()==ctrlGrp)
 				e.setControlGroup(-1);
-			e.setControlGroup(ctrlGrp);
 		}
+		for(Entity e:selectedUnits)
+			e.setControlGroup(ctrlGrp);
 	}
 	public void selectControlGroup(int ctrlGrp)
 	{
@@ -279,11 +280,32 @@ public class Player implements Drawable,Observer{
 		{
 
 			MoveOrder m = new MoveOrder();
-			m.init(loc);
+			
+			float minX,maxX,minY,maxY;
+			minX=loc.x;
+			maxX=loc.x;
+			
+			minY=loc.y;
+			maxY=loc.y;
+			
+			for(Building b:selectedBuildings)
+			{
+				if(b.getPosition().x>maxX)
+					maxX=b.getPosition().x;
+				if(b.getPosition().x<minX)
+					minX=b.getPosition().x;
+				
+				if(b.getPosition().y>maxY)
+					maxY=b.getPosition().y;
+				if(b.getPosition().y<minY)
+					minY=b.getPosition().y;
+			}
+			m.init(loc,1,minX,maxX,minY,maxY);
 			for(Building b:selectedBuildings)
 			{
 				b.setRallyPoint(m);
 			}
+			currentField=m.flowField;
 		}
 	}
 	public void issueAttackBuildingOrder(Building b)

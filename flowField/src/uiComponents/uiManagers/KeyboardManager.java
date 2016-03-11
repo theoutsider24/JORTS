@@ -16,16 +16,20 @@ import org.jsfml.window.event.KeyEvent;
 import FYP.GameWindow;
 import FYP.Main;
 import uiComponents.CommandLineInterface.CommandRunner;
+import uiComponents.CommandLineInterface.ModifiedCommandRunner;
+
 
 public class KeyboardManager {
 	public static ArrayList<Keyboard.Key> numKeys;
 	GameWindow window;
 	public HashMap<Keyboard.Key,Runnable> keyMappings;
+	public HashMap<Keyboard.Key,Runnable> modifiedKeyMappings;
 	public static ArrayList<String[]> loadedMappings=new ArrayList<String[]>();;
 	public KeyboardManager(GameWindow window)
 	{
 		this.window=window;
 		keyMappings=new HashMap<Keyboard.Key,Runnable>();
+		modifiedKeyMappings=new HashMap<Keyboard.Key,Runnable>();
 		numKeys = new ArrayList<Keyboard.Key>();
 		numKeys.add(Keyboard.Key.NUM0);
 		numKeys.add(Keyboard.Key.NUM1);
@@ -39,24 +43,34 @@ public class KeyboardManager {
 		numKeys.add(Keyboard.Key.NUM9);
 		mapKeys();
 	}
-	public static void loadMapping(String key,String cmd)
+	public static void loadMapping(String key,String cmd,String mod)
 	{
-		loadedMappings.add(new String[]{key,cmd});
+		loadedMappings.add(new String[]{key,cmd,mod});
 	}
 	public void addLoadedMappings()
 	{
 		for(String[] s:loadedMappings)
 		{
-			mapKeyCommand(s[0],s[1]);
+			mapKeyCommand(s[0],s[1],s[2]);
 		}
+	}
+	public void mapKeyCommand(Keyboard.Key key,String cmd,Key mod)
+	{
+		modifiedKeyMappings.put(key, new ModifiedCommandRunner(window,cmd,mod));		
 	}
 	public void mapKeyCommand(Keyboard.Key key,String cmd)
 	{
-		keyMappings.put(key, new CommandRunner(window,cmd));
+		keyMappings.put(key, new CommandRunner(window,cmd));				
 	}
-	public void mapKeyCommand(String key,String cmd)
+	
+	public void mapKeyCommand(String key,String cmd,String mod)
 	{
-		mapKeyCommand(Keyboard.Key.valueOf(key),cmd);
+		
+		try{Key modKey = Keyboard.Key.valueOf(mod);
+		mapKeyCommand(Keyboard.Key.valueOf(key),cmd,modKey);}
+		catch(Exception ex){
+			mapKeyCommand(Keyboard.Key.valueOf(key),cmd);
+			}
 	}
 	private void mapKeys()
 	{
@@ -125,61 +139,21 @@ public class KeyboardManager {
 		else if (event.type == Event.Type.KEY_PRESSED)
 		{
 			KeyEvent e = event.asKeyEvent();
-			if(keyMappings.containsKey(e.key))
+			boolean succesful=false;
+			if(modifiedKeyMappings.containsKey(e.key))
+			{
+				System.out.println("test");
+				ModifiedCommandRunner m = (ModifiedCommandRunner)modifiedKeyMappings.get(e.key);
+				m.run();
+				if(m.modifiersPressed())
+					succesful=true;
+				System.out.println(succesful);
+			}
+			if(!succesful&&keyMappings.containsKey(e.key))
+			{
+				System.out.println(keyMappings.get(e.key));
 				keyMappings.get(e.key).run();
-			/*switch(e.key)
-	    	{
-	    		case ESCAPE: window.close();
-	    			break;
-	    		case UP: window.moveCamera(0,-30); 
-	    			break;
-	    		case DOWN: window.moveCamera(0,30); 
-	    			break;
-	    		case LEFT: window.moveCamera(-30,0); 
-	    			break;
-	    		case RIGHT: window.moveCamera(30,0);
-					break;
-	    		case ADD: window.zoom(2); 
-	    			break;
-	    		case F1: window.changeActivePlayer(Main.players.get(0));
-	    			break;
-	    		case F2: window.changeActivePlayer(Main.players.get(1));
-	    			break;
-	    		case F3: window.changeActivePlayer(Main.players.get(2));
-	    			break;
-	    		case SUBTRACT: window.zoom(.5f); 
-	    			break;
-	    		case S: if(!Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-	    					Main.worldMap.saveToFile();//TODO breaks game
-						else
-							Main.worldMap.saveFile(DEFAUL_MAP);	
-	    				; 
-					break;
-	    		case L: Main.worldMap.loadFromFile(); 
-	    			break;
-	    		case RETURN: window.gui.console.open();
-				break;
-	    		case Z: if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-	    					Main.worldMap.undo();
-	    			break;
-	    		case N: if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-	    					Main.worldMap.openAll();
-					break;
-	    		case Y: if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-	    					Main.worldMap.redo();
-				break;
-	    		case PAUSE: PAUSED=!PAUSED;
-	    			break;
-	    		default: 
-	    			if(numKeys.contains(e.key))
-					{
-	    				if(Keyboard.isKeyPressed(Keyboard.Key.LCONTROL))
-	    					window.activePlayer.assignControlGroup(numKeys.indexOf(e.key));
-	    				else
-	    					window.activePlayer.selectControlGroup(numKeys.indexOf(e.key));
-					}
-					break;       
-	    	}*/
+			}
     	}
 	}
 }
