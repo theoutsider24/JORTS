@@ -8,6 +8,9 @@ import org.jsfml.graphics.Color;
 
 public class Constants {
 	public static boolean PAUSED=false;
+	public static boolean SHOW_FLOW=false;
+	
+	
 	public final static int CELL_SIZE=50;
 	public final static int GRID_SIZE=150;
 	
@@ -19,6 +22,7 @@ public class Constants {
 	public final static int RESOLUTION_Y=1000;
 	public final static boolean FULLSCREEN=false;
 	public final static int FRAME_CAP=144;
+	public final static float TARGET_DELTA_T=1000/FRAME_CAP;
 	
 	public final static String WINDOW_TITLE="JORTS";
 	
@@ -32,7 +36,7 @@ public class Constants {
 	public final static String DEFAUL_MAP=MAP_DIRECTORY+"//FYP1.mp";
 	
 	public final static boolean SHOW_HEALTH_BARS=false;
-	public final static boolean SHOW_VISION_MASK=true;
+	public final static boolean SHOW_VISION_MASK=false;
 	
 	public final static int COST_INCREASE_ON_CLICK=10;
 	public final static float ZOOM_VALUE=1.5f;

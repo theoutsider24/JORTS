@@ -389,12 +389,17 @@ public class Map extends Observable implements Drawable{
 	}
 	public void unhighlightAll()
 	{
+		boolean updateRequired=false;
 		for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
 			{
-				cells[i][j].unhighlight();
+				if(cells[i][j].highlighted)
+				{
+					cells[i][j].unhighlight();
+					updateRequired=true;
+				}
 			}
-		mapImage.updateImage();
+		if(updateRequired)mapImage.updateImage();
 	}
 	
 }

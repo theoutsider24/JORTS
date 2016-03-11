@@ -231,16 +231,34 @@ public abstract class Entity extends CircleShape{
 		
 		if (distance < e.influenceRange)
 		{
-			float repulsionAngle = CommonFunctions.getAngleBetweenVectors(this.getPosition(), e.getPosition());// atan2(this->getPosition().y - unit->getPosition().y, this->getPosition().x - unit->getPosition().x);
+			//float repulsionAngle = CommonFunctions.getAngleBetweenVectors(this.getPosition(), e.getPosition());// atan2(this->getPosition().y - unit->getPosition().y, this->getPosition().x - unit->getPosition().x);
 			
 			cosVal = (distance / e.influenceRange) * 90;
 
 			repulsionFactor = (float) Math.cos(cosVal* 3.14159265 / 180.0)*5;
 		/*	return Vector2f.mul(new Vector2f((float)(2* Math.cos(repulsionAngle)), (float)(2 * Math.sin(repulsionAngle))),
 							repulsionFactor);*/
-			Vector2f result = Vector2f.mul(new Vector2f((float)(2* Math.cos(repulsionAngle)), (float)(2 * Math.sin(repulsionAngle))),
+			/*Vector2f result = Vector2f.mul(new Vector2f((float)( Math.cos(repulsionAngle)), (float)( Math.sin(repulsionAngle))),
 					repulsionFactor);
-			result=Vector2f.div(result,unitRepulsionResistance);
+			Vector2f test1 =(new Vector2f((float)( Math.cos(repulsionAngle)), (float)( Math.sin(repulsionAngle))));
+			Vector2f test2 = CommonFunctions.normaliseVector(Vector2f.sub(getPosition(),e.getPosition()));
+			if(CommonFunctions.getLength(test2)==0)
+			{
+				test2 = Vector2f.add(test2, new Vector2f(1,0));
+			}
+			Vector2f test3 = Vector2f.sub(test1, test2);*/
+			
+			
+			Vector2f tempVect = CommonFunctions.normaliseVector(Vector2f.sub(getPosition(),e.getPosition()));
+			if(CommonFunctions.getLength(tempVect)==0)
+			{
+				tempVect = Vector2f.add(tempVect, new Vector2f(1,0));
+			}
+			
+			tempVect=Vector2f.mul(tempVect, repulsionFactor*2);
+			
+			Vector2f result=Vector2f.div(tempVect,unitRepulsionResistance);
+			//result=Vector2f.div(result,unitRepulsionResistance);
 			return result;
 		}
 		return new Vector2f(0,0);
@@ -320,8 +338,8 @@ public abstract class Entity extends CircleShape{
 	public void moveAndRegisterAbsolute(Vector2f v)
 	{
 		//System.out.println(Main.game.deltaT);
-			//this.move(Vector2f.mul(v,(Main.game.deltaT/7)));
-			this.move(v);
+			this.move(Vector2f.mul(v,(((float)Main.game.deltaT)/TARGET_DELTA_T)));
+		//	this.move(v);
 		//System.out.println(v.toString());
 		enforceBounds();
 		reregister();

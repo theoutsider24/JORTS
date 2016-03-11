@@ -14,6 +14,7 @@ import org.jsfml.graphics.Vertex;
 import org.jsfml.graphics.VertexArray;
 import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
+import org.jsfml.window.ContextActivationException;
 import org.jsfml.window.Mouse;
 
 import FYP.GameWindow;
@@ -149,7 +150,9 @@ public class Cursor extends VertexArray{
 	{
 		Vector2i pos = Mouse.getPosition(window);
 		if(pos.x>0&&pos.x<RESOLUTION_X && pos.y>0&&pos.y<RESOLUTION_Y)
+		{
 			setPosition(pos);
+		}
 		if(attachedUnit!=null)
 			attachedUnit.setPosition(window.mouse.clickLoc);
 		

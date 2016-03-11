@@ -17,6 +17,7 @@ import FYP.Main;
 import FYP.Player;
 import behaviour.abilities.Ability;
 import behaviour.abilities.CreateUnitAbility;
+import behaviour.orders.MoveOrder;
 import behaviour.orders.SurroundBuildingOrder;
 import behaviour.timedBehaviours.TimedBehaviour;
 import gameElements.map.MapCell;
@@ -28,7 +29,7 @@ public abstract class Building extends RectangleShape {
 	public ArrayList<int[]> offsets = new ArrayList<int[]>(); 
 	public boolean placed=false;
 	public boolean valid=true;
-	
+	public MoveOrder rallyOrder;
 	public int[] origin=new int[2];
 	public int maxQueueSize=6;
 	public ArrayList<MapCell> occupiedCells = new ArrayList<MapCell>();
@@ -60,6 +61,10 @@ public abstract class Building extends RectangleShape {
 		
 		//surroundOrder= new SurroundBuildingOrder();
 	}
+	public void setRallyPoint(MoveOrder rp)
+	{
+		rallyOrder=rp;
+	}
 	public void cancelProduction(int i)
 	{
 		try{
@@ -90,6 +95,7 @@ public abstract class Building extends RectangleShape {
 						Entity e=UnitFactory.buildEntity(type,spawnLoc.x,spawnLoc.y,player);
 						if(e!=null)
 							player.addUnit(e);
+						if(rallyOrder!=null)rallyOrder.issue(e);
 				}}
 			);
 		}

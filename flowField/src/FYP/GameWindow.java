@@ -24,7 +24,6 @@ import uiComponents.uiManagers.MouseManager;
 
 public class GameWindow extends RenderWindow{
 	public boolean editMapMode=false;
-	public boolean showFlow=false;
 	public View gameView;
 	public View uiView;
 	public MouseManager mouse;
@@ -62,7 +61,7 @@ public class GameWindow extends RenderWindow{
 		setView(gameView);
 		 if(SHOW_VISION_MASK)Main.worldMap.refreshVisionMask();
 	   draw(Main.worldMap);
-	   if(showFlow)
+	   if(SHOW_FLOW)
 		   draw(activePlayer.currentField);
 	   for(Player p:Main.players)
 		   draw(p);
@@ -164,7 +163,7 @@ public class GameWindow extends RenderWindow{
 		Commands.registerCommand("toggle_show_flow",new CommandInterface(){
 			@Override
 			public void run(String[] args) {
-				showFlow=!showFlow;
+				SHOW_FLOW=!SHOW_FLOW;
 		}});
 		Commands.registerCommand("place_unit",new CommandInterface(){
 			@Override
@@ -187,7 +186,13 @@ public class GameWindow extends RenderWindow{
 						gui.console.runCommand("place_unit "+args[0]);
 						gui.cursor.placeAttachedUnit();
 					}
-					else if(args.length>=3)
+					else if(args.length==2)
+					{
+						int repititions = Integer.parseInt(args[1]);
+						for(int i=0;i<repititions;i++)
+							gui.console.runCommand("addUnit "+args[0]);
+					}
+					else if(args.length==3)
 					{
 						String type=args[0];
 						int x=Integer.parseInt(args[1]);

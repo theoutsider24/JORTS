@@ -21,13 +21,15 @@ public class MapCell extends RectangleShape{
 	Color highlightColor=new Color(0,0,0);
 	public boolean visible=false;
 	public boolean mask=false;
-	
+	public boolean highlighted=false;
 	public void highlight(Color c)
 	{
+		highlighted=true;
 		highlightColor=c;
 	}
 	public void unhighlight()
 	{
+		highlighted=false;
 		highlightColor=new Color(0,0,0);
 	}	
 	

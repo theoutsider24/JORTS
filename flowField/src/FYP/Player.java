@@ -12,6 +12,7 @@ import org.jsfml.graphics.RectangleShape;
 import org.jsfml.graphics.RenderStates;
 import org.jsfml.graphics.RenderTarget;
 import org.jsfml.system.Vector2f;
+import org.jsfml.system.Vector2i;
 
 import behaviour.flowField.Field;
 import behaviour.flowField.InfluenceMap;
@@ -247,7 +248,7 @@ public class Player implements Drawable,Observer{
 			}
 			
 			MoveOrder m = new MoveOrder();
-			m.init(loc, selectedUnits.size()/2,minX,maxX,minY,maxY);
+			m.init(loc,(int) (selectedUnits.size()*((70f/(float)CELL_SIZE)*(70f/(float)CELL_SIZE))),minX,maxX,minY,maxY);//TODO adapt area to unit size
 			
 			for(Entity e:selectedUnits)
 			{
@@ -272,6 +273,19 @@ public class Player implements Drawable,Observer{
 			currentField=m.flowField;
 		}
 	}
+	public void issueRallyPointOrder(Vector2f loc)
+	{
+		if(selectedBuildings.size()>0)
+		{
+
+			MoveOrder m = new MoveOrder();
+			m.init(loc);
+			for(Building b:selectedBuildings)
+			{
+				b.setRallyPoint(m);
+			}
+		}
+	}
 	public void issueAttackBuildingOrder(Building b)
 	{
 		if(selectedUnits.size()>0)
@@ -287,10 +301,18 @@ public class Player implements Drawable,Observer{
 	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {
+		//int i=0;
 		for(Entity e:units)
 		{
-			arg0.draw(e);
+			Vector2i pixelPos =arg0.mapCoordsToPixel(e.getPosition());
+			if(pixelPos.x>0&&pixelPos.y>0&&pixelPos.x<RESOLUTION_X&&pixelPos.y<RESOLUTION_Y)
+			{
+				arg0.draw(e);
+				//i++;
+			}
 		}
+
+		//System.out.println(i);
 		for(Building b:buildings)
 		{
 			arg0.draw(b);

@@ -11,8 +11,8 @@
 		{"key":"F1", "command":"setPlayer 0"}
 		{"key":"F2", "command":"setPlayer 1"}
 		{"key":"F3", "command":"setPlayer 2"}
-		{"key":"I", "command":"addUnit infantry"}
-		{"key":"C", "command":"addUnit cavalry"}
+		{"key":"I", "command":"addUnit infantry 20"}
+		{"key":"C", "command":"addUnit cavalry 20"}
 		{"key":"B", "command":"addBuilding barracks"}
 		
 		{"key":"NUM0", "command":"selectControlGroup 0"}

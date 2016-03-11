@@ -238,39 +238,38 @@ public class MouseManager {
 	public void rightButtonDown()
 	{
 		boolean clickOnButton=false;
-		/*or(uiButton b:gui.buttons)
-			if(b.getGlobalBounds().contains(uiClickLoc))
-			{
-				clickOnButton=true;
-			}*/
-
 		if(window.gui.cursor.state.contains("minimap"))
 		{
-			//minimap.moveCamera(uiClickLoc);
 			window.activePlayer.issueMoveCommand(window.gui.minimap.getWorldCoords(uiClickLoc));
 			clickOnButton=true;
 		}
 		if(!clickOnButton&&!window.gui.cursor.state.contains("gui"))
 		{
-			if(window.gui.cursor.state.contains("enemy")&&window.gui.cursor.state.contains("unit"))
+			if(window.activePlayer.getSelectedUnits().size()>0)
 			{
-				String id= window.gui.cursor.state.substring(window.gui.cursor.state.lastIndexOf("enemy_")+6);
-				window.activePlayer.issueFollowCommand(Entity.allEntities.get(id));
+				if(window.gui.cursor.state.contains("enemy")&&window.gui.cursor.state.contains("unit"))
+				{
+					String id= window.gui.cursor.state.substring(window.gui.cursor.state.lastIndexOf("enemy_")+6);
+					window.activePlayer.issueFollowCommand(Entity.allEntities.get(id));
+				}
+				else if(window.gui.cursor.state.contains("enemy")&&window.gui.cursor.state.contains("building"))
+				{
+					String id= window.gui.cursor.state.substring(window.gui.cursor.state.lastIndexOf("enemy_")+6);
+					window.activePlayer.issueAttackBuildingOrder(Building.allBuildings.get(id));
+				}
+				else if(window.gui.cursor.state.contains("MOVE"))
+				{
+					Thread t=new Thread(new Runnable(){
+						@Override
+						public void run() {
+							window.activePlayer.issueMoveCommand(clickLoc);
+						}},"Move_Command_Thread");
+					t.start();
+				}
 			}
-			else if(/*window.gui.cursor.state.contains("enemy")&&*/window.gui.cursor.state.contains("building"))
+			else if(window.activePlayer.getSelectedBuildings().size()>0)
 			{
-				//String id= window.gui.cursor.state.substring(window.gui.cursor.state.lastIndexOf("enemy_")+6);
-				String id= window.gui.cursor.state.substring(window.gui.cursor.state.lastIndexOf("building"));
-				window.activePlayer.issueAttackBuildingOrder(Building.allBuildings.get(id));
-			}
-			else
-			{
-				Thread t=new Thread(new Runnable(){
-					@Override
-					public void run() {
-						window.activePlayer.issueMoveCommand(clickLoc);
-					}},"Move_Command_Thread");
-				t.start();
+				window.activePlayer.issueRallyPointOrder(clickLoc);
 			}
 		}
 	}
@@ -288,6 +287,7 @@ public class MouseManager {
 		window.setView(window.uiView);				
 		//uiClickLoc =window.mapPixelToCoords(event.asMouseButtonEvent().position);
 		uiClickLoc =window.mapPixelToCoords(window.gui.cursor.getPosition());//Mouse.getPosition(window));
+		
 	}
 	public void mouseWheelRolled(int delta)
 	{
