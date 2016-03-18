@@ -63,7 +63,7 @@ public class MouseManager {
 			mouseWheelRolled(event.asMouseWheelEvent().delta);
 		}
 	}
-	public void determineHoverIntent()
+	public void determineHoverIntent()	
 	{
 
 		MapCell cell = Main.worldMap.getCellAtPos(clickLoc);
@@ -86,17 +86,6 @@ public class MouseManager {
 			window.gui.cursor.state= "buildingAttached_"+window.gui.cursor.getAttachedBuildingId();
 			return;
 		}
-		/*if(Main.activePlayer.selectionInProgress)
-		{
-			for(Entity e:Main.activePlayer.getUnits())
-			{
-				FloatRect rect=window.gui.selectionRect.realRect.getGlobalBounds();
-				if(rect.contains(e.getPosition().x, e.getPosition().y))
-					e.hover();
-				else if(CommonFunctions.getDist(rect, e.getPosition())<e.getRadius())				
-					e.hover();					
-			}
-		}*/
 		for(Entity e:cell.getEntities())
 		{
 			if(CommonFunctions.contains(e,clickLoc))
@@ -145,7 +134,8 @@ public class MouseManager {
 			window.gui.cursor.setColor(new Color(180,180,180));
 			window.gui.cursor.state="BLOCKED_CELL";
 		}
-	}public void leftButtonDown()
+	}
+	public void leftButtonDown()	
 	{	
 		window.gui.cursor.startState=window.gui.cursor.state;
 		if(clickTimer.getElapsedTime().asMilliseconds()<CLICK_INTERVAL)
@@ -280,13 +270,12 @@ public class MouseManager {
 	}
 	public void setMouseLocs()
 	{
-		window.gui.cursor.update();
-		window.setView(window.gameView);				
+		window.gui.cursor.update();				
 		//clickLoc =window.mapPixelToCoords(event.asMouseButtonEvent().position);
-		clickLoc =window.mapPixelToCoords(window.gui.cursor.getPosition());//Mouse.getPosition(window));
-		window.setView(window.uiView);				
+		clickLoc =window.gui.cursor.getGamePosition();//Mouse.getPosition(window));
+					
 		//uiClickLoc =window.mapPixelToCoords(event.asMouseButtonEvent().position);
-		uiClickLoc =window.mapPixelToCoords(window.gui.cursor.getPosition());//Mouse.getPosition(window));
+		uiClickLoc =window.gui.cursor.getUIPosition();//Mouse.getPosition(window));
 		
 	}
 	public void mouseWheelRolled(int delta)
@@ -298,7 +287,7 @@ public class MouseManager {
 	}
 	public void limitMouse()
 	{
-		Vector2i pos =  window.gui.cursor.getPosition();
+		Vector2f pos = window.gui.cursor.getUIPosition();
 		if(pos.x-BORDER_DRAG_TOLERANCE<=0) window.moveCamera(-15,0);
 		else if(pos.x+BORDER_DRAG_TOLERANCE>=RESOLUTION_X) window.moveCamera(15,0);
 		

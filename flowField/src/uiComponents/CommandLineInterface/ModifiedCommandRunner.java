@@ -24,7 +24,7 @@ public class ModifiedCommandRunner extends CommandRunner{
 			return true;
 		for(Key k:requiredKeys)
 		{
-			System.out.println(k.toString());
+			//System.out.println(k.toString());
 			if(!Keyboard.isKeyPressed(k))
 			{
 				return false;

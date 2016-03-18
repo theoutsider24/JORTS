@@ -181,13 +181,17 @@ public class FlowCell {
 		
 		integrationText = new Text(this.toString(),Main.font);
 		integrationText.setCharacterSize(20);
-		integrationText.setColor(Color.RED);
+		if(los)integrationText.setColor(Color.BLUE);
+		else integrationText.setColor(Color.RED);
 		integrationText.setPosition(this.getPosition());
 	}
 	public String toString()
 	{
-		cost=mpCl.cost;
-		String result=((int)integration)+"\n";
+		//cost=mpCl.cost;
+		//String result=((int)integration)+"\n";
+		//String result=((int)cost)+"\n";
+		String result=neighbours.size()+"\n";
+		
 		//result += flow.x+",\n"+flow.y;
 		//String result=cost+"";
 		//String result=((int)integration)+"";

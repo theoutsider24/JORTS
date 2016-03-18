@@ -1,5 +1,6 @@
 {
-    "UnitType": "goliath",
+	"Damage":50,
+    "UnitType": "Goliath",
     "Speed": 2,
     "Health": 500,
     "Radius": 60

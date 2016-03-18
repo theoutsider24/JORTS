@@ -26,7 +26,7 @@ public class PlayerLabel extends UpdatableTextField {
 		text.setCharacterSize(15);
 		//text.move(new Vector2f(3,0));
 		text.setOrigin(-3,0);
-		text.setString(p.id);
+		text.setString(p.name);
 	}
 	Player player;
 	@Override

@@ -1,13 +1,25 @@
 {
-    "UnitType": "barracks",
+    "UnitType": "Barracks",
     "Health": 200,
     "Size": 4,
     "Production":
 	[
-		{"Name": "infantry","Time":2000},
-		{"Name": "cavalry","Time":2000},
-		{"Name": "siege_unit","Time":2000},
-		{"Name": "goliath","Time":2000},
-		{"Name": "zaria","Time":2000}
-	]
+		{
+			"unitType": "Infantry",
+			"time":2000
+			"resources":
+			[
+				{"resource":"wood","amount":200}
+			]
+		},
+		{
+			"unitType": "Siege_Unit",
+			"time":10000
+			"resources":
+			[
+				{"resource":"wood","amount":1000}
+			]
+		}
+	],	
+	"Icon": "barracks.png"
 }

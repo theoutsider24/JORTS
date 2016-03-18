@@ -8,15 +8,24 @@
 		{"key":"RIGHT", "command":"move_camera 30 0"}
 		{"key":"ADD", "command":"zoom_in 2"}
 		{"key":"SUBTRACT", "command":"zoom_out 2"}
+		{"key":"DELETE", "command":"kill"}
+		
 		{"key":"F1", "command":"setPlayer 0"}
 		{"key":"F2", "command":"setPlayer 1"}
 		{"key":"F3", "command":"setPlayer 2"}
-		{"key":"I", "command":"addUnit infantry 20"}
+		{"key":"F4", "command":"setPlayer 3"}
+		{"key":"F5", "command":"setPlayer 4"}
+		{"key":"F6", "command":"setPlayer 5"}
+		{"key":"F7", "command":"setPlayer 6"}
+		{"key":"F8", "command":"setPlayer 7"}
+		{"key":"F9", "command":"setPlayer 8"}
 		
+		{"key":"I", "command":"addUnit infantry"}		
+		{"key":"I", "command":"addUnit infantry 20","modifier":"LCONTROL"}
+		{"key":"C", "command":"addUnit cavalry"}
+		{"key":"C", "command":"addUnit cavalry 20","modifier":"LCONTROL"}
 		
-		{"key":"C", "command":"addUnit cavalry 20"}
-		{"key":"C", "command":"addUnit infantry 20","modifier":"LCONTROL"}
-		{"key":"B", "command":"addBuilding barracks"}
+		{"key":"B", "command":"addBuilding Barracks"}
 		
 		{"key":"NUM0", "command":"selectControlGroup 0"}
 		{"key":"NUM1", "command":"selectControlGroup 1"}
@@ -28,7 +37,6 @@
 		{"key":"NUM7", "command":"selectControlGroup 7"}
 		{"key":"NUM8", "command":"selectControlGroup 8"}
 		{"key":"NUM9", "command":"selectControlGroup 9"}
-		
 		
 		{"key":"NUM0", "command":"assignControlGroup 0", "modifier":"LCONTROL"}
 		{"key":"NUM1", "command":"assignControlGroup 1", "modifier":"LCONTROL"}

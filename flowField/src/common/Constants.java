@@ -35,7 +35,7 @@ public class Constants {
 	public final static boolean MINIMAP_ON=false;
 	public final static String DEFAUL_MAP=MAP_DIRECTORY+"//FYP1.mp";
 	
-	public final static boolean SHOW_HEALTH_BARS=false;
+	public final static boolean SHOW_HEALTH_BARS=true;
 	public final static boolean SHOW_VISION_MASK=false;
 	
 	public final static int COST_INCREASE_ON_CLICK=10;
@@ -48,7 +48,7 @@ public class Constants {
 	
 	public final static boolean MAP[][] = new boolean[GRID_SIZE][GRID_SIZE];
 	
-	public final static Color GROUND_COLOR = Color.GREEN;
+	public final static Color GROUND_COLOR = new Color(0,200,0);
 	public final static Color OBSTACLE_COLOR = new Color(50,50,50);
 	public final static int CLICK_INTERVAL = (Integer)Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
 

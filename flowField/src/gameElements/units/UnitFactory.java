@@ -1,6 +1,7 @@
 package gameElements.units;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
 import org.jsfml.graphics.IntRect;
 import org.jsfml.system.Vector2f;
@@ -10,7 +11,7 @@ import behaviour.abilities.BuildBuildingAbility;
 import behaviour.abilities.CreateUnitAbility;
 
 public class UnitFactory {
-	static HashMap<String,UnitDefinition> prototypes = new HashMap<String,UnitDefinition>();
+	public static TreeMap<String,UnitDefinition> prototypes = new TreeMap<String,UnitDefinition>(String.CASE_INSENSITIVE_ORDER);
 	public static Entity buildEntity(String type, Vector2f v,Player p)
 	{
 		return buildEntity(type,(int)v.x,(int)v.y,p);
@@ -24,7 +25,7 @@ public class UnitFactory {
 			Entity e= new Entity(x,y){};
 			
 			e.setUnitType(def.unitType);
-			
+			e.damage=def.damage;
 			e.maxSpeed=def.maxSpeed;
 			e.setMaxHealth(def.maxHealth);
 			e.setRadius(def.radius);

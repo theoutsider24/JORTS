@@ -1,16 +1,8 @@
 {
-    "UnitType": "cavalry",
+	"Damage":8,
+    "UnitType": "Cavalry",
     "Speed": 3,
     "Health": 50,
     "Radius": 25,
-    "Company List": [
-        "Compnay: eBay",
-        "Compnay: Paypal",
-        "Compnay: Google"
-    ],
-    "ability":
-	{
-		"Name": "q"
-	},
 	"Icon": "cavalry.png"
 }

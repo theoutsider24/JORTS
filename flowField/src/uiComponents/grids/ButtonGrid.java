@@ -11,6 +11,7 @@ import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 
 import FYP.Main;
+import uiComponents.GUI;
 import uiComponents.buttons.uiButton;
 
 public abstract class ButtonGrid extends RectangleShape implements Drawable{
@@ -18,8 +19,10 @@ public abstract class ButtonGrid extends RectangleShape implements Drawable{
 	int x,y;
 	int spacing=3;
 	Vector2i buttonSize;
-	public ButtonGrid(int x,int y,Vector2f pos,Vector2i size) {
+	GUI gui;
+	public ButtonGrid(int x,int y,Vector2f pos,Vector2i size,GUI gui) {
 		super();
+		this.gui=gui;
 		setFillColor(Color.TRANSPARENT);
 		setOutlineColor(Color.WHITE);
 		setOutlineThickness(1);
@@ -36,6 +39,7 @@ public abstract class ButtonGrid extends RectangleShape implements Drawable{
 		//Main.gui.buttons.add(b);
 		buttons[x][y]=b;
 		buttons[x][y].setPosition(spacing+getPosition().x+(x*(buttonSize.x+spacing)),spacing+getPosition().y+(y*(buttonSize.y+spacing)));
+		gui.rects.add(0,b);
 	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {
@@ -100,6 +104,7 @@ public abstract class ButtonGrid extends RectangleShape implements Drawable{
 			{
 				try{
 					uiButton.allButtons.remove(buttons[i][j].title);
+					gui.rects.remove(buttons[i][j]);
 					buttons[i][j]=null;
 				}catch(Exception e){}
 			}

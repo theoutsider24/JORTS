@@ -156,7 +156,7 @@ public class Map extends Observable implements Drawable{
 	}
 	public void closeCell(int x,int y)
 	{
-		if(cellExists(x,y))
+		if(cellExists(x,y)&&getCell(x,y).isTraversable())
 		{
 			getCell(x,y).close();
 		}
@@ -287,7 +287,7 @@ public class Map extends Observable implements Drawable{
 					cells[i][j].setCost(x);
 				}
 			}
-			for (int i = 0; i < GRID_SIZE; i++) 
+			/*for (int i = 0; i < GRID_SIZE; i++) 
 				for (int j = 0; j < GRID_SIZE; j++) 
 				{
 					if(!cells[i][j].isTraversable())
@@ -302,7 +302,7 @@ public class Map extends Observable implements Drawable{
 								}
 							}
 					}
-				}
+				}*/
 			refreshImage();	
 		}
 		catch(FileNotFoundException ex){}

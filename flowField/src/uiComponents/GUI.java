@@ -33,14 +33,15 @@ import uiComponents.grids.StandardButtonGrid;
 import uiComponents.textFields.FPSTimer;
 import uiComponents.textFields.GameClock;
 import uiComponents.textFields.PlayerLabel;
+import uiComponents.textFields.ResourceList;
 import uiComponents.textFields.UnitCapCounter;
 import uiComponents.textFields.UpdatableTextField;
 
 public class GUI implements Drawable{
 	View view;
-	GameWindow window;
+	public GameWindow window;
 	public Minimap minimap;
-	public ButtonGrid grid1,grid2,grid3;
+	public ButtonGrid controlGroupButtonGrid,actionButtonGrid;
 	//public ArrayList<uiButton> buttons;
 	public RectangleShape lowerBackground;
 	public RectangleShape topBackground;
@@ -56,10 +57,16 @@ public class GUI implements Drawable{
 	public UnitCapCounter unitCapCounter;
 	UpdatableTextField cursorState;
 	public BuildingStatusLayout buildingStatusLayout;
+	public UnitStatusLayout unitStatusLayout;
+	public ResourceList resourceList;
 	public ArrayList<RectangleShape> rects = new ArrayList<RectangleShape>();
 	public GUI(GameWindow window)
 	{
 		this.window=window;
+		init();
+	}
+	public void init()
+	{
 		drawables = new ArrayList<Drawable>();
 		this.view=window.uiView;
 		minimap=new Minimap(window);
@@ -77,14 +84,17 @@ public class GUI implements Drawable{
 		topBackground.setFillColor(new Color(50,50,50));
 		
 		buildingStatusLayout = new BuildingStatusLayout(this);
+		unitStatusLayout = new UnitStatusLayout(this);
 		
 		playerList=new PlayerList(window);
-		
+		exit = new ExitButton("",window);
 		console=new Console();
 		
 		clock = new GameClock();
 		fpsTimer = new FPSTimer();
+		
 		unitCapCounter = new UnitCapCounter(window);
+		resourceList=new ResourceList(window);
 		
 		selectionRect=new SelectionRect(window);
 		cursor=new Cursor(window);
@@ -98,17 +108,19 @@ public class GUI implements Drawable{
 		};
 		cursorState.setPosition(new Vector2f(10,RESOLUTION_Y-LOWER_GUI_HEIGHT-70));
 		
-		grid1 = new StandardButtonGrid(1, 7, new Vector2f(10,100));
-		grid2 = new ControlGroupButtonGrid(1, 9, new Vector2f(700, RESOLUTION_Y-LOWER_GUI_HEIGHT-40),window);
-		grid3= new ActionButtonGrid(0, 0, new Vector2f(20,RESOLUTION_Y-LOWER_GUI_HEIGHT+20),window);
-		initButtons();
+		//grid1 = new StandardButtonGrid(1, 7, new Vector2f(10,100),this);
+		controlGroupButtonGrid = new ControlGroupButtonGrid(1, 9, new Vector2f(RESOLUTION_X/2, RESOLUTION_Y-LOWER_GUI_HEIGHT-40),this);
+		actionButtonGrid= new ActionButtonGrid(0, 0, new Vector2f(20,RESOLUTION_Y-LOWER_GUI_HEIGHT+20),this);
+		
+		//controlGroupButtonGrid.setOutlineThickness(0);
+		//initButtons();
 		
 		pauseOverlay=new PauseOverlay();
 		
 		rects.add(minimap);
-		rects.add(grid1);
-		rects.add(grid2);
-		rects.add(grid3);
+		//rects.add(grid1);
+		rects.add(controlGroupButtonGrid);
+		rects.add(actionButtonGrid);
 
 		rects.add(buildingStatusLayout.currentSlot);
 		rects.add(buildingStatusLayout.slots);
@@ -131,8 +143,11 @@ public class GUI implements Drawable{
 				
 				if(result.contains("buttonGrid"))
 				{
+					result="";
 					try{result=((ButtonGrid)r).getButton(v).toString();}catch(Exception e){}
 				}
+				if(result.equals(""))
+					return null;
 				return result;	
 			}
 		}
@@ -145,23 +160,29 @@ public class GUI implements Drawable{
 		window.setView(view);
 		window.draw(topBackground);
 		window.draw(lowerBackground);
-		window.draw(grid1);
-		((ControlGroupButtonGrid) grid2).update();
-		window.draw(grid2);
-		((ActionButtonGrid) grid3).update();
-		window.draw(grid3);
+		//window.draw(grid1);
+		((ControlGroupButtonGrid) controlGroupButtonGrid).update();
+		window.draw(controlGroupButtonGrid);
+		((ActionButtonGrid) actionButtonGrid).update();
+		window.draw(actionButtonGrid);
 		if(MINIMAP_ON)
 		{
 			minimap.update();
 			window.draw(minimap);
 		}
 		
-		if(this.window.activePlayer.getSelectedBuildings().size()==1)
+		if(this.window.activePlayer.getSelectedBuildings().size()>0)
 		{
-			buildingStatusLayout.update(this.window.activePlayer.getSelectedBuildings().get(0));
+			buildingStatusLayout.update(this.window.activePlayer.getSelectedBuildings());
 			window.draw(buildingStatusLayout);
 		}
 		buildingStatusLayout.progressBar.update();
+		
+		if(this.window.activePlayer.getSelectedUnits().size()>0)
+		{
+			unitStatusLayout.update(this.window.activePlayer.getSelectedUnits());
+			window.draw(unitStatusLayout);
+		}
 		
 		clock.update();
 		window.draw(clock);
@@ -171,6 +192,9 @@ public class GUI implements Drawable{
 		
 		unitCapCounter.update();
 		window.draw(unitCapCounter);
+		
+		resourceList.update();
+		window.draw(resourceList);
 		
 		window.draw(exit);		
 		window.draw(playerList);
@@ -183,15 +207,15 @@ public class GUI implements Drawable{
 		window.draw(selectionRect);
 		window.draw(cursor);
 		cursorState.update();
-		window.draw(cursorState);
+		//window.draw(cursorState);
 		if(PAUSED)window.draw(pauseOverlay);
 		//for(Drawable d:drawables)
 		//	window.draw(d);
 	}
-	public void initButtons()
+	/*public void initButtons()
 	{		
 		//grid1 = new StandardButtonGrid(1, 5, new Vector2f(10,100));
-		exit = new ExitButton("",window);
+		
 		
 		
 		grid1.addButton(new StandardButton("Zoom In"){public void click(){
@@ -225,5 +249,5 @@ public class GUI implements Drawable{
 			}} , 0, 6);
 		//grid2 = new ControlGroupButtonGrid(1, 9, new Vector2f(700, RESOLUTION_Y-LOWER_GUI_HEIGHT-40));
 		grid2.setOutlineThickness(0);
-	}
+	}*/
 }

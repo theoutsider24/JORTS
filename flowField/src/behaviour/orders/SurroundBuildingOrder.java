@@ -7,6 +7,8 @@ import org.jsfml.system.Vector2f;
 import FYP.Main;
 import behaviour.flowField.Field;
 import behaviour.flowField.FlowCell;
+import behaviour.interactions.UnitBuildingCombatInteraction;
+import behaviour.interactions.UnitCombatInteraction;
 import common.CommonFunctions;
 import gameElements.buildings.Building;
 import gameElements.map.MapCell;
@@ -52,15 +54,28 @@ public class SurroundBuildingOrder extends Order{
 	@Override
 	public Vector2f getVector(Entity e)
 	{
+		if(b.destroyed)
+		{
+			Order.IdleOrder.issue(e);
+		}
 		Vector2f v= super.getVector(e);
+		
 		if(CommonFunctions.getLength(v)==0&&flowField.calculated)
 		{
-			//System.out.println(CommonFunctions.getDist(b.getGlobalBounds(),e.getPosition())-e.getRadius());
-			if(!(CommonFunctions.getDist(b.getGlobalBounds(),e.getPosition())-e.getRadius()<30))
-			{				
+			if((CommonFunctions.getDist(b.getGlobalBounds(),e.getPosition())-e.getRadius()<50))
+			{	
+				
 				v=Vector2f.sub(b.getPosition(), e.getPosition());
 				v=CommonFunctions.normaliseVector(v);
 				v=Vector2f.mul(v, FlowCell.maxSpeed);
+				System.out.println("close");
+				if(!e.acting)					
+				{
+					new UnitBuildingCombatInteraction(1000,e,b);
+					System.out.println("trying");
+				}
+				else
+					System.out.println("acting");
 			}
 		}
 		//if(flowField.calculated)System.out.println(v.x+","+v.y);

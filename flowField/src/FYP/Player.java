@@ -2,6 +2,7 @@ package FYP;
 
 import java.awt.Rectangle;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -23,11 +24,12 @@ import common.CommonFunctions;
 import gameElements.buildings.Building;
 import gameElements.map.MapCell;
 import gameElements.units.Entity;
+import uiComponents.textFields.ResourceList;
 
 import static FYP.Main.worldMap;
 import static common.Constants.*;
 public class Player implements Drawable,Observer{ 
-	public String id="";
+	public String name="";
 	Color teamColor;
 	public Field lastField;
 	ArrayList<Entity> units;
@@ -41,7 +43,7 @@ public class Player implements Drawable,Observer{
 	public Field currentField=Field.nullField;
 	public Vector2f selectionPoint;
 	public boolean selectionInProgress=false;
-	public static Color playerColors[] = new Color[]{Color.BLUE,Color.RED,Color.MAGENTA,new Color(150,0,150)};
+	public static Color playerColors[] = new Color[]{new Color(150,150,150),Color.BLUE,Color.RED,Color.MAGENTA,new Color(150,0,150)};
 	private static Vector2f offset = new Vector2f(200,300);
 	public static Vector2f spawnPoints[] = new Vector2f[]{
 			//new Vector2f(offset.x,offset.y),
@@ -56,11 +58,14 @@ public class Player implements Drawable,Observer{
 	public int playerNum;
 	public Color color;
 	public Vector2f startPosition;
-	
-	public Player()
+	public HashMap<String,Integer> resources;
+	public Player(String name)
 	{
+		resources=new HashMap<String,Integer>();
+		for(String s:ResourceList.resources)
+			resources.put(s,0);
 		playerNum=players++;
-		id="player_"+playerNum;
+		this.name=name;//"player_"+playerNum;
 		color=playerColors[playerNum];
 		startPosition=spawnPoints[playerNum];		
 		
@@ -171,6 +176,19 @@ public class Player implements Drawable,Observer{
 		}
 		selectUnits(temp);
 	}
+	public void selectUnit(Entity e)
+	{
+		ArrayList<Entity> es = new ArrayList<Entity>();
+		es.add(e);
+		selectUnits(es);
+	}
+	public void selectUnit(String id)
+	{
+		System.out.println(id);
+		Entity e=Entity.allEntities.get(id);
+		if(e.player==this)
+			selectUnit(e);
+	}
 	public void selectUnits(ArrayList<Entity> es)
 	{
 		clearSelectedUnits();
@@ -223,6 +241,11 @@ public class Player implements Drawable,Observer{
 		for(Building b:selectedBuildings)
 			b.deselect();
 		selectedBuildings.clear();	
+	}
+	public void clearAllSelected()
+	{
+		clearSelectedBuildings();
+		clearSelectedUnits();
 	}
 	public void issueMoveCommand(Vector2f loc)
 	{
@@ -312,6 +335,7 @@ public class Player implements Drawable,Observer{
 	{
 		if(selectedUnits.size()>0)
 		{
+			System.out.println("attack");
 			//SurroundBuildingOrder m = new SurroundBuildingOrder();
 			//m.init(b);
 			for(Entity e:selectedUnits)

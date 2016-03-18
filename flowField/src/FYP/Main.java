@@ -46,7 +46,7 @@ public class Main extends Observable{
 	public static Main game;
 	public static long deltaT;
 	static String gameDefinition="";
-	
+	public static String initScript="";
 	public static void main(String[] args) throws IOException
 	{
 		if(args.length>0)
@@ -62,16 +62,9 @@ public class Main extends Observable{
 	public void init() throws IOException
 	{
 		loadFont(FONT);		
+		worldMap = new Map(); 	
 		windows=new ArrayList<GameWindow>();
-		worldMap = new Map(); 		
 		players=new ArrayList<Player>();
-		
-		players=new ArrayList<Player>();
-		players.add(new Player());
-		players.add(new Player());
-		players.add(new Player());
-		
-		
 		JsonReader.readGameDefinition(gameDefinition);
 		
 		new GameWindow(players.get(0));
@@ -79,15 +72,6 @@ public class Main extends Observable{
 		//new GameWindow(players.get(1));
 		/*mouse = new MouseManager();
 		keyboard=new KeyboardManager();*/
-		
-		
-		
-		
-		//initWindow();
-		//gui = new GUI(uiView);
-		//window1=new GameWindow();
-		//window2=new GameWindow();
-		//windows.add(window1);
 		
 			//new GameWindow(players.get(1));
 			//windows.get(1).setPosition(new Vector2i(1920,0));
@@ -98,11 +82,10 @@ public class Main extends Observable{
 		for(int i=0;i<STARTING_UNIT_COUNT;i++)			
 			players.get(0).addUnit(UnitFactory.buildEntity("infantry",(int) (players.get(0).startPosition.x+(int)(Math.random()*startingAreaSize)),(int) (players.get(0).startPosition.y+(int)(Math.random()*startingAreaSize)),players.get(0)));
 		
-		//zoom(.25f);
-		for(GameWindow w:windows)
-			w.gui.playerList.update();
-		//registerCommands();
-		clock=new Clock();
+		
+		clock=new Clock();		
+		windows.get(0).runCommand(initScript);
+		
 		while(windowOpen())
 		{
 			gameLoop();

@@ -23,6 +23,7 @@ public class GameClock extends UpdatableTextField
 		super();
 		setSize(new Vector2f(width,UPPER_GUI_HEIGHT));
 		setOrigin(new Vector2f(width/2,0));
+		text.setOrigin(new Vector2f(0,0));
 		setPosition(RESOLUTION_X/2,0);
 		
 		text.setCharacterSize(20);

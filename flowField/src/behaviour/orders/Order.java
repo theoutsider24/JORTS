@@ -14,21 +14,22 @@ public abstract class Order {
 	Thread t;
 	public String orderType="";
 	public Field flowField;
-	ArrayList<CircleShape> targets;
+	ArrayList<Entity> targets;
 	public static final Order IdleOrder=new Order(){};
 	public ArrayList<Entity> entities;
 	public Order()
 	{
 		entities = new ArrayList<Entity>();
 		flowField = Field.nullField;//new Field(Main.worldMap);
-		targets = new ArrayList<CircleShape>();
+		targets = new ArrayList<Entity>();
 	}
 	public void issue(Entity e)
 	{
-		if(e.currentOrder.flowField!=Field.nullField)
+		if(e.currentOrder!=null&&e.currentOrder!=Order.IdleOrder)
 			e.currentOrder.remove(e);
 		entities.add(e);
 		e.currentOrder=this;
+		e.acting=false;
 	}
 	public void remove(Entity e)
 	{

@@ -36,7 +36,7 @@ public class Field  implements Drawable,Observer{
 	//public static final int GRID_SIZE=100;
 	//static final int GRID_SIZE = Main.resolution.x/CELL_SIZE;
 	//static ExecutorService threadPool = Executors.newFixedThreadPool(1);
-	
+	Sprite sprite= new Sprite();
 	Image image;
 	Texture texture;
 	RectangleShape shape;
@@ -80,11 +80,32 @@ public class Field  implements Drawable,Observer{
 
 		int counter=0;
 		cells = new FlowCell[GRID_SIZE][GRID_SIZE];
+		init(worldMap);
+		//if()updateImage();
+	}
+	public void init(Map worldMap)
+	{
 		for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
 				cells[i][j] = new FlowCell(this,worldMap.getCell(i, j));	
 		registerNeighours();
-		//if()updateImage();
+		
+		for (int i = 0; i < GRID_SIZE; i++) 
+			for (int j = 0; j < GRID_SIZE; j++) 
+			{
+				if(!cells[i][j].isOpen())
+				{
+					for(int x=-1;x<=1;x++)
+						for(int y=-1;y<=1;y++)
+						{
+							if(x!=0&&y!=0)
+							{
+								try{cells[i+x][j+y].increaseCost(3);}
+								catch(Exception e){/*e.printStackTrace();*/}
+							}
+						}
+				}
+			}
 	}
 	public void recalculate()
 	{
@@ -97,16 +118,6 @@ public class Field  implements Drawable,Observer{
 			}
 		});
 		t.start();	
-		/* threadPool.execute(new Runnable(){
-				@Override
-				public void run() {
-
-					System.out.println("recalculating");
-					if(fieldMode.equals("clickPoint"))openCellatPos(goalPosition, range,minX,maxX, minY,maxY);		
-					else if(fieldMode.equals("pointList"))openCellLocations(pointList);
-					System.out.println("done");
-				}
-			});*/
 	}
 	/*public void setCellAsGoal(FlowCell c)
 	{
@@ -115,14 +126,21 @@ public class Field  implements Drawable,Observer{
 	}*/
 	public void updateImage()
 	{
+		if(image==null)
+		{
+			image = new Image();
+			texture = new Texture();
+			if(rendTex==null)rendTex=new RenderTexture();
+			image.create(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE);
+	
+			shape = new RectangleShape(new Vector2f(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE));
+		
 
-
-		image = new Image();
-		texture = new Texture();
-		if(rendTex==null)rendTex=new RenderTexture();
-		image.create(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE);
-
-		shape = new RectangleShape(new Vector2f(GRID_SIZE*CELL_SIZE,GRID_SIZE*CELL_SIZE));
+			try {
+				rendTex.create((GRID_SIZE*CELL_SIZE),(GRID_SIZE*CELL_SIZE));
+			} catch (TextureCreationException e) {e.printStackTrace();}
+			sprite.setTexture(rendTex.getTexture());
+		}
 		/*Image img = new Image();
 		img.create(GRID_SIZE,GRID_SIZE);
 		for(int i=0;i<GRID_SIZE;i++)
@@ -143,9 +161,6 @@ public class Field  implements Drawable,Observer{
 		*/
 		if(SHOW_FLOW)
 		{
-			try {
-				rendTex.create((GRID_SIZE*CELL_SIZE),(GRID_SIZE*CELL_SIZE));
-			} catch (TextureCreationException e) {e.printStackTrace();}
 			rendTex.clear(Color.TRANSPARENT);
 			
 			for(int i=0;i<GRID_SIZE;i++)
@@ -230,7 +245,7 @@ public class Field  implements Drawable,Observer{
 			losPass();
 			System.out.println(bresenhamLineCalls);
 			while(openList.size()>0)
-				integrate();
+				try{integrate();}catch(NullPointerException ex){}
 
 			setVectors();
 			if(SHOW_FLOW)updateImage();
@@ -262,7 +277,7 @@ public class Field  implements Drawable,Observer{
 		}
 		losPass();
 		while(openList.size()>0)
-			integrate();
+			try{integrate();}catch(NullPointerException ex){}
 		setVectors();
 		if(SHOW_FLOW)updateImage();
 
@@ -284,24 +299,11 @@ public class Field  implements Drawable,Observer{
 	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) 
-	{		
-		try	{
-		arg0.draw(new Sprite(rendTex.getTexture()));}
-		catch(NullPointerException ex){updateImage();}
-		finally{arg0.draw(new Sprite(rendTex.getTexture()));}
-		
-		/*for(int i=0;i<GRID_SIZE;i++)
-			for(int j=0;j<GRID_SIZE;j++)
-			{
-				arg0.draw(cells[i][j].getVectorVisualistation());
-				
-				Text intnum = new Text(cells[i][j].toString(),Main.font);
-				intnum.setCharacterSize(8);
-				intnum.setPosition(cells[i][j].getPosition());
-				arg0.draw(intnum);
-				arg0.draw(cells[i][j].integrationText);
-			}
-				*///cells[i][j].draw(arg0,Main.displayField);		
+	{				
+		/*try	{
+		sprite.setTexture(rendTex.getTexture());}
+		catch(NullPointerException ex){updateImage();sprite.setTexture(rendTex.getTexture());}
+		*/arg0.draw(sprite);		
 	}
 	public void losPass()
 	{
@@ -415,42 +417,49 @@ public class Field  implements Drawable,Observer{
 			openList.remove(0);	
 		}	
 	}
-	public void integrate()
+	public void integrate() throws NullPointerException
 	{
-		for(FlowCell c : openList.get(0).neighbours)
+		try{
+			for(FlowCell c : openList.get(0).neighbours)
+			{
+				try{
+					if(!closedList.contains(c)&&!openList.contains(c))
+					{
+						if(c.isValid)
+						{
+							openList.add(c);	
+		
+							if(!c.los)
+								c.integration = openList.get(0).integration + c.cost;
+						}
+						else
+							borderList.add(c);
+					}
+					else if(closedList.contains(c))
+					{
+						if(c.integration > openList.get(0).integration + c.cost&&!c.los)
+						{
+							c.integration = openList.get(0).integration + c.cost;
+						
+							closedList.remove(c);
+							openList.add(c);
+						}
+					}
+					else if(openList.contains(c))
+					{
+						if(c.integration > openList.get(0).integration + c.cost)
+						{
+							c.integration = openList.get(0).integration + c.cost;
+						}
+					}
+				}catch(Exception e){}
+			}
+		}catch(Exception e){}
+		if(!openList.isEmpty())
 		{
-			if(!closedList.contains(c)&&!openList.contains(c))
-			{
-				if(c.isValid)
-				{
-					openList.add(c);	
-
-					if(!c.los)
-						c.integration = openList.get(0).integration + c.cost;
-				}
-				else
-					borderList.add(c);
-			}
-			else if(closedList.contains(c))
-			{
-				if(c.integration > openList.get(0).integration + c.cost&&!c.los)
-				{
-					c.integration = openList.get(0).integration + c.cost;
-				
-					closedList.remove(c);
-					openList.add(c);
-				}
-			}
-			else if(openList.contains(c))
-			{
-				if(c.integration > openList.get(0).integration + c.cost)
-				{
-					c.integration = openList.get(0).integration + c.cost;
-				}
-			}
+			closedList.add(openList.get(0));
+			try{openList.remove(0);}	catch(ArrayIndexOutOfBoundsException ex){}
 		}
-		closedList.add(openList.get(0));
-		openList.remove(0);	
 	}
 	public boolean hasLineOfSight(FlowCell goal,FlowCell c)
 	{
@@ -622,10 +631,7 @@ public class Field  implements Drawable,Observer{
 	}
 	public void update()
 	{
-		for(int i=0;i<GRID_SIZE;i++)
-			for(int j=0;j<GRID_SIZE;j++)
-				cells[i][j] = new FlowCell(this,Main.worldMap.getCell(i, j));	
-		registerNeighours();
+		init(Main.worldMap);
 		recalculate();
 	}
 }

@@ -20,6 +20,7 @@ import behaviour.flowField.Field;
 import behaviour.flowField.FlowCell;
 import behaviour.orders.Order;
 import behaviour.orders.SurroundBuildingOrder;
+import FYP.GameWindow;
 import FYP.Main;
 import FYP.Player;
 import common.CommonFunctions;
@@ -31,14 +32,15 @@ public abstract class Entity extends CircleShape{
 	public static HashMap<String,Entity> allEntities = new HashMap<String,Entity>();
 	public static int numberOfEntities;
 	public String id;
-	
+	public int damage;
 	public ArrayList<Ability> abilities = new ArrayList<Ability>();
 	
 	public Order currentOrder;
 	
+	public boolean dead=false;
 	public String unitType;
 	Vector2f speed;
-	float maxSpeed;
+	public float maxSpeed;
 	int radius=7;
 	Vector2i currentCell;
 	Vector2f repulsion;
@@ -50,10 +52,10 @@ public abstract class Entity extends CircleShape{
 	Color playerColor=new Color(50,50,50);
 	public Player player;
 	HealthBar healthBar;
-	int health;
+	public int health;
 	boolean hovered=false,selected=false;
 	public int maxHealth;
-	
+	public boolean acting=false;
 	boolean enabled=true;
 	public Entity(Vector2f v)
 	{
@@ -92,7 +94,6 @@ public abstract class Entity extends CircleShape{
 		setOutlineColor(playerColor);
 		
 		healthBar=new HealthBar(this);
-		healthBar.setMaxHealth(maxHealth);
 		
 		speed = new Vector2f(0,0);
 		repulsion  = new Vector2f(0,0);
@@ -100,7 +101,28 @@ public abstract class Entity extends CircleShape{
 		reregister();
 		setPosition(x,y);
 		allEntities.put(id,this);
-		currentOrder=Order.IdleOrder;
+		Order.IdleOrder.issue(this);
+		//currentOrder=Order.IdleOrder;
+	}
+	public void kill()
+	{
+		if(!dead)
+		{
+			dead=true;
+			allEntities.remove(id);
+			player.getUnits().remove(this);
+			player.getSelectedUnits().remove(this);
+			currentOrder.remove(this);
+			
+			int currentX = (int) (getPosition().x/CELL_SIZE);
+			int currentY = (int) (getPosition().y/CELL_SIZE);
+			for(int i=currentCell.x-1;i<=currentCell.x+1;i++)
+			{
+				for(int j=currentCell.y-1;j<=currentCell.y+1;j++)
+					worldMap.getCell(i,j).deregisterUnit(this);
+			}
+			player.unitCount--;
+		}
 	}
 	public void disable()
 	{
@@ -121,13 +143,15 @@ public abstract class Entity extends CircleShape{
 	public void setMaxHealth(int max)
 	{
 		maxHealth=max;
+		health=max;
 		healthBar.setMaxHealth(maxHealth);
 	}
 	public void setPlayer(Player p)
 	{
 		player=p;
 		playerColor=p.color;
-		setFillColor(playerColor);
+		if(getTexture()==null)setFillColor(playerColor);
+		else	setFillColor(Color.WHITE);
 		setOutlineColor(playerColor);
 	}
 	public void setRadius(int radius)
@@ -153,10 +177,17 @@ public abstract class Entity extends CircleShape{
 		setOutlineColor(playerColor);
 		selected=false;
 	}
-	/*public void setFlowField(Field f)
+	public void updateHealth(int dmg)
 	{
-		this.fieldMap=f;
-	}*/
+		health+=dmg;
+		health=Math.max(0, health);
+		health=Math.min(maxHealth, health);
+		
+		healthBar.update(dmg);
+		//System.out.println(health);
+		if(health<=0)
+			kill();
+	}
 	public void tick()
 	{	
 		if(!enabled) return;
@@ -183,16 +214,17 @@ public abstract class Entity extends CircleShape{
 		super.draw(arg0, arg1);
 		if(controlGroup!=-1)
 		{
-			arg0.draw(controlGroupText);
+			if(((GameWindow)arg0).activePlayer==player) arg0.draw(controlGroupText);
 		}
-		if(SHOW_HEALTH_BARS)
-			arg0.draw(healthBar);
 		
 		if(hovered&&!selected)
 		{
 			hovered=false;
 			setOutlineColor(playerColor);
 		}
+
+		if(SHOW_HEALTH_BARS)
+			arg0.draw(healthBar);
 	}
 	private void enforceBounds() {
 		this.move(Math.min(CELL_SIZE*GRID_SIZE - this.getPosition().x -10,0)    ,  Math.min(CELL_SIZE*GRID_SIZE - this.getPosition().y -10,0));
@@ -231,34 +263,15 @@ public abstract class Entity extends CircleShape{
 		
 		if (distance < e.influenceRange)
 		{
-			//float repulsionAngle = CommonFunctions.getAngleBetweenVectors(this.getPosition(), e.getPosition());// atan2(this->getPosition().y - unit->getPosition().y, this->getPosition().x - unit->getPosition().x);
-			
 			cosVal = (distance / e.influenceRange) * 90;
-
 			repulsionFactor = (float) Math.cos(cosVal* 3.14159265 / 180.0)*5;
-		/*	return Vector2f.mul(new Vector2f((float)(2* Math.cos(repulsionAngle)), (float)(2 * Math.sin(repulsionAngle))),
-							repulsionFactor);*/
-			/*Vector2f result = Vector2f.mul(new Vector2f((float)( Math.cos(repulsionAngle)), (float)( Math.sin(repulsionAngle))),
-					repulsionFactor);
-			Vector2f test1 =(new Vector2f((float)( Math.cos(repulsionAngle)), (float)( Math.sin(repulsionAngle))));
-			Vector2f test2 = CommonFunctions.normaliseVector(Vector2f.sub(getPosition(),e.getPosition()));
-			if(CommonFunctions.getLength(test2)==0)
-			{
-				test2 = Vector2f.add(test2, new Vector2f(1,0));
-			}
-			Vector2f test3 = Vector2f.sub(test1, test2);*/
-			
-			
 			Vector2f tempVect = CommonFunctions.normaliseVector(Vector2f.sub(getPosition(),e.getPosition()));
 			if(CommonFunctions.getLength(tempVect)==0)
 			{
 				tempVect = Vector2f.add(tempVect, new Vector2f(1,0));
 			}
-			
 			tempVect=Vector2f.mul(tempVect, repulsionFactor*2);
-			
 			Vector2f result=Vector2f.div(tempVect,unitRepulsionResistance);
-			//result=Vector2f.div(result,unitRepulsionResistance);
 			return result;
 		}
 		return new Vector2f(0,0);
@@ -266,27 +279,24 @@ public abstract class Entity extends CircleShape{
 	public Vector2f getCellRepulsion(FlowCell c)
 	{
 		float cosVal = 0;
-		float repulsionFactor = 5f;
+		float repulsionFactor = 1f;
 		//float distance = (float)CommonFunctions.getDist(this.getPosition(), c.getCenter());
 		float distance = (float)CommonFunctions.getDist(c.getGlobalBounds(),this.getPosition());
-		distance-=this.getRadius();
-		
+		distance-=this.getRadius();		
 		distance = Math.max(distance,0.1f);
-		
-		int maxDist=CELL_SIZE;
+		int maxDist=5;
 		
 		if (distance < maxDist)
-		{
-			float repulsionAngle = CommonFunctions.getAngleBetweenVectors(this.getPosition(), c.getCenter());// atan2(this->getPosition().y - unit->getPosition().y, this->getPosition().x - unit->getPosition().x);
-									
+		{					
 			cosVal = (distance / maxDist) * 90;//the 5 needs to be the maximum distance at that 
-
-			repulsionFactor = (float) Math.cos(cosVal* 3.14159265 / 180.0);
-			Vector2f result = Vector2f.mul(new Vector2f((float)(2* Math.cos(repulsionAngle)), (float)(2 * Math.sin(repulsionAngle))),
-							repulsionFactor);
-			result = Vector2f.div(result,3);
-			if(CommonFunctions.getLength(result)>20)
-				System.out.println(CommonFunctions.getLength(result));
+			repulsionFactor = (float) Math.cos(cosVal* 3.14159265 / 180.0)*5;
+			Vector2f tempVect = CommonFunctions.normaliseVector(Vector2f.sub(getPosition(),c.getCenter()));
+			if(CommonFunctions.getLength(tempVect)==0)
+			{
+				tempVect = Vector2f.add(tempVect, new Vector2f(1,0));
+			}
+			tempVect=Vector2f.mul(tempVect, repulsionFactor*2);
+			Vector2f result=Vector2f.div(tempVect,unitRepulsionResistance);
 			return result;
 		}
 		return new Vector2f(0,0);
@@ -338,7 +348,9 @@ public abstract class Entity extends CircleShape{
 	public void moveAndRegisterAbsolute(Vector2f v)
 	{
 		//System.out.println(Main.game.deltaT);
-			this.move(Vector2f.mul(v,(((float)Main.game.deltaT)/TARGET_DELTA_T)));
+		Vector2f movement = Vector2f.mul(v,(((float)Main.game.deltaT)/TARGET_DELTA_T));
+		//if(Math.abs(movement.x)>0.1&&Math.abs(movement.x)>0.1)
+			this.move(movement);
 		//	this.move(v);
 		//System.out.println(v.toString());
 		enforceBounds();

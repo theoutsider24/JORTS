@@ -25,7 +25,7 @@ public class BuildBuildingAbility extends Ability{
 	@Override
 	public void run() {
 		GameWindow w= Main.getPlayerWindow(p);
-			w.gui.cursor.attachBuilding(BuildingFactory.buildEntity(building,p));
+			w.gui.cursor.attachBuilding(BuildingFactory.buildBuilding(building,p));
 		
 	}
 }

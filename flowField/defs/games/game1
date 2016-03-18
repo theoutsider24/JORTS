@@ -9,8 +9,26 @@
 	],
 	"buildings":
 	[
-		"barracks.json"
+		"barracks.json",
+		"tree.json",
+		"stone.json"
 	],
 	"map": "FYP1.mp",
-	"keyMappings": "mapping1.json"
+	"keyMappings": "mapping1.json",
+	"resources": 
+	[
+		"Wood",
+		"Stone",
+		"Gold",
+		"Food"
+	],
+	"scenario":"DEMO.txt",
+	"players":
+	[
+		{"name":"GAIA"},
+		{"name":"Matthew"},
+		{"name":"Zaria"},
+		{"name":"FI"}
+	]
+	
 }

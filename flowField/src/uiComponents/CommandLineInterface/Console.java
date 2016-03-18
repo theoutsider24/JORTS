@@ -87,7 +87,7 @@ public class Console implements Drawable{
 	public void runCommand(String s)
 	{
 		//System.out.println(s);
-		String[] cmds=s.split(",");
+		String[] cmds=s.split(";");
 		for(String cmd:cmds)
 		{
 			addCharacter(cmd);

@@ -7,6 +7,9 @@ import org.jsfml.system.Vector2f;
 
 import FYP.Main;
 import behaviour.flowField.Field;
+import behaviour.flowField.FlowCell;
+import behaviour.interactions.UnitCombatInteraction;
+import common.CommonFunctions;
 import gameElements.units.Entity;
 
 public class FollowOrder extends Order implements Observer{
@@ -68,5 +71,35 @@ public class FollowOrder extends Order implements Observer{
 			   Main.worldMap.getCellAtPos(targets.get(0).getPosition()))
 				flowField.openCellatPos(targets.get(0).getPosition());	
 		}
+	}
+	@Override
+	public Vector2f getVector(Entity e)
+	{
+		if(targets.get(0).dead)
+		{
+			Order.IdleOrder.issue(e);
+		}
+		Entity target=targets.get(0);
+		Vector2f v= super.getVector(e);
+			
+		int dist=(int) (CommonFunctions.getDist(target.getPosition(),e.getPosition())-e.getRadius()-target.getRadius());
+		if(dist<50)
+		{				
+			if(dist>e.influenceRange)
+			{
+				v=Vector2f.sub(target.getPosition(), e.getPosition());
+				v=CommonFunctions.normaliseVector(v);
+				v=Vector2f.mul(v, FlowCell.maxSpeed);
+			}
+				
+		//	System.out.println("attacking");
+			//v=Vector2f.sub(target.getPosition(), e.getPosition());
+			//v=CommonFunctions.normaliseVector(v);
+			//v=Vector2f.mul(v, FlowCell.maxSpeed);
+			if(!e.acting)new UnitCombatInteraction(1000,e,target);
+		}
+		
+		//if(flowField.calculated)System.out.println(v.x+","+v.y);
+		return v;
 	}
 }

@@ -7,13 +7,16 @@ import java.io.IOException;
 import org.jsfml.graphics.Color;
 import org.jsfml.graphics.RenderWindow;
 import org.jsfml.graphics.View;
+import org.jsfml.system.Vector2f;
 import org.jsfml.system.Vector2i;
 import org.jsfml.window.ContextSettings;
 import org.jsfml.window.VideoMode;
 import org.jsfml.window.event.Event;
 
 import common.Constants;
+import gameElements.buildings.Building;
 import gameElements.buildings.BuildingFactory;
+import gameElements.map.MapCell;
 import gameElements.units.Entity;
 import gameElements.units.UnitFactory;
 import uiComponents.GUI;
@@ -60,15 +63,15 @@ public class GameWindow extends RenderWindow{
 		
 		setView(gameView);
 		 if(SHOW_VISION_MASK)Main.worldMap.refreshVisionMask();
-	   draw(Main.worldMap);
-	   if(SHOW_FLOW)
-		   draw(activePlayer.currentField);
-	   for(Player p:Main.players)
-		   draw(p);
-	   if(SHOW_VISION_MASK) draw(Main.worldMap.visionMask);
-	   draw(gui);
-	   //updateFPSTimer();
-	   display();
+	 draw(Main.worldMap);
+	 if(SHOW_FLOW)
+		 draw(activePlayer.currentField);
+	 for(Player p:Main.players)
+		 draw(p);
+	 if(SHOW_VISION_MASK) draw(Main.worldMap.visionMask);
+	 draw(gui);
+	 //updateFPSTimer();
+	 display();
 	}
 	public void init()
 	{
@@ -84,6 +87,8 @@ public class GameWindow extends RenderWindow{
 		
 		setPosition(new Vector2i(0,0));
 		setMouseCursorVisible(false);
+		
+		
 		
 		gameView = new View();
 		gameView.setSize(RESOLUTION_X, RESOLUTION_Y);
@@ -133,9 +138,17 @@ public class GameWindow extends RenderWindow{
 	}
 	public void changeActivePlayer(Player p)
 	{
-		activePlayer=p;
-		gui.playerList.update();
-		Main.worldMap.resetVision();
+		if(activePlayer!=p)
+		{
+			activePlayer.clearAllSelected();
+			activePlayer=p;
+			gui.playerList.update();
+			Main.worldMap.resetVision();
+		}
+	}
+	public void runCommand(String s)
+	{
+		gui.console.runCommand(s);
 	}
 	public void registerCommands()
 	{
@@ -183,7 +196,7 @@ public class GameWindow extends RenderWindow{
 				try{
 					if(args.length==1)
 					{
-						gui.console.runCommand("place_unit "+args[0]);
+						runCommand("place_unit "+args[0]);
 						gui.cursor.placeAttachedUnit();
 					}
 					else if(args.length==2)
@@ -212,7 +225,7 @@ public class GameWindow extends RenderWindow{
 						type=args[0];
 					}
 					gui.cursor.attachBuilding(type);
-				}catch(Exception e){}				
+				}catch(Exception e){e.printStackTrace();}				
 		}});
 		Commands.registerCommand("addBuilding",new CommandInterface(){
 			@Override
@@ -220,16 +233,15 @@ public class GameWindow extends RenderWindow{
 				try{
 					if(args.length==1)
 					{
-						gui.console.runCommand("place_building "+args[0]);
-						gui.cursor.placeAttachedBuilding();
+						MapCell c = Main.worldMap.getCellAtPos(mouse.clickLoc);
+						runCommand("addBuilding "+args[0]+" "+c.x+" "+c.y);
 					}
 					else if(args.length>=3)
 					{
 						String type=args[0];
 						int x=Integer.parseInt(args[1]);
 						int y=Integer.parseInt(args[2]);
-						Entity e = UnitFactory.buildEntity(type, x, y, activePlayer);
-						activePlayer.addUnit(e);
+						BuildingFactory.buildBuilding(type, activePlayer,x,y);
 					}
 				}catch(Exception e){}
 		}});
@@ -304,6 +316,18 @@ public class GameWindow extends RenderWindow{
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
+		}});
+		Commands.registerCommand("kill",new CommandInterface(){
+			@Override
+			public void run(String[] args) {
+				while(!activePlayer.selectedUnits.isEmpty())
+				{
+					activePlayer.selectedUnits.get(0).kill();
+				}
+				while(!activePlayer.selectedBuildings.isEmpty())
+				{
+					activePlayer.selectedBuildings.get(0).destroy();
+				}
 		}});
 	}
 }

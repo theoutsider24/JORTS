@@ -142,16 +142,16 @@ public class KeyboardManager {
 			boolean succesful=false;
 			if(modifiedKeyMappings.containsKey(e.key))
 			{
-				System.out.println("test");
+			//	System.out.println("test");
 				ModifiedCommandRunner m = (ModifiedCommandRunner)modifiedKeyMappings.get(e.key);
 				m.run();
 				if(m.modifiersPressed())
 					succesful=true;
-				System.out.println(succesful);
+			//	System.out.println(succesful);
 			}
 			if(!succesful&&keyMappings.containsKey(e.key))
 			{
-				System.out.println(keyMappings.get(e.key));
+			//	System.out.println(keyMappings.get(e.key));
 				keyMappings.get(e.key).run();
 			}
     	}

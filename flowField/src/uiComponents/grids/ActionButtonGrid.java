@@ -12,15 +12,14 @@ import FYP.Main;
 import behaviour.abilities.Ability;
 import gameElements.buildings.Building;
 import gameElements.units.Entity;
+import uiComponents.GUI;
 import uiComponents.buttons.StandardButton;
 import uiComponents.buttons.uiButton;
 
 public class ActionButtonGrid extends StandardButtonGrid{
 	String currentType="";
-	GameWindow window;
-	public ActionButtonGrid(int x, int y, Vector2f pos,GameWindow window) {
-		super(3, 3, pos);
-		this.window=window;
+	public ActionButtonGrid(int x, int y, Vector2f pos,GUI gui) {
+		super(3, 3, pos,gui);
 	}
 	public void setAbilities(ArrayList<Ability> abilities)
 	{
@@ -40,9 +39,9 @@ public class ActionButtonGrid extends StandardButtonGrid{
 	public void update()
 	{
 		HashMap<String,Integer> counter = new HashMap<String,Integer>();
-		if(window.activePlayer.getSelectedUnits().size()>0)
+		if(gui.window.activePlayer.getSelectedUnits().size()>0)
 		{
-			for(Entity e:window.activePlayer.getSelectedUnits())
+			for(Entity e:gui.window.activePlayer.getSelectedUnits())
 			{
 				if(counter.containsKey(e.unitType))
 				{
@@ -67,7 +66,7 @@ public class ActionButtonGrid extends StandardButtonGrid{
 		    {
 		    	removeAll();
 		    	currentType=type;
-			    outer:for(Entity e:window.activePlayer.getSelectedUnits())
+			    outer:for(Entity e:gui.window.activePlayer.getSelectedUnits())
 				{
 			    	if(e.unitType.equals(type))
 			    	{
@@ -78,9 +77,9 @@ public class ActionButtonGrid extends StandardButtonGrid{
 		    }
 		   
 		}
-		else if(window.activePlayer.getSelectedBuildings().size()>0)
+		else if(gui.window.activePlayer.getSelectedBuildings().size()>0)
 		{
-			for(Building b:window.activePlayer.getSelectedBuildings())
+			for(Building b:gui.window.activePlayer.getSelectedBuildings())
 			{
 				if(counter.containsKey(b.buildingType))
 				{
@@ -105,7 +104,7 @@ public class ActionButtonGrid extends StandardButtonGrid{
 		    {
 		    	removeAll();
 		    	currentType=type;
-			    outer:for(Building b:window.activePlayer.getSelectedBuildings())
+			    outer:for(Building b:gui.window.activePlayer.getSelectedBuildings())
 				{
 			    	if(b.buildingType.equals(type))
 			    	{

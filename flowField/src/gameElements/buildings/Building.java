@@ -19,23 +19,26 @@ import behaviour.abilities.Ability;
 import behaviour.abilities.CreateUnitAbility;
 import behaviour.orders.MoveOrder;
 import behaviour.orders.SurroundBuildingOrder;
+import behaviour.timedBehaviours.ProductionTimedBehaviour;
 import behaviour.timedBehaviours.TimedBehaviour;
 import gameElements.map.MapCell;
 import gameElements.units.Entity;
 import gameElements.units.UnitFactory;
+import uiComponents.HealthBar;
 
 public abstract class Building extends RectangleShape {
 	public static HashMap<String,Building> allBuildings = new HashMap<String,Building>();
 	public ArrayList<int[]> offsets = new ArrayList<int[]>(); 
 	public boolean placed=false;
 	public boolean valid=true;
+	public boolean destroyed=false;
 	public MoveOrder rallyOrder;
 	public int[] origin=new int[2];
 	public int maxQueueSize=6;
 	public ArrayList<MapCell> occupiedCells = new ArrayList<MapCell>();
 	public ArrayList<Ability> abilities = new ArrayList<Ability>();
 	//public ArrayList<CreateUnitAbility> productionQueue;
-	public ArrayList<TimedBehaviour> productionQueue;
+	public ArrayList<ProductionTimedBehaviour> productionQueue;
 	public String id;
 	public static int numberOfBuildings;
 	public String buildingType="building";
@@ -45,21 +48,49 @@ public abstract class Building extends RectangleShape {
 	public SurroundBuildingOrder surroundOrder;
 	int outlineThickness=5;
 	
-	public Building()
+	HealthBar healthBar;
+	public int maxHealth;
+	public int health;
+	
+	int dimension=5;
+	public Building(int size)
 	{
+		dimension=size;
 		id=buildingType+"_#"+numberOfBuildings++;
 		
-		offsets.add(new int[]{0,0});		
+		/*offsets.add(new int[]{0,0});		
 		offsets.add(new int[]{-1,-1});
 		offsets.add(new int[]{0,-1});
-		offsets.add(new int[]{-1,0});		
+		offsets.add(new int[]{-1,0});		*/
+		
+		for(int i=0;i<dimension&&offsets.size()<(dimension*dimension);i++)
+			for(int j=0;j<dimension&&offsets.size()<(dimension*dimension);j++)
+			{
+				offsets.add(new int[]{i-(dimension/2),j-(dimension/2)});
+			}
+		
+		/*offsets.add(new int[]{0,-2});		
+		offsets.add(new int[]{-1,-2});
+		offsets.add(new int[]{-2,0});
+		offsets.add(new int[]{-2,-1});
+		offsets.add(new int[]{-2,-2});*/
+		
 		setFillColor(playerColor);
-		setSize(new Vector2f((2*CELL_SIZE)-outlineThickness*2,(2*CELL_SIZE)-outlineThickness*2));
+		setSize(new Vector2f((dimension*CELL_SIZE)-outlineThickness*2,(dimension*CELL_SIZE)-outlineThickness*2));
 		
-		productionQueue=new ArrayList<TimedBehaviour>();
+		productionQueue=new ArrayList<ProductionTimedBehaviour>();
 		
-		
+
+		healthBar=new HealthBar(this);
+		//setMaxHealth(100);
+		//healthBar.setMaxHealth(maxHealth);
 		//surroundOrder= new SurroundBuildingOrder();
+	}
+	public void setMaxHealth(int max)
+	{
+		maxHealth=max;
+		health=max;
+		healthBar.setMaxHealth(maxHealth);
 	}
 	public void setRallyPoint(MoveOrder rp)
 	{
@@ -87,7 +118,7 @@ public abstract class Building extends RectangleShape {
 		if(productionQueue.size()<maxQueueSize)
 		{
 			productionQueue.add(
-				new TimedBehaviour(time)
+				new ProductionTimedBehaviour(time,type)
 				{
 					@Override
 					public void run(){
@@ -102,14 +133,17 @@ public abstract class Building extends RectangleShape {
 	}
 	public void place()
 	{
-		setFillColor(playerColor);
+		if(getTexture()==null)setFillColor(playerColor);
+		else	setFillColor(Color.WHITE);
 		setOutlineColor(playerColor);
 		setOutlineThickness(outlineThickness);
 		
 		//System.out.println(origin[0]);
 		//System.out.println(origin[1]);
 		//System.out.println(Main.worldMap.getCell(origin[0],origin[1]).getPosition().x);
-		setPosition(Main.worldMap.getCell(origin[0]-1, origin[1]-1).getPosition());
+			//origin is the cell being hovered
+		setPosition(Main.worldMap.getCell(origin[0]-(dimension/2-1)-1, origin[1]-(dimension/2-1)-1).getPosition());
+		healthBar.setPosition(getPosition());
 		setOrigin(Vector2f.div(getSize(), 2));
 		move(Vector2f.div(getSize(), 2));
 		move(outlineThickness,outlineThickness);
@@ -127,6 +161,22 @@ public abstract class Building extends RectangleShape {
 		surroundOrder = new SurroundBuildingOrder();
 		surroundOrder.init(this);
 	}
+	public void destroy()
+	{
+		if(!destroyed)
+		{
+			destroyed=true;
+			allBuildings.remove(id);
+			player.getBuildings().remove(this);
+			player.getSelectedBuildings().remove(this);
+			for(MapCell c:occupiedCells)
+			{
+				c.open();
+				c.deregisterBuilding(this);
+			}
+			Main.worldMap.refreshImage();
+		}
+	}
 	public void setPlayer(Player p)
 	{
 		player=p;
@@ -139,7 +189,20 @@ public abstract class Building extends RectangleShape {
 		setOutlineColor(playerColor);
 		if(selected)
 			setOutlineColor(Color.WHITE);
+		if(SHOW_HEALTH_BARS)
+			arg0.draw(healthBar);
 	}	
+	public void updateHealth(int dmg)
+	{
+		health+=dmg;
+		health=Math.max(0, health);
+		health=Math.min(maxHealth, health);
+		
+		healthBar.update(dmg);
+		
+		if(health<=0)
+			destroy();
+	}
 	public void hover()
 	{
 		if(!selected)setOutlineColor(Color.add(new Color(200,200,200),playerColor));

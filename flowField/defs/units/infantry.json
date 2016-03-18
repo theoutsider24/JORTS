@@ -1,5 +1,6 @@
 {
-    "UnitType": "infantry",
+	"Damage":5,
+    "UnitType": "Infantry",
     "Speed": 2,
     "Health": 100,
     "Radius": 15,
@@ -7,5 +8,5 @@
 	[
 		{"Name": "barracks"}	
 	],
-	"Icon": "sword.gif"
+	"Icon": "villager_male.png"
 }

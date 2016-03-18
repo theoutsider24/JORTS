@@ -1,0 +1,6 @@
+setPlayer 0
+addBuilding tree /*20 20;
+addBuilding tree 20 21;
+addBuilding tree*/ 20 22;
+addBuilding stone 20 23;
+setPlayer 1

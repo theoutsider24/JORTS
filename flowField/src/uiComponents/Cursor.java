@@ -142,10 +142,20 @@ public class Cursor extends VertexArray{
 			outline.set(i,new Vertex(outline.get(i).position,Color.BLACK));
 		}
 	}
-	public Vector2i getPosition()
+	public Vector2f getUIPosition()
 	{
-		return position;
+		window.setView(window.uiView);				
+		//uiClickLoc =window.mapPixelToCoords(event.asMouseButtonEvent().position);
+		Vector2f v =window.mapPixelToCoords(position);
+		return v;
 	}
+	public Vector2f getGamePosition()
+	{
+		window.setView(window.gameView);	
+		Vector2f v =window.mapPixelToCoords(position);
+		return v;
+	}
+	
 	public void update()
 	{
 		Vector2i pos = Mouse.getPosition(window);
@@ -212,7 +222,7 @@ public class Cursor extends VertexArray{
 	{
 		if(attachedBuilding==null)
 		{
-			attachedBuilding=BuildingFactory.buildEntity("barracks",window.activePlayer); 
+			attachedBuilding=BuildingFactory.buildBuilding("barracks",window.activePlayer); 
 			window.activePlayer.addBuilding(attachedBuilding);
 			update();
 			

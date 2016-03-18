@@ -18,7 +18,7 @@ public abstract class uiButton extends RectangleShape{
 	public String id;
 	static int instances;
 	public String title;
-	Text text;
+	public Text text;
 	RectangleShape overlay;
 	int width=100;
 	int height=50;
@@ -124,6 +124,7 @@ public abstract class uiButton extends RectangleShape{
 	@Override
 	public String toString()
 	{
-		return id;
+		if(visible)return id;
+		else return "";
 	}
 }

@@ -22,8 +22,7 @@ public abstract class TimedBehaviour implements Runnable, Observer{
 			if(timeToComplete<=0)
 			{
 				run();
-				running=false;
-				Main.game.deleteObserver(this);
+				stop();
 			}
 		}
 	}

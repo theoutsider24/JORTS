@@ -10,19 +10,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class UnitDefinition {
-	String unitType="undefined";
-	int maxSpeed=1;
-	int maxHealth=1;
-	int radius=1;
-	ArrayList<String> buildings;
-	Image icon;
-	Texture texture;
+	public String unitType="undefined";
+	public int maxSpeed=1;
+	public int maxHealth=1;
+	public int radius=1;
+	public int damage=1;
+	public ArrayList<String> buildings;
+	public Texture texture;
 	public UnitDefinition(JSONObject obj)
 	{
 		unitType=(String)obj.get("UnitType");
 		maxSpeed=(int)((long)obj.get("Speed"));
 		maxHealth=(int)((long)obj.get("Health"));
-		radius=(int)((long)obj.get("Radius"));		
+		radius=(int)((long)obj.get("Radius"));	
+		damage=(int)((long)obj.get("Damage"));	
 		buildings = new ArrayList<String>();
 		
 		JSONArray buildingList = (JSONArray) obj.get("Building");
@@ -32,7 +33,6 @@ public class UnitDefinition {
 				buildings.add((String)((JSONObject)o).get("Name"));
 			}
 		
-		icon=new Image();
 		if(obj.get("Icon")!=null)
 		{
 			try 

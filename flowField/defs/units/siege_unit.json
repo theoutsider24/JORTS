@@ -1,5 +1,6 @@
 {
-    "UnitType": "siege_unit",
+	"Damage":20,
+    "UnitType": "Siege_Unit",
     "Speed": 1,
     "Health": 200,
     "Radius": 35,

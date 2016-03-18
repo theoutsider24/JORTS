@@ -1,5 +1,6 @@
 {
-    "UnitType": "zaria",
+	"Damage":2,
+    "UnitType": "Zaria",
     "Speed": 100,
     "Health": 10,
     "Radius": 5
