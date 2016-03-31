@@ -187,10 +187,10 @@ public class GUI implements Drawable{
 			minimap.update();
 			window.draw(minimap);
 		}
-		
+
+		buildingStatusLayout.update(this.window.activePlayer.getSelectedBuildings());
 		if(this.window.activePlayer.getSelectedBuildings().size()>0)
 		{
-			buildingStatusLayout.update(this.window.activePlayer.getSelectedBuildings());
 			window.draw(buildingStatusLayout);
 		}
 		buildingStatusLayout.progressBar.update();

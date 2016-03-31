@@ -73,17 +73,19 @@ public class BuildingStatusLayout implements Drawable{
 	}
 	public void update(ArrayList<Building> buildings)
 	{
-		if(selectedBuildingsChanged())
+		if(selectedBuildingsChanged()||buildings.size()==1)
 		{
-
-			this.buildings.clear();
-			selectionSlots.removeAll();
-			for(Building b:buildings)
+			if(selectedBuildingsChanged())
 			{
-				this.buildings.add(b);
+				this.buildings.clear();
+				selectionSlots.removeAll();
+				for(Building b:buildings)
+				{
+					this.buildings.add(b);
+				}
 			}
 			if(buildings.size()==1)
-				update(buildings.get(0));
+				update(this.buildings.get(0));
 			else 
 			{
 				HashMap<String, Integer> types = new HashMap<String, Integer>();				

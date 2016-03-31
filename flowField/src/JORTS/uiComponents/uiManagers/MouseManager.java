@@ -25,6 +25,7 @@ public class MouseManager {
 	public Clock clickTimer;
 	public boolean doubleClick;
 	public GameWindow window;
+	Vector2f lastClickLoc;
 	public MouseManager(GameWindow window)
 	{
 		this.window=window;
@@ -141,7 +142,8 @@ public class MouseManager {
 		
 		if(clickTimer.getElapsedTime().asMilliseconds()<CLICK_INTERVAL)
 		{
-			doubleClick=true;
+			if(CommonFunctions.getDist(lastClickLoc, clickLoc)<10)
+				doubleClick=true;
 		}
 		clickTimer.restart();
 		
@@ -189,6 +191,7 @@ public class MouseManager {
 			else
 				window.activePlayer.startSelection(clickLoc,window);
 		}
+		lastClickLoc=new Vector2f(clickLoc.x,clickLoc.y);
 	}
 	public void leftButtonUp()
 	{	
