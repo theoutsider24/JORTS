@@ -1,0 +1,24 @@
+{
+    "UnitType": "Town_Center",
+    "Health": 200,
+    "Size": 5,
+    "Production":
+	[
+		"villager"
+	],	
+	"repository":
+	[
+		"Wood",
+		"Food",
+		"Gold",
+		"Stone"
+	]
+	"Icon": "town_centre.png",
+	"Cost":
+	{
+		"resources":
+		[
+			{"resource":"wood","amount":500}
+		]
+	}
+}

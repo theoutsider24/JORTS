@@ -20,12 +20,18 @@
 		{"key":"F8", "command":"setPlayer 7"}
 		{"key":"F9", "command":"setPlayer 8"}
 		
-		{"key":"I", "command":"addUnit infantry"}		
-		{"key":"I", "command":"addUnit infantry 20","modifier":"LCONTROL"}
+		{"key":"I", "command":"addUnit villager"}		
+		{"key":"I", "command":"addUnit archer 20","modifier":"LCONTROL"}
 		{"key":"C", "command":"addUnit cavalry"}
 		{"key":"C", "command":"addUnit cavalry 20","modifier":"LCONTROL"}
+		{"key":"V", "command":"addUnit Siege_unit"}	
 		
-		{"key":"B", "command":"addBuilding Barracks"}
+		{"key":"B", "command":"addBuilding Town_Center"},
+		{"key":"M", "command":"addFoundation Barracks"}
+		
+		{"key":"R", "command":"addResource Wood"},
+		{"key":"T", "command":"addResource Stone"},
+		{"key":"U", "command":"addResource Gold"},
 		
 		{"key":"NUM0", "command":"selectControlGroup 0"}
 		{"key":"NUM1", "command":"selectControlGroup 1"}
@@ -51,5 +57,8 @@
 		
 		{"key":"O", "command":"openCell"}
 		{"key":"S", "command":"saveMap"}
+		
+		{"key":"TAB", "command":"toggle_show_flow"}
+		{"key":"HOME", "command":"toggle_edit_map"}
 	]
 }

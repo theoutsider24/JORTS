@@ -1,12 +1,23 @@
 {
-	"Damage":20,
+	"Damage":5,
     "UnitType": "Siege_Unit",
-    "Speed": 1,
+    "Speed": 0.65,
     "Health": 200,
+    "Range":1200,
+    "Ranged":true,
     "Radius": 35,
+    "ProjectileType":"SplashProjectile",
     "ability":
     	{
     		"Name": "q"
     	},
-	"Icon": "siege_unit.png"
+	"Icon": "siege_unit.png",
+	"Cost":
+	{
+		"time":10000
+		"resources":
+		[
+			{"resource":"wood","amount":1000}
+		]
+	}
 }

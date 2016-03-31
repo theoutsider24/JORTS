@@ -1,0 +1,18 @@
+{
+	"Damage":5,
+    "UnitType": "Archer",
+    "Speed": 1.0,
+    "Health": 100,
+    "Range":200,
+    "Ranged":true,
+    "ProjectileType":"HomingProjectile",
+	"Icon": "archer.png",
+	"Cost":
+	{
+		"time":10000
+		"resources":
+		[
+			{"resource":"wood","amount":1000}
+		]
+	}
+}

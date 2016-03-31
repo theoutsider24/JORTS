@@ -1,8 +1,16 @@
 {
-	"Damage":8,
+	"Damage":20,
     "UnitType": "Cavalry",
-    "Speed": 3,
+    "Speed": 1.2,
     "Health": 50,
-    "Radius": 25,
-	"Icon": "cavalry.png"
+    "Radius": 10,
+	"Icon": "cavalry.png",
+	"Cost":
+	{
+		"time":10000
+		"resources":
+		[
+			{"resource":"wood","amount":1000}
+		]
+	}
 }

@@ -1,0 +1,21 @@
+{
+	"Damage":2,
+    "UnitType": "Villager",
+    "Speed": 0.2,
+    "Health": 100,
+	"Building":
+	[
+		{"Name": "barracks"}	
+		{"Name": "Town_center"}	
+	],
+	"Icon": "villager_male.png",
+	"canConstruct":true,
+	"Cost":
+	{
+		"time":2000
+		"resources":
+		[
+			{"resource":"wood","amount":20}
+		]
+	}
+}

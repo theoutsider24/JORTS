@@ -2,33 +2,32 @@
 	"units":
 	[
 		"cavalry.json",
-		"infantry.json",
+		"archer.json",
 		"siege_unit.json",
-		"goliath.json",
-		"zaria.json"
+		"villager.json"
 	],
 	"buildings":
 	[
-		"barracks.json",
-		"tree.json",
-		"stone.json"
+		"Town_Center.json",
+		"barracks.json"
 	],
-	"map": "FYP1.mp",
+	"map": "bigRiver.mp",
 	"keyMappings": "mapping1.json",
 	"resources": 
 	[
-		"Wood",
-		"Stone",
-		"Gold",
-		"Food"
+		{"name":"Wood","icon":"tree.gif"},
+		{"name""Stone","icon":"stone.gif"},
+		{"name""Gold","icon":"gold.png"},
+		{"name""Food"}
 	],
 	"scenario":"DEMO.txt",
+	"terrain":"terrains.json",
 	"players":
 	[
 		{"name":"GAIA"},
 		{"name":"Matthew"},
 		{"name":"Zaria"},
-		{"name":"FI"}
+		{"name":"HARTS"}
 	]
 	
 }

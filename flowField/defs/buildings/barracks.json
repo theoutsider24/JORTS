@@ -1,25 +1,20 @@
 {
     "UnitType": "Barracks",
     "Health": 200,
-    "Size": 4,
+    "Size": 6,
     "Production":
 	[
-		{
-			"unitType": "Infantry",
-			"time":2000
-			"resources":
-			[
-				{"resource":"wood","amount":200}
-			]
-		},
-		{
-			"unitType": "Siege_Unit",
-			"time":10000
-			"resources":
-			[
-				{"resource":"wood","amount":1000}
-			]
-		}
+		"Archer",
+		"Siege_Unit",
+		"cavalry"
 	],	
-	"Icon": "barracks.png"
+	"Icon": "barracks.png",
+	"Cost":
+	{
+		"resources":
+		[
+			{"resource":"wood","amount":200},
+			{"resource":"stone","amount":200}
+		]
+	}
 }

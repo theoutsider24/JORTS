@@ -1,0 +1,25 @@
+{
+	"default":"snow",
+	"definitions":
+	[
+		{
+			"Open":true,
+			"Color":[255,255,255],
+			"Texture":"snow.png"
+			"Name":"snow"
+		},
+		{
+			"Open":false,
+			"Color":[255,255,255],
+			"Texture":"rock.png"
+			"Name":"rock"
+		}
+		,
+		{
+			"Open":false,
+			"Color":[205,255,205],
+			"Texture":"water.png"
+			"Name":"water"
+		}
+	]
+}

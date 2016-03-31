@@ -1,6 +1,73 @@
-setPlayer 0
-addBuilding tree /*20 20;
-addBuilding tree 20 21;
-addBuilding tree*/ 20 22;
-addBuilding stone 20 23;
-setPlayer 1
+setPlayer 3;
+
+giveResource 3 Wood 500
+giveResource 3 Gold 500
+giveResource 3 Food 500
+
+addBuilding Town_Center 24 26
+addUnit villager 396 523
+addUnit villager 447 614
+addUnit villager 551 453
+addUnit villager 585 526
+
+
+setPlayer 0;
+addResource Wood 19 37
+addResource Wood 20 37
+addResource Wood 22 37
+addResource Wood 23 37
+addResource Wood 25 37
+
+addResource Wood 18 38
+addResource Wood 19 38
+addResource Wood 20 38
+addResource Wood 21 38
+addResource Wood 22 38
+addResource Wood 23 38
+addResource Wood 24 38
+addResource Wood 25 38
+addResource Wood 26 38
+
+addResource Wood 17 39
+addResource Wood 18 39
+addResource Wood 19 39
+addResource Wood 20 39
+addResource Wood 21 39
+addResource Wood 22 39
+addResource Wood 23 39
+addResource Wood 24 39
+addResource Wood 25 39
+addResource Wood 26 39
+
+addResource Wood 17 40
+addResource Wood 18 40
+addResource Wood 19 40
+addResource Wood 20 40
+addResource Wood 21 40
+addResource Wood 22 40
+addResource Wood 23 40
+addResource Wood 24 40
+addResource Wood 25 40
+addResource Wood 26 40
+
+addResource Wood 21 41
+addResource Wood 22 41
+addResource Wood 23 41
+
+addResource Stone 14 29
+addResource Stone 14 30
+addResource Stone 15 31
+addResource Stone 15 30
+addResource Stone 16 32
+addResource Stone 16 31
+addResource Stone 14 31
+
+addResource Gold 31 20
+addResource Gold 32 20
+addResource Gold 32 21
+addResource Gold 31 21
+addResource Gold 33 21
+addResource Gold 34 22
+addResource Gold 33 22
+
+setPlayer 2;
