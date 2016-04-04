@@ -5,8 +5,9 @@
     "Health": 100,
 	"Building":
 	[
-		{"Name": "barracks"}	
-		{"Name": "Town_center"}	
+		{"Name": "barracks"},	
+		{"Name": "Town_center"},
+		{"Name": "castle"}
 	],
 	"Icon": "villager_male.png",
 	"canConstruct":true,

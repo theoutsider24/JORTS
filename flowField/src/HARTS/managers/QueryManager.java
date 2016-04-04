@@ -59,6 +59,14 @@ public class QueryManager extends Manager
 	{
 		makeQuery("produce unit \""+type+"\" from building \""+buildingId+"\"");
 	}
+	public String getIdleVillager()
+	{
+		return makeQuery("get random idle villager");
+	}
+	public String collectResource(String uId,String resId)
+	{
+		return makeQuery("\""+uId+"\" collect \""+resId+"\"");
+	}
 	public String makeQuery(String s)
 	{
 		Query q=new Query(s);

@@ -407,7 +407,7 @@ public class CommonFunctions {
 	{
 		for(MapCell c:b.occupiedCells)
 		{
-			if(p.visionMap.isVisible(c.x, c.y))
+			if(!p.visionMap.isInvisible(c.x, c.y))
 				return true;
 		}
 		return false;

@@ -9,12 +9,14 @@ import org.json.simple.JSONObject;
 import JORTS.behaviour.abilities.Ability;
 import JORTS.behaviour.abilities.BuildBuildingAbility;
 import JORTS.behaviour.abilities.CreateUnitAbility;
+import JORTS.behaviour.orders.Order;
 import JORTS.common.ResourceAmount;
 import JORTS.core.Main;
 import JORTS.core.Player;
 import JORTS.gameElements.buildings.Building;
 import JORTS.gameElements.buildings.BuildingDefinition;
 import JORTS.gameElements.buildings.BuildingFactory;
+import JORTS.gameElements.buildings.resources.Resource;
 import JORTS.gameElements.units.Entity;
 import JORTS.gameElements.units.UnitDefinition;
 import JORTS.gameElements.units.UnitFactory;
@@ -41,6 +43,7 @@ public class QueryProcessor {
 		case "what buildings are in the game?":response=getBuildingList();break;
 		case "what resources are in the game?":response=getResourceList();break;
 		case "who are the players?":response=getPlayerList();break;
+		case "get random idle villager":response=getRandomIdleVillager();break;
 		default :response="other"; break;
 		}
 		if(response.equals("other"))
@@ -51,9 +54,32 @@ public class QueryProcessor {
 			else if(query.contains("what resources are required"))response=getRequiredResources(query);
 			else if(query.contains("how much"))response=getCurrentResources(query);
 			else if(query.contains("produce unit"))response=produceUnit(query);
+			else if(query.contains("collect"))collectResource(query);
 		}
 		response=id+":"+response;
 		server.sendMessage(server.player, response);
+	}
+	private void collectResource(String query) {
+		String unit=query.split("\"")[1];
+		String resource=query.split("\"")[3];
+		
+		Building b=server.eventManager.visibleBuildings.get(resource);
+		Resource r=(Resource)b;
+		r.getHarvestOrder().issue(server.eventManager.visibleUnits.get(unit));
+	}
+	private String getRandomIdleVillager() {
+		for(Entity e:server.player.getUnits())
+		{
+			if(e.canConstruct&&e.currentOrder==Order.IdleOrder)//TODO change to canCollect
+			{
+				for(String s:server.eventManager.visibleUnits.keySet())
+				{
+					if(server.eventManager.visibleUnits.get(s)==e)
+						return s;
+				}
+			}
+		}
+		return "";
 	}
 	private String produceUnit(String query) {
 		String type=query.split("\"")[1];

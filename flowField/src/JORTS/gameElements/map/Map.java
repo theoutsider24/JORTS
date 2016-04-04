@@ -89,13 +89,30 @@ public class Map extends Observable implements Drawable{
 	}
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1) {		
-		Vector2f topLeft=arg0.mapPixelToCoords(new Vector2i(0,0));
-		topLeft = Vector2f.sub(topLeft, new Vector2f(CELL_SIZE,CELL_SIZE));
-		Vector2f bottomRight=arg0.mapPixelToCoords(new Vector2i(RESOLUTION_X,RESOLUTION_Y));
 		for(int i=0;i<GRID_SIZE;i++)
 			for(int j=0;j<GRID_SIZE;j++)
 			{
-				if(CommonFunctions.isOnScreen(arg0,cells[i][j]))
+				boolean isVisible=!visionMap.isInvisible(i, j);
+
+				boolean onScreen=false;
+				
+				//if(isVisible)onScreen=CommonFunctions.isOnScreen(arg0,cells[i][j]);
+				onScreen=true;
+				boolean edge=false;
+				for(int x=-2;x<=2&&onScreen&&!edge&&!isVisible;x++)
+				{
+					for(int y=-2;y<=2&&onScreen&&!edge&&!isVisible;y++)
+					{
+						try{
+						if(!visionMap.isInvisible(i+x, j+y))
+						{
+							edge=true;
+						}
+						}catch(Exception ex){}
+					}
+				}
+					
+				if(onScreen&&(edge||isVisible))
 					arg0.draw(cells[i][j]);
 			}
 		//arg0.draw(visionMask);

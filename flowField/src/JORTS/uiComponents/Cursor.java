@@ -161,7 +161,7 @@ public class Cursor extends VertexArray{
 		{
 			Vector2i center = new Vector2i(RESOLUTION_X/2,RESOLUTION_Y/2);
 			Vector2i movement= Vector2i.sub(Mouse.getPosition(window),center);
-			Mouse.setPosition(Vector2i.add(center,new Vector2i(8,31)));
+			Mouse.setPosition(Vector2i.add(Vector2i.add(window.getPosition(),center),new Vector2i(8,30)));
 	
 			//Vector2i pos = Mouse.getPosition(window);
 			Vector2i pos = Vector2i.add(movement, position);

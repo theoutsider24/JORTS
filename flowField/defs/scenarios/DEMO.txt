@@ -70,4 +70,4 @@ addResource Gold 33 21
 addResource Gold 34 22
 addResource Gold 33 22
 
-setPlayer 2;
+setPlayer 3;

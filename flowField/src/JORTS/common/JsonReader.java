@@ -148,7 +148,7 @@ public class JsonReader {
 		JSONArray players = (JSONArray)jsonObject.get("players");
 		for(Object o:players)
 		{
-			Main.players.add(new Player((String)((JSONObject)o).get("name")));
+			Main.players.add(new Player((String)o));
 		}
 		
 	}

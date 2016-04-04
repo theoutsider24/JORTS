@@ -59,6 +59,11 @@ public class VisionMap implements Drawable{
 		if(!SHOW_VISION_MASK)return true;
 		return grid[x][y]==Visibility.VISIBLE;
 	}
+	public boolean isInvisible(int x,int y)
+	{
+		if(!SHOW_VISION_MASK)return false;
+		return grid[x][y]==Visibility.INVISIBLE;
+	}
 	public void update()
 	{
 		for(int i=0;i<GRID_SIZE;i++)

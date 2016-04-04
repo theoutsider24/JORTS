@@ -1,7 +1,7 @@
 {
 	"Damage":5,
     "UnitType": "Archer",
-    "Speed": 1.0,
+    "Speed": 0.7,
     "Health": 100,
     "Range":200,
     "Ranged":true,
@@ -12,7 +12,7 @@
 		"time":10000
 		"resources":
 		[
-			{"resource":"wood","amount":1000}
+			{"resource":"wood","amount":100}
 		]
 	}
 }

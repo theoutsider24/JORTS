@@ -60,17 +60,6 @@ public class KeyboardManager {
 	private void mapKeys()
 	{
 		addLoadedMappings();
-		//mapKeyCommand(ESCAPE,"exit");
-		//mapKeyCommand(UP,"move_camera 0 -30");
-		//mapKeyCommand(DOWN,"move_camera 0 30");
-		//mapKeyCommand(LEFT,"move_camera -30 0");
-		//mapKeyCommand(RIGHT,"move_camera 30 0");
-		
-		/*mapKeyCommand(ADD,"zoom_in 2");
-		mapKeyCommand(F1,"setPlayer 0");
-		mapKeyCommand(F2,"setPlayer 1");
-		mapKeyCommand(F3,"setPlayer 2");
-		mapKeyCommand(SUBTRACT,"zoom_out 2");	*/	
 		
 		keyMappings.put(Key.L, new Runnable(){@Override public void run(){try {
 			Main.worldMap.loadFromFile();

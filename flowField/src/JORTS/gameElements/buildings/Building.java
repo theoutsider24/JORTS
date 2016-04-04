@@ -20,6 +20,7 @@ import JORTS.behaviour.orders.SurroundBuildingOrder;
 import JORTS.behaviour.timedBehaviours.ProductionTimedBehaviour;
 import JORTS.common.CommonFunctions;
 import JORTS.common.ResourceAmount;
+import JORTS.core.GameWindow;
 import JORTS.core.Main;
 import JORTS.core.Player;
 import JORTS.gameElements.map.MapCell;
@@ -235,7 +236,7 @@ public abstract class Building extends RectangleShape implements Attackable{
 	@Override
 	public void draw(RenderTarget arg0, RenderStates arg1)
 	{
-		if(valid)
+		if(valid&&CommonFunctions.isVisible(this,((GameWindow)arg0).activePlayer))
 		{
 			super.draw(arg0, arg1);
 			setOutlineColor(playerColor);

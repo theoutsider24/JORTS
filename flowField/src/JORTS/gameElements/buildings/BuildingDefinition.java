@@ -20,7 +20,7 @@ public class BuildingDefinition {
 	public JSONObject costDetails;
 	public BuildingDefinition(JSONObject obj)
 	{
-		unitType=(String)obj.get("UnitType");
+		unitType=(String)obj.get("BuildingType");
 		maxHealth=(int)((long)obj.get("Health"));
 		size=(int)((long)obj.get("Size"));		
 		production = new ArrayList<String>();

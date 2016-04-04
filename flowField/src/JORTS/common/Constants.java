@@ -12,14 +12,12 @@ public class Constants {
 	public final static int CELL_SIZE=20;
 	public final static int GRID_SIZE=100;
 	
-	public final static int STARTING_UNIT_COUNT=0;
-
 	public final static String FONT="FreeMonoBold";
 
 	public final static int RESOLUTION_X=1900;
 	public final static int RESOLUTION_Y=1000;
 	public final static boolean FULLSCREEN=false;
-	public final static int FRAME_CAP=144;
+	public final static int FRAME_CAP=200;
 	public final static float TARGET_DELTA_T=1000/FRAME_CAP;
 	
 	public final static String WINDOW_TITLE="JORTS";
@@ -34,7 +32,7 @@ public class Constants {
 	public final static boolean MINIMAP_ON=false;
 	
 	public final static boolean SHOW_HEALTH_BARS=true;
-	public final static boolean SHOW_VISION_MASK=false;
+	public final static boolean SHOW_VISION_MASK=true;
 	
 	public final static int COST_INCREASE_ON_CLICK=10;
 	public final static int CAMERA_MOVEMENT_VALUE=8;
@@ -49,7 +47,7 @@ public class Constants {
 	public final static Color OBSTACLE_COLOR = new Color(50,50,50);
 	public final static int CLICK_INTERVAL = (Integer)Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
 
-	public final static boolean LOCK_ZOOM = false;
+	public final static boolean LOCK_ZOOM = true;
 	public final static float MAX_ZOOM = 3;
 	public final static float MIN_ZOOM = 1;
 	public final static float ZOOM_VALUE=1.1f;

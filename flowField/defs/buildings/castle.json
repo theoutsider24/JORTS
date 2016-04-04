@@ -1,0 +1,21 @@
+{
+    "BuildingType": "Castle",
+    "Health": 500,
+    "Size": 8,
+    "Production":
+	[
+		"Archer",
+		"Siege_Unit",
+		"cavalry"
+	],	
+	"Icon": "castle.png",
+	"Cost":
+	{
+		"resources":
+		[
+			{"resource":"wood","amount":1000},
+			{"resource":"stone","amount":1000},
+			{"resource":"gold","amount":500}
+		]
+	}
+}

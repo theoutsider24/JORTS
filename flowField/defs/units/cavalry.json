@@ -5,6 +5,7 @@
     "Health": 50,
     "Radius": 10,
 	"Icon": "cavalry.png",
+	"VisionRange":200,
 	"Cost":
 	{
 		"time":10000

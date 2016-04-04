@@ -397,6 +397,7 @@ public abstract class Entity extends CircleShape implements Attackable{
 	{
 				//Vector2f movement = Vector2f.mul(v,(((float)Main.game.deltaT)/TARGET_DELTA_T));
 		Vector2f movement=v;
+		
 		//if(Math.abs(movement.x)>0.1&&Math.abs(movement.x)>0.1)
 			this.move(movement);
 			//if(CommonFunctions.getLength(movement)>maxSpeed)System.out.println(maxSpeed+","+CommonFunctions.getLength(movement));

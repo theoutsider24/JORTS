@@ -1,8 +1,10 @@
 package HARTS.managers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
+import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
 
 import HARTS.Building;
@@ -66,17 +68,5 @@ public class BuildingManager extends Manager{
 			System.out.println(playerName+" not found");
 		buildings.get(playerName).add(new Building(id,f1,f2));
 		
-		
-
-		
-		/*List<Cluster<Unit>> clusters= clusterer.cluster(units);
-		String message="";
-
-		System.out.println("There are "+clusters.size()+" armies");
-		int i=0;
-		for(Cluster<Unit> c:clusters)
-		{
-			System.out.println("Army#"+i+" has "+c.getPoints().size()+" units");
-		}*/
 	}
 }

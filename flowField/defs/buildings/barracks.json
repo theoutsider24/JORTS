@@ -1,5 +1,5 @@
 {
-    "UnitType": "Barracks",
+    "BuildingType": "Barracks",
     "Health": 200,
     "Size": 6,
     "Production":

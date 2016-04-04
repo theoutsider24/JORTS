@@ -7,6 +7,7 @@
     "Ranged":true,
     "Radius": 35,
     "ProjectileType":"SplashProjectile",
+    "VisionRange":400,
     "ability":
     	{
     		"Name": "q"

@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import HARTS.Building;
 import HARTS.EventListener; 
 import HARTS.Main;
+import HARTS.Unit;
 
 public class ProductionManager extends Manager{
 	public TreeMap<String,Integer> resources;
@@ -56,11 +57,23 @@ public class ProductionManager extends Manager{
 		    		if(Main.core.desires.initialised)
 		    		{
 		    			requestUnit(Main.core.desires.getMostDesiredUnit());
+		    			String freeUnit=Main.core.queryManager.getIdleVillager();
+		    			if(!freeUnit.equals(""))
+		    			{
+		    				Main.core.queryManager.collectResource(freeUnit, getNearestResource(""));
+		    			}
 		    		}
 		    	}
 		    }
 		};
 		timer.schedule(myTask, 100, 100);
+	}
+	public String getNearestResource(String u)//Random
+	{
+		ArrayList<Building> resources =Main.core.buildingManager.buildings.get("gaia");
+		Building b=resources.get((int)(Math.random()*resources.size()));
+		
+		return b.id;
 	}
 	public void requestBuilding(String type)
 	{

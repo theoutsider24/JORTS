@@ -1,5 +1,5 @@
 {
-    "UnitType": "Town_Center",
+    "BuildingType": "Town_Center",
     "Health": 200,
     "Size": 5,
     "Production":

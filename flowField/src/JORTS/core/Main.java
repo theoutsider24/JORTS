@@ -1,10 +1,6 @@
 package JORTS.core;
 
-import static JORTS.common.Constants.FONT;
-import static JORTS.common.Constants.FONT_DIRECTORY;
-import static JORTS.common.Constants.PAUSED;
-import static JORTS.common.Constants.STARTING_UNIT_COUNT;
-import static JORTS.common.Constants.WINDOW_TITLE;
+import static JORTS.common.Constants.*;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -59,6 +55,7 @@ public class Main extends Observable{
 		JsonReader.readGameDefinition(gameDefinition);
 		
 		new GameWindow(players.get(0));
+		//new GameWindow(players.get(1));
 		//new GameWindow(players.get(1));
 		//new GameWindow(players.get(1));
 		/*mouse = new MouseManager();
